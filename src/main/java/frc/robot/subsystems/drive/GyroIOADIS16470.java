@@ -15,35 +15,43 @@ package frc.robot.subsystems.drive;
 
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusCode;
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.Pigeon2Configuration;
-import com.ctre.phoenix6.hardware.Pigeon2;
-
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
-
 import java.util.Queue;
 
 /** IO implementation for Pigeon 2. */
 public class GyroIOADIS16470 implements GyroIO {
   private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
-    private SwerveDrivePoseEstimator m_poseEstimator;
+  private final double yaw = m_gyro.getAngle();
+  private final Queue<Double> yawPositionQueue;
+  private final Queue<Double> yawTimestampQueue;
+  private final double yawVelocity = m_gyro.getAccelZ();
+
   public GyroIOADIS16470() {
-    //TODO
-    
-    
+    // TODO
+    m_gyro.calibrate();
+
+    yawTimestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
+    yawPositionQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
   }
 
   @Override
   public void updateInputs(GyroIOInputs inputs) {
-    //inputs.connected = m_poseEstimator.update(Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ);
+    inputs.connected = m_gyro.isConnected();
+    inputs.yawPosition = Rotation2d.fromDegrees(m_gyro.getAngle());
+    inputs.yawVelocityRadPerSec = Units.degreesToRadians(m_gyro.getAccelZ());
+
+    inputs.odometryYawTimestamps =
+        yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
+
+    inputs.odometryYawPositions =
+        yawPositionQueue.stream()
+            .map((Double value) -> Rotation2d.fromDegrees(value))
+            .toArray(Rotation2d[]::new);
+
+    yawTimestampQueue.clear();
+    yawPositionQueue.clear();
     // TODO
   }
 }

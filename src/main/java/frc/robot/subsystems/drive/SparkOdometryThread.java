@@ -72,11 +72,11 @@ public class SparkOdometryThread {
   }
 
   /** Registers a generic signal to be read from the thread. */
-  public Queue<Double> registerSignal(DoubleSupplier signal) {
+  public Queue<Double> registerSignal(DoubleSupplier yaw) {
     Queue<Double> queue = new ArrayBlockingQueue<>(20);
     Drive.odometryLock.lock();
     try {
-      genericSignals.add(signal);
+      genericSignals.add(yaw);
       genericQueues.add(queue);
     } finally {
       Drive.odometryLock.unlock();
