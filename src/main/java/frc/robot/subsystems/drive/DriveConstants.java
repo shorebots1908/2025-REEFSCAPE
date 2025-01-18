@@ -43,7 +43,6 @@ public class DriveConstants {
   // Device CAN IDs
   public static final int pigeonCanId = 9;
 
-
   public static final int frontLeftDriveCanId = 2;
   public static final int backLeftDriveCanId = 8;
   public static final int frontRightDriveCanId = 4;
@@ -53,7 +52,6 @@ public class DriveConstants {
   public static final int backLeftTurnCanId = 7;
   public static final int frontRightTurnCanId = 3;
   public static final int backRightTurnCanId = 5;
-
 
   // Drive motor configuration
   public static final int driveMotorCurrentLimit = 50;
