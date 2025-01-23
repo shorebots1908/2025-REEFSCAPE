@@ -13,8 +13,6 @@
 
 package frc.robot;
 
-import static frc.robot.subsystems.vision.VisionConstants.*;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -160,7 +158,7 @@ public class RobotContainer {
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    controller.y().onTrue(Commands.runOnce(drive::gyroResetY, drive));
+    // controller.y().onTrue(Commands.runOnce(drive::gyroResetY, drive));
 
     // Reset gyro to 0° when B button is pressed
     controller

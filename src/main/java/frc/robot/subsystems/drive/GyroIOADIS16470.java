@@ -13,8 +13,6 @@
 
 package frc.robot.subsystems.drive;
 
-import static frc.robot.subsystems.drive.DriveConstants.*;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
@@ -23,10 +21,10 @@ import java.util.Queue;
 /** IO implementation for Pigeon 2. */
 public class GyroIOADIS16470 implements GyroIO {
   private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
-  private final double yaw = m_gyro.getAngle();
+  // private final double yaw = m_gyro.getAngle();
   private final Queue<Double> yawPositionQueue;
   private final Queue<Double> yawTimestampQueue;
-  private final double yawVelocity = m_gyro.getAccelZ();
+  // private final double yawVelocity = m_gyro.getAccelZ();
 
   public GyroIOADIS16470() {
     // TODO
