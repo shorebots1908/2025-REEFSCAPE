@@ -6,6 +6,12 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+/**
+ * TODO:
+ *
+ * <p>- [ ] Make ElevatorIO an interface - [ ] Add ElevatorIOSpark class - [ ] Move SparkMax classes
+ * to ElevatorIOSpark -
+ */
 public class Elevator {
   private SparkMax leadElevator = new SparkMax(9, MotorType.kBrushless);
   private SparkMax followElevator = new SparkMax(10, MotorType.kBrushless);

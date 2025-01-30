@@ -29,15 +29,15 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
-import frc.robot.subsystems.intake.CoralIntake;
-import frc.robot.subsystems.intake.CoralIntakeConfig;
-import frc.robot.subsystems.intake.CoralIntakeIO;
-import frc.robot.subsystems.intake.CoralIntakeIOSim;
 import frc.robot.subsystems.intake.BallerIntake;
 import frc.robot.subsystems.intake.BallerIntakeConfig;
 import frc.robot.subsystems.intake.BallerIntakeIO;
 import frc.robot.subsystems.intake.BallerIntakeIOSim;
 import frc.robot.subsystems.intake.BallerIntakeIOSparkMax;
+import frc.robot.subsystems.intake.CoralIntake;
+import frc.robot.subsystems.intake.CoralIntakeConfig;
+import frc.robot.subsystems.intake.CoralIntakeIO;
+import frc.robot.subsystems.intake.CoralIntakeIOSim;
 import frc.robot.subsystems.intake.CoralIntakeIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -87,11 +87,9 @@ public class RobotContainer {
         // new VisionIOPhotonVision(
         //     VisionConstants.camera1Name, VisionConstants.robotToCamera1));
 
-        ballerIntake =
-            new BallerIntake(new BallerIntakeIOSparkMax(new BallerIntakeConfig(13, 14)));
+        ballerIntake = new BallerIntake(new BallerIntakeIOSparkMax(new BallerIntakeConfig(13, 14)));
 
-        coralIntake = 
-            new CoralIntake(new CoralIntakeIOSparkMax(new CoralIntakeConfig(11, 12)));
+        coralIntake = new CoralIntake(new CoralIntakeIOSparkMax(new CoralIntakeConfig(11, 12)));
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
