@@ -179,6 +179,15 @@ public class RobotContainer {
                 () -> -controller.getLeftX(),
                 () -> new Rotation2d()));
 
+    controller
+        .rightBumper()
+        .onTrue(
+            DriveCommands.joystickDriveRobotRelative(
+                drive,
+                () -> -controller.getLeftY(),
+                () -> -controller.getLeftX(),
+                () -> -controller.getRightX()));
+
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
     // controller.y().onTrue(Commands.runOnce(drive::gyroResetY, drive));
