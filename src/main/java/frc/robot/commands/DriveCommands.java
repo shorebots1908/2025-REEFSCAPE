@@ -14,7 +14,11 @@
 package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -38,6 +42,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import frc.robot.util.FieldPoint;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -70,7 +75,7 @@ public class DriveCommands {
     //
     try {
       // Load the path you want to follow using its name in the GUI
-      PathPlannerPath path = PathPlannerPath.fromPathFile("path4");
+      PathPlannerPath path = PathPlannerPath.fromPathFile("path5");
 
       // Create a path following command using AutoBuilder. This will also trigger event markers.
       return AutoBuilder.followPath(path);
@@ -78,6 +83,23 @@ public class DriveCommands {
       DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
       return Commands.none();
     }
+  }
+  
+  public static Command goToFieldPoint(Drive drive, FieldPoint point) {
+  
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+      FieldPoint.REEF_AB
+    );
+
+    PathConstraints defaultConstraints =  new PathConstraints(3.0, 3.0, 9.42478, 12.5664); 
+
+    PathPlannerPath toReefAB = new PathPlannerPath(
+      waypoints,
+      defaultConstraints,
+        null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
+        new GoalEndState(0.0, Rotation2d.fromDegrees(0)));
+
+    return AutoBuilder.followPath(toReefAB);
   }
 
   /**
