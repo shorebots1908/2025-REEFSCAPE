@@ -6,6 +6,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import frc.robot.subsystems.BasePosition;
+
 /**
  * TODO:
  *
@@ -23,5 +25,11 @@ public class Elevator {
         followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  public void elevatorMove() {}
+  public void goToPosition(BasePosition position) {
+    
+  }
+
+  public void positionStop() {
+
+  }
 }
