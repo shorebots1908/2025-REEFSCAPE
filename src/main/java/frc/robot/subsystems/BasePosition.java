@@ -1,10 +1,10 @@
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems;
 
-public class ElevatorPosition {
+public class BasePosition {
   /** Must be in the range of 0.0 to 1.0 */
   private double value;
 
-  public ElevatorPosition(double value) {
+  public BasePosition(double value) {
     if (value < 0.0) {
       throw new RuntimeException("ElevatorPosition cannot be less than 0.0");
     }

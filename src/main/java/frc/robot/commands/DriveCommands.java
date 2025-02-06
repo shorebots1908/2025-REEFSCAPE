@@ -18,7 +18,6 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -36,13 +35,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
+import frc.robot.util.FieldPoint;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-import frc.robot.util.FieldPoint;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -84,20 +83,20 @@ public class DriveCommands {
       return Commands.none();
     }
   }
-  
-  public static Command goToFieldPoint(Drive drive, FieldPoint point) {
-  
-    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-      FieldPoint.REEF_AB
-    );
 
-    PathConstraints defaultConstraints =  new PathConstraints(3.0, 3.0, 9.42478, 12.5664); 
+  public static Command goToFieldPoint(Drive drive, Pose2d point) {
 
-    PathPlannerPath toReefAB = new PathPlannerPath(
-      waypoints,
-      defaultConstraints,
-        null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
-        new GoalEndState(0.0, Rotation2d.fromDegrees(0)));
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(FieldPoint.REEF_AB);
+
+    PathConstraints defaultConstraints = new PathConstraints(3.0, 3.0, 9.42478, 12.5664);
+
+    PathPlannerPath toReefAB =
+        new PathPlannerPath(
+            waypoints,
+            defaultConstraints,
+            null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+            // be null for on-the-fly paths.
+            new GoalEndState(0.0, Rotation2d.fromDegrees(0)));
 
     return AutoBuilder.followPath(toReefAB);
   }

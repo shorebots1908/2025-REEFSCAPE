@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.ballerIntake;
 
 public class BallerIntakeIOSim implements BallerIntakeIO {
   public BallerIntakeIOSim() {}

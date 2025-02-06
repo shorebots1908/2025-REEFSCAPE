@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.coralIntake;
 
 public class CoralIntakeIOSim implements CoralIntakeIO {
   public CoralIntakeIOSim() {}
