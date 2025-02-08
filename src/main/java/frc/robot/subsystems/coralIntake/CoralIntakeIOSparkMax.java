@@ -17,6 +17,4 @@ public class CoralIntakeIOSparkMax implements CoralIntakeIO {
   }
 
   public void periodic() {}
-
-
 }

@@ -5,7 +5,6 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import frc.robot.subsystems.BasePosition;
 
 /**
@@ -15,21 +14,26 @@ import frc.robot.subsystems.BasePosition;
  * to ElevatorIOSpark -
  */
 public class Elevator {
-  private SparkMax leadElevator = new SparkMax(9, MotorType.kBrushless);
-  private SparkMax followElevator = new SparkMax(10, MotorType.kBrushless);
+  
 
   public Elevator() {
-    SparkMaxConfig followConfig = new SparkMaxConfig();
-    followConfig.follow(9, true);
-    followElevator.configure(
-        followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-  }
-
-  public void goToPosition(BasePosition position) {
     
   }
 
-  public void positionStop() {
+  public void goToPosition(BasePosition position) {}
 
+  public void positionStop() {}
+
+  public boolean limitTop() {
+
+    return false;
+  }
+  public boolean limitBottom() {
+
+    return false;
+  }
+  public double getPosition() {
+    
+    return 0.0;
   }
 }

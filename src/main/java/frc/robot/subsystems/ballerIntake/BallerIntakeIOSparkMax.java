@@ -17,14 +17,4 @@ public class BallerIntakeIOSparkMax implements BallerIntakeIO {
   }
 
   public void periodic() {}
-
-  public void bintakeYes() {
-    leftMotor.set(0.6);
-    rightMotor.set(0.6);
-  }
-
-  public void bintakeNo() {
-    leftMotor.set(-0.4);
-    rightMotor.set(-0.4);
-  }
 }
