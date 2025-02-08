@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.CoralToolCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.subsystems.ballerIntake.BallerIntake;
@@ -41,6 +40,11 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorConfig;
+import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevator.ElevatorIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -58,6 +62,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
+  private final Elevator elevator;
   private final BallerIntake ballerIntake;
   private final CoralIntake coralIntake;
 
@@ -89,6 +94,23 @@ public class RobotContainer {
         // new VisionIOPhotonVision(
         //     VisionConstants.camera1Name, VisionConstants.robotToCamera1));
 
+        elevator =
+            new Elevator(
+                new ElevatorIOSparkMax(
+                    new ElevatorConfig(
+                        // Motor IDs: left, right
+                        9, 10,
+
+                        // TODO LIMIT SWITCHES DIGITAL IDs
+                        //
+                        // Limit switches: lower, upper
+                        0, 0,
+
+                        // TODO MEASURE SANE DEFAULTS
+                        //
+                        // Encoder range values: lower, upper
+                        0, 100)));
+
         ballerIntake = new BallerIntake(new BallerIntakeIOSparkMax(new BallerIntakeConfig(13, 14)));
 
         coralIntake = new CoralIntake(new CoralIntakeIOSparkMax(new CoralIntakeConfig(11, 12)));
@@ -110,6 +132,8 @@ public class RobotContainer {
         // new VisionIOPhotonVisionSim(
         //     VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
 
+        elevator = new Elevator(new ElevatorIOSim());
+
         ballerIntake = new BallerIntake(new BallerIntakeIOSim());
 
         coralIntake = new CoralIntake(new CoralIntakeIOSim());
@@ -126,6 +150,8 @@ public class RobotContainer {
                 new ModuleIO() {});
 
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+
+        elevator = new Elevator(new ElevatorIO() {});
 
         ballerIntake = new BallerIntake(new BallerIntakeIO() {});
 
@@ -170,9 +196,18 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
-    controller.y().onTrue(ElevatorCommands.elevatorMove(null, null));
-    controller.povUp().onTrue(CoralToolCommands.coralPickup(coralIntake));
-    controller.povDown().onTrue(CoralToolCommands.coralPlace(coralIntake));
+
+    // controller.y().onTrue(ElevatorCommands.moveToPosition(null, null));
+    // controller.povUp().onTrue(CoralToolCommands.coralPickup(coralIntake));
+    // controller.povDown().onTrue(CoralToolCommands.coralPlace(coralIntake));
+
+    // NOTE:
+    // Value gets applied as motor.setVoltage();
+    // Which means the range is maybe -12 - 12
+    // The joystick gives us -1, 1
+    controller
+        .rightBumper()
+        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> controller.getRightY()));
 
     // Lock to 0° when A button is held
     controller
