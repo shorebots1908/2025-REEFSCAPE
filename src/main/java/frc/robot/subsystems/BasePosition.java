@@ -48,4 +48,20 @@ public class BasePosition {
 
     return y;
   }
+  public static BasePosition fromRange(double lower, double upper, double value) {
+    if (value < lower) return new BasePosition(0.0);
+    if (value > upper) return new BasePosition(1.0);
+
+    double x1 = lower;
+    double x2 = upper;
+    double y1 = 0;
+    double y2 = 1;
+    double m = (y2 - y1) / (x2 -x1);
+    double b = y1 - (m * x1);
+
+    double x = value;
+    double y = (m * x) + b;
+
+    return new BasePosition(y);
+  }
 }
