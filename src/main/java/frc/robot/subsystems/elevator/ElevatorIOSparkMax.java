@@ -10,7 +10,6 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
@@ -26,8 +25,8 @@ public class ElevatorIOSparkMax implements ElevatorIO {
   private LoggedNetworkNumber elevatorUpperLimit;
   private LoggedNetworkNumber elevatorLowerLimit;
 
-  private DigitalInput limitUpper;
-  private DigitalInput limitLower;
+  // private DigitalInput limitUpper;
+  // private DigitalInput limitLower;
 
   public ElevatorIOSparkMax(ElevatorConfig config) {
     leftMotor = new SparkMax(config.leftMotorCanId, MotorType.kBrushless);
@@ -39,8 +38,8 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     rightMotor.configure(
         followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    limitUpper = new DigitalInput(config.upperLimitId);
-    limitLower = new DigitalInput(config.lowerLimitId);
+    // limitUpper = new DigitalInput(config.upperLimitId);
+    // limitLower = new DigitalInput(config.lowerLimitId);
 
     elevatorUpperLimit =
         new LoggedNetworkNumber("/Tuning/ElevatorUpperValue", config.upperEncoderValue);
@@ -51,8 +50,8 @@ public class ElevatorIOSparkMax implements ElevatorIO {
   public void updateInputs(ElevatorIO.ElevatorIOInputs inputs) {
     ifOk(leftMotor, leftEncoder::getPosition, (value) -> inputs.positionRad = value);
     ifOk(leftMotor, leftEncoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
-    inputs.atLower = limitLower.get();
-    inputs.atUpper = limitUpper.get();
+    // inputs.atLower = limitLower.get();
+    // inputs.atUpper = limitUpper.get();
   }
 
   public void setTargetPosition(BasePosition position) {
@@ -67,13 +66,13 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     leftMotor.setVoltage(output);
   }
 
-  public boolean atLowerLimit() {
-    return limitLower.get();
-  }
+  // public boolean atLowerLimit() {
+  //   return limitLower.get();
+  // }
 
-  public boolean atUpperLimit() {
-    return limitUpper.get();
-  }
+  // public boolean atUpperLimit() {
+  //   return limitUpper.get();
+  // }
 
   public void periodic() {}
 }

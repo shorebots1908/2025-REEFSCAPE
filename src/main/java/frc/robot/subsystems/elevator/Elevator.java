@@ -2,6 +2,7 @@ package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.BasePosition;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * TODO:
@@ -43,5 +44,6 @@ public class Elevator extends SubsystemBase {
 
   public void periodic() {
     io.updateInputs(inputs);
+    Logger.processInputs("Elevator", inputs);
   }
 }
