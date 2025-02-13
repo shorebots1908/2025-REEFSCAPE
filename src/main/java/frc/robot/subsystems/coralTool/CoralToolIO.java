@@ -16,4 +16,6 @@ public interface CoralToolIO {
   public default void updateInputs(CoralToolIOInputs inputs) {}
 
   public default void setWristOpenLoop(double output) {}
+
+  public default void setWheelsOpenLoop(double output) {}
 }

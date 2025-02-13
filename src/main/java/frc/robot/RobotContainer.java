@@ -114,7 +114,7 @@ public class RobotContainer {
 
         ballerIntake = new BallerIntake(new BallerIntakeIOSparkMax(new BallerIntakeConfig(13, 14)));
 
-        coralTool = new CoralTool(new CoralToolIOSparkMax(new CoralToolConfig(11, 12, 13)));
+        coralTool = new CoralTool(new CoralToolIOSparkMax(new CoralToolConfig(11, 12, 19)));
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -245,7 +245,17 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // While holding the left bumper, use right Y for coral wrist
-    controller.leftBumper().whileTrue(CoralToolCommands.moveByJoystick(coralTool, () -> -controller.getRightY()));
+    controller
+        .leftBumper()
+        .whileTrue(CoralToolCommands.moveByJoystick(coralTool, () -> -controller.getRightY(),() -> {
+            if(controller.y().getAsBoolean()){
+                return 5.0;
+            }
+            if(controller.a().getAsBoolean()){
+                return -5.0;
+            }
+            return 0.0;
+        }));
   }
 
   /**

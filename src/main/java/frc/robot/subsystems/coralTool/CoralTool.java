@@ -16,6 +16,10 @@ public class CoralTool extends SubsystemBase {
     io.setWristOpenLoop(output);
   }
 
+  public void setWheelsOpenLoop(double output) {
+    io.setWheelsOpenLoop(output);
+  }
+
   public void positionStop() {}
 
   public void spinIn(double speed) {}

@@ -24,4 +24,9 @@ public class CoralToolIOSparkMax implements CoralToolIO {
   public void setWristOpenLoop(double output) {
     wristMotor.setVoltage(output);
   }
+
+  @Override
+  public void setWheelsOpenLoop(double output) {
+    leftMotor.setVoltage(output);
+  }
 }
