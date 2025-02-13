@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.CoralToolCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.subsystems.ballerIntake.BallerIntake;
@@ -29,11 +30,11 @@ import frc.robot.subsystems.ballerIntake.BallerIntakeConfig;
 import frc.robot.subsystems.ballerIntake.BallerIntakeIO;
 import frc.robot.subsystems.ballerIntake.BallerIntakeIOSim;
 import frc.robot.subsystems.ballerIntake.BallerIntakeIOSparkMax;
-import frc.robot.subsystems.coralIntake.CoralIntake;
-import frc.robot.subsystems.coralIntake.CoralIntakeConfig;
-import frc.robot.subsystems.coralIntake.CoralIntakeIO;
-import frc.robot.subsystems.coralIntake.CoralIntakeIOSim;
-import frc.robot.subsystems.coralIntake.CoralIntakeIOSparkMax;
+import frc.robot.subsystems.coralTool.CoralTool;
+import frc.robot.subsystems.coralTool.CoralToolConfig;
+import frc.robot.subsystems.coralTool.CoralToolIO;
+import frc.robot.subsystems.coralTool.CoralToolIOSim;
+import frc.robot.subsystems.coralTool.CoralToolIOSparkMax;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -64,7 +65,7 @@ public class RobotContainer {
   private final Vision vision;
   private final Elevator elevator;
   private final BallerIntake ballerIntake;
-  private final CoralIntake coralIntake;
+  private final CoralTool coralTool;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -113,7 +114,7 @@ public class RobotContainer {
 
         ballerIntake = new BallerIntake(new BallerIntakeIOSparkMax(new BallerIntakeConfig(13, 14)));
 
-        coralIntake = new CoralIntake(new CoralIntakeIOSparkMax(new CoralIntakeConfig(11, 12)));
+        coralTool = new CoralTool(new CoralToolIOSparkMax(new CoralToolConfig(11, 12, 13)));
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -136,7 +137,7 @@ public class RobotContainer {
 
         ballerIntake = new BallerIntake(new BallerIntakeIOSim());
 
-        coralIntake = new CoralIntake(new CoralIntakeIOSim());
+        coralTool = new CoralTool(new CoralToolIOSim());
         break;
 
       default:
@@ -155,7 +156,7 @@ public class RobotContainer {
 
         ballerIntake = new BallerIntake(new BallerIntakeIO() {});
 
-        coralIntake = new CoralIntake(new CoralIntakeIO() {});
+        coralTool = new CoralTool(new CoralToolIO() {});
         break;
     }
 
@@ -227,6 +228,7 @@ public class RobotContainer {
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
                 () -> -controller.getRightX()));
+
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
     // controller.y().onTrue(Commands.runOnce(drive::gyroResetY, drive));
@@ -241,6 +243,9 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    // While holding the left bumper, use right Y for coral wrist
+    controller.leftBumper().whileTrue(CoralToolCommands.moveByJoystick(coralTool, () -> -controller.getRightY()));
   }
 
   /**

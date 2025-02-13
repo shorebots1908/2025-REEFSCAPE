@@ -1,16 +1,20 @@
-package frc.robot.subsystems.coralIntake;
+package frc.robot.subsystems.coralTool;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.BasePosition;
 
-public class CoralIntake extends SubsystemBase {
-  private final CoralIntakeIO io;
+public class CoralTool extends SubsystemBase {
+  private final CoralToolIO io;
 
-  public CoralIntake(CoralIntakeIO io) {
+  public CoralTool(CoralToolIO io) {
     this.io = io;
   }
 
   public void goToPosition(BasePosition position) {}
+
+  public void setWristOpenLoop(double output) {
+    io.setWristOpenLoop(output);
+  }
 
   public void positionStop() {}
 
