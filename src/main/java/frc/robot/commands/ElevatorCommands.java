@@ -6,6 +6,8 @@ import frc.robot.subsystems.BasePosition;
 import frc.robot.subsystems.elevator.Elevator;
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
+
 public class ElevatorCommands {
 
   public static Command moveByJoystick(Elevator elevator, DoubleSupplier value) {
@@ -22,6 +24,11 @@ public class ElevatorCommands {
           elevator.setTargetPosition(position);
         },
         elevator);
+  }
+  public static Command moveElevatorTunable(Elevator elevator, LoggedNetworkNumber number) {
+    return Commands.run( () -> {
+      elevator.setTargetPosition(new BasePosition(number.get()));
+    }, elevator );
   }
 
   public static Command stop(Elevator elevator) {

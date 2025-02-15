@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.CoralToolCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
+import frc.robot.subsystems.BasePosition;
 import frc.robot.subsystems.ballerIntake.BallerIntake;
 import frc.robot.subsystems.ballerIntake.BallerIntakeConfig;
 import frc.robot.subsystems.ballerIntake.BallerIntakeIO;
@@ -52,6 +53,7 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -197,6 +199,12 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
+    elevator.setDefaultCommand(ElevatorCommands.moveElevatorTunable(
+        elevator, new LoggedNetworkNumber("/Tuning/Elevator/Target", 0)));
+
+        controller
+        .povLeft()
+        .whileTrue(ElevatorCommands.moveToPosition(elevator, new BasePosition(0.5)));
 
     // controller.y().onTrue(ElevatorCommands.moveToPosition(null, null));
     // controller.povUp().onTrue(CoralToolCommands.coralPickup(coralIntake));

@@ -1,0 +1,170 @@
+{
+  "hubs": [
+    {
+      "x": 108,
+      "y": 0,
+      "width": 1312,
+      "height": 824,
+      "state": {
+        "sidebar": {
+          "width": 283,
+          "expanded": [
+            "/AdvantageKit/RealOutputs/Odometry",
+            "/AdvantageKit/RealOutputs/Odometry/Robot",
+            "/AdvantageKit/RealOutputs/Vision/Summary",
+            "/AdvantageKit/RealOutputs/Vision/Camera1",
+            "/AdvantageKit/RealOutputs/Vision/Camera0",
+            "/AdvantageKit/RealOutputs/SwerveStates",
+            "/AdvantageKit/RealOutputs/SwerveChassisSpeeds",
+            "/AdvantageKit/Drive/Module2",
+            "/AdvantageKit/Drive/Module2/OdometryTurnPositions/1",
+            "/AdvantageKit/Drive/Module2/OdometryTurnPositions/0",
+            "/AdvantageKit/Drive/Module2/OdometryTurnPositions/2",
+            "/AdvantageKit/Drive/Module2/OdometryDrivePositionsRad",
+            "/AdvantageKit/Drive/Module0/TurnPosition",
+            "/AdvantageKit",
+            "/AdvantageKit/RealOutputs",
+            "/AdvantageKit/Vision/Camera0",
+            "/AdvantageKit/Vision/Camera0/PoseObservations",
+            "/AdvantageKit/RealOutputs/Vision",
+            "/Tuning",
+            "/AdvantageKit/Elevator"
+          ]
+        },
+        "tabs": {
+          "selected": 4,
+          "tabs": [
+            {
+              "type": 0,
+              "title": "",
+              "controller": null,
+              "controllerUUID": "lde67t4i7rz7dmqcbla4x6a5dorrujle",
+              "renderer": "#/",
+              "controlsHeight": 0
+            },
+            {
+              "type": 1,
+              "title": "Line Graph",
+              "controller": {
+                "leftSources": [],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "gidlstpf0xheuukqflfzt8m4ogoxgzg0",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 9,
+              "title": "Swerve",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "chassisSpeeds",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveChassisSpeeds/Measured",
+                    "logType": "ChassisSpeeds",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff0000"
+                    }
+                  },
+                  {
+                    "type": "states",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveStates/Measured",
+                    "logType": "SwerveModuleState[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#0000ff",
+                      "arrangement": "0,1,2,3"
+                    }
+                  }
+                ],
+                "maxSpeed": 5,
+                "sizeX": 0.6477,
+                "sizeY": 0.6477,
+                "orientation": 1
+              },
+              "controllerUUID": "cik30xvnmb5wbastub1tyoek9o0ouc27",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 2,
+              "title": "Odometry",
+              "controller": {
+                "sources": [],
+                "game": "2025 Field (Welded)",
+                "bumpers": "auto",
+                "origin": "blue",
+                "orientation": 0,
+                "size": 30
+              },
+              "controllerUUID": "zhq348ycwdcime9rges4cx6nkfiy1ks9",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 3,
+              "title": "3D Field",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "robot",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Robot",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "2025 KitBot"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera0/RobotPoses",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "model": "2025 KitBot",
+                      "color": "#00ff00"
+                    }
+                  }
+                ],
+                "game": "2025 Field (Welded)",
+                "origin": "blue"
+              },
+              "controllerUUID": "i6xqlcr3krvr45bc9f90gyb8sdcv5k1f",
+              "renderer": {
+                "cameraIndex": -1,
+                "orbitFov": 50,
+                "cameraPosition": [
+                  3.000053964141264,
+                  4.131606367194596,
+                  -11.575282913847811
+                ],
+                "cameraTarget": [
+                  8.039276316630074,
+                  -1.6552579161650942,
+                  -2.195337193313463
+                ]
+              },
+              "controlsHeight": 200
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "satellites": [],
+  "version": "4.1.0"
+}
