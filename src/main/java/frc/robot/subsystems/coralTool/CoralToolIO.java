@@ -1,7 +1,11 @@
 package frc.robot.subsystems.coralTool;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.subsystems.BasePosition;
+
 import org.littletonrobotics.junction.AutoLog;
+
+import com.fasterxml.jackson.databind.JsonSerializable.Base;
 
 public interface CoralToolIO {
   @AutoLog
@@ -18,4 +22,6 @@ public interface CoralToolIO {
   public default void setWristOpenLoop(double output) {}
 
   public default void setWheelsOpenLoop(double output) {}
+
+  public default void setPosition(BasePosition position) {}
 }
