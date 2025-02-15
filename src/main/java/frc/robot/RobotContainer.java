@@ -58,237 +58,276 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // Subsystems
-  private final Drive drive;
-  private final Vision vision;
-  private final Elevator elevator;
-  private final BallerIntake ballerIntake;
-  private final CoralTool coralTool;
+    // Subsystems
+    private final Drive drive;
+    private final Vision vision;
+    private final Elevator elevator;
+    private final BallerIntake ballerIntake;
+    private final CoralTool coralTool;
 
-  // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+    // Controller
+    private final CommandXboxController controller = new CommandXboxController(0);
 
-  // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+    // Dashboard inputs
+    private final LoggedDashboardChooser<Command> autoChooser;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
+    public RobotContainer() {
+        drive = initDrive();
+        vision = initVision();
+        elevator = initElevator();
+        ballerIntake = initBallerIntake();
+        coralTool = initCoralTool();
 
-    switch (Constants.currentMode) {
-      case REAL:
-        // Real robot, instantiate hardware IO implementations
-        drive =
-            new Drive(
-                // new GyroIOADIS16470(),
-                new GyroIOPigeon2(),
-                new ModuleIOSpark(0),
-                new ModuleIOSpark(1),
-                new ModuleIOSpark(2),
-                new ModuleIOSpark(3));
+        // Set up auto routines
+        autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0));
-        // new VisionIOPhotonVision(
-        //     VisionConstants.camera1Name, VisionConstants.robotToCamera1));
+        // Set up SysId routines
+        configureAutoCommand(
+                autoChooser,
+                "drive-wheel-radius-characterization", DriveCommands.wheelRadiusCharacterization(drive));
+        configureAutoCommand(
+                autoChooser,
+                "drive-simple-ff-characterization", DriveCommands.feedforwardCharacterization(drive));
+        configureAutoCommand(
+                autoChooser,
+                "drive-sysid-quasistatic-forward",
+                drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        configureAutoCommand(
+                autoChooser,
+                "drive-sysid-quasistatic-reverse",
+                drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        configureAutoCommand(
+                autoChooser,
+                "drive-sysid-dynamic-forward", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        configureAutoCommand(
+                autoChooser,
+                "drive-sysid-dynamic-reverse", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-        elevator =
-            new Elevator(
-                new ElevatorIOSparkMax(
-                    new ElevatorConfig(
-                        // Motor IDs: left, right
-                        9, 10,
-
-                        // TODO LIMIT SWITCHES DIGITAL IDs
-                        //
-                        // Limit switches: lower, upper
-                        0, 0,
-
-                        // TODO MEASURE SANE DEFAULTS
-                        //
-                        // Encoder range values: lower, upper
-                        0, 100)));
-
-        ballerIntake = new BallerIntake(new BallerIntakeIOSparkMax(new BallerIntakeConfig(13, 14)));
-
-        coralTool = new CoralTool(new CoralToolIOSparkMax(new CoralToolConfig(11, 12, 19)));
-        break;
-      case SIM:
-        // Sim robot, instantiate physics sim IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim());
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose));
-        // new VisionIOPhotonVisionSim(
-        //     VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
-
-        elevator = new Elevator(new ElevatorIOSim());
-
-        ballerIntake = new BallerIntake(new BallerIntakeIOSim());
-
-        coralTool = new CoralTool(new CoralToolIOSim());
-        break;
-
-      default:
-        // Replayed robot, disable IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
-
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-
-        elevator = new Elevator(new ElevatorIO() {});
-
-        ballerIntake = new BallerIntake(new BallerIntakeIO() {});
-
-        coralTool = new CoralTool(new CoralToolIO() {});
-        break;
+        // Configure the button bindings
+        configureButtonBindings();
     }
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-    // Set up SysId routines
-    configureAutoCommand(
-        autoChooser,
-        "drive-wheel-radius-characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    configureAutoCommand(
-        autoChooser,
-        "drive-simple-ff-characterization", DriveCommands.feedforwardCharacterization(drive));
-    configureAutoCommand(
-        autoChooser,
-        "drive-sysid-quasistatic-forward",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    configureAutoCommand(
-        autoChooser,
-        "drive-sysid-quasistatic-reverse",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    configureAutoCommand(
-        autoChooser,
-        "drive-sysid-dynamic-forward", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    configureAutoCommand(
-        autoChooser,
-        "drive-sysid-dynamic-reverse", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-
-    // Configure the button bindings
-    configureButtonBindings();
-
-  }
-
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
-    elevator.setDefaultCommand(ElevatorCommands.moveElevatorTunable(
-        elevator, new LoggedNetworkNumber("/Tuning/Elevator/Target", 0)));
+    /**
+     * Use this method to define your button->command mappings. Buttons can be
+     * created by
+     * instantiating a {@link GenericHID} or one of its subclasses ({@link
+     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+     * it to a {@link
+     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     */
+    private void configureButtonBindings() {
+        // Default command, normal field-relative drive
+        drive.setDefaultCommand(
+                DriveCommands.joystickDrive(
+                        drive,
+                        () -> -controller.getLeftY(),
+                        () -> -controller.getLeftX(),
+                        () -> -controller.getRightX()));
+        elevator.setDefaultCommand(ElevatorCommands.moveElevatorTunable(
+                elevator, new LoggedNetworkNumber("/Tuning/Elevator/Target", 0)));
 
         controller
-        .povLeft()
-        .whileTrue(ElevatorCommands.setTargetPosition(elevator, new BasePosition(0.5)));
+                .povLeft()
+                .whileTrue(ElevatorCommands.setTargetPosition(elevator, new BasePosition(0.5)));
 
-    // controller.y().onTrue(ElevatorCommands.moveToPosition(null, null));
-    // controller.povUp().onTrue(CoralToolCommands.coralPickup(coralIntake));
-    // controller.povDown().onTrue(CoralToolCommands.coralPlace(coralIntake));
+        // controller.y().onTrue(ElevatorCommands.moveToPosition(null, null));
+        // controller.povUp().onTrue(CoralToolCommands.coralPickup(coralIntake));
+        // controller.povDown().onTrue(CoralToolCommands.coralPlace(coralIntake));
 
-    // NOTE:
-    // Value gets applied as motor.setVoltage();
-    // Which means the range is maybe -12 - 12
-    // The joystick gives us -1, 1
-    controller
-        .rightBumper()
-        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> controller.getRightY()));
+        // NOTE:
+        // Value gets applied as motor.setVoltage();
+        // Which means the range is maybe -12 - 12
+        // The joystick gives us -1, 1
+        controller
+                .rightBumper()
+                .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> controller.getRightY()));
 
-    // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+        // Lock to 0° when A button is held
+        controller
+                .a()
+                .whileTrue(
+                        DriveCommands.joystickDriveAtAngle(
+                                drive,
+                                () -> -controller.getLeftY(),
+                                () -> -controller.getLeftX(),
+                                () -> new Rotation2d()));
 
-    controller
-        .rightBumper()
-        .onTrue(
-            DriveCommands.joystickDriveRobotRelative(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> -controller.getRightX()));
+        controller
+                .rightBumper()
+                .onTrue(
+                        DriveCommands.joystickDriveRobotRelative(
+                                drive,
+                                () -> -controller.getLeftY(),
+                                () -> -controller.getLeftX(),
+                                () -> -controller.getRightX()));
 
-    // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    // controller.y().onTrue(Commands.runOnce(drive::gyroResetY, drive));
+        // Switch to X pattern when X button is pressed
+        controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+        // controller.y().onTrue(Commands.runOnce(drive::gyroResetY, drive));
 
-    // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+        // Reset gyro to 0° when B button is pressed
+        controller
+                .b()
+                .onTrue(
+                        Commands.runOnce(
+                                () -> drive.setPose(
+                                        new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                                drive)
+                                .ignoringDisable(true));
 
-    // While holding the left bumper, use right Y for coral wrist
-    controller
-        .leftBumper()
-        .whileTrue(CoralToolCommands.moveByJoystick(coralTool, () -> -controller.getRightY(),() -> {
-            if(controller.y().getAsBoolean()){
-                return 5.0;
-            }
-            if(controller.a().getAsBoolean()){
-                return -5.0;
-            }
-            return 0.0;
-        }));
-  }
-  private void configureAutoCommand(LoggedDashboardChooser chooser,String name, Command command) {
+        // While holding the left bumper, use right Y for coral wrist
+        controller
+                .leftBumper()
+                .whileTrue(CoralToolCommands.moveByJoystick(coralTool, () -> -controller.getRightY(), () -> {
+                    if (controller.y().getAsBoolean()) {
+                        return 5.0;
+                    }
+                    if (controller.a().getAsBoolean()) {
+                        return -5.0;
+                    }
+                    return 0.0;
+                }));
+    }
+
+    private void configureAutoCommand(LoggedDashboardChooser<Command> chooser, String name, Command command) {
         chooser.addOption(name, command);
         NamedCommands.registerCommand(name, command);
-  }
+    }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
 
-  public Command getAutonomousCommand() {
-    return DriveCommands.autoPath(drive);
-    // return DriveCommands.goToFieldPoint(drive, FieldPoint.REEF_AB);
-  }
+    public Command getAutonomousCommand() {
+        return DriveCommands.autoPath(drive);
+        // return DriveCommands.goToFieldPoint(drive, FieldPoint.REEF_AB);
+    }
+
+    private Drive initDrive() {
+        switch (Constants.currentMode) {
+            case REAL:
+                // Real robot, instantiate hardware IO implementations
+                return new Drive(
+                    new GyroIOPigeon2(),
+                    new ModuleIOSpark(0),
+                    new ModuleIOSpark(1),
+                    new ModuleIOSpark(2),
+                    new ModuleIOSpark(3));
+
+            case SIM:
+                // Sim robot, instantiate physics sim IO implementations
+                return new Drive(
+                    new GyroIO() {},
+                    new ModuleIOSim(),
+                    new ModuleIOSim(),
+                    new ModuleIOSim(),
+                    new ModuleIOSim());
+            default:
+                // Replayed robot, disable IO implementations
+                return new Drive(
+                    new GyroIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {});
+        }
+    }
+
+    public Vision initVision() {
+        switch (Constants.currentMode) {
+            case REAL:
+                // Real robot, instantiate hardware IO implementations
+                return new Vision(
+                    drive::addVisionMeasurement,
+                    new VisionIOPhotonVision(
+                            VisionConstants.camera0Name, VisionConstants.robotToCamera0));
+
+            case SIM:
+                // Sim robot, instantiate physics sim IO implementations
+                return new Vision(
+                    drive::addVisionMeasurement,
+                    new VisionIOPhotonVisionSim(
+                            VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose));
+
+            default:
+                // Replayed robot, disable IO implementations
+                return new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        }
+    }
+
+    private Elevator initElevator() {
+        switch (Constants.currentMode) {
+            case REAL:
+                // Real robot, instantiate hardware IO implementations
+                return new Elevator(
+                        new ElevatorIOSparkMax(
+                                new ElevatorConfig(
+                                        // Motor IDs: left, right
+                                        9, 10,
+
+                                        // TODO LIMIT SWITCHES DIGITAL IDs
+                                        //
+                                        // Limit switches: lower, upper
+                                        0, 0,
+
+                                        // TODO MEASURE SANE DEFAULTS
+                                        //
+                                        // Encoder range values: lower, upper
+                                        0, 100)));
+
+            case SIM:
+                // Sim robot, instantiate physics sim IO implementations
+                return new Elevator(new ElevatorIOSim());
+
+            default:
+                // Replayed robot, disable IO implementations
+                return new Elevator(new ElevatorIO() {});
+        }
+    }
+
+    public BallerIntake initBallerIntake() {
+        switch (Constants.currentMode) {
+            case REAL:
+                // Real robot, instantiate hardware IO implementations
+                return new BallerIntake(new BallerIntakeIOSparkMax(new BallerIntakeConfig(13, 14)));
+
+            case SIM:
+                // Sim robot, instantiate physics sim IO implementations
+                return new BallerIntake(new BallerIntakeIOSim());
+
+            default:
+                // Replayed robot, disable IO implementations
+                return new BallerIntake(new BallerIntakeIO() {});
+        }
+    }
+
+    public CoralTool initCoralTool() {
+        switch (Constants.currentMode) {
+            case REAL:
+                // Real robot, instantiate hardware IO implementations
+                return new CoralTool(new CoralToolIOSparkMax(new CoralToolConfig(11, 12, 19)));
+
+            case SIM:
+                // Sim robot, instantiate physics sim IO implementations
+                return new CoralTool(new CoralToolIOSim());
+
+            default:
+                // Replayed robot, disable IO implementations
+                return new CoralTool(new CoralToolIO() {});
+        }
+    }
 }
