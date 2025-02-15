@@ -17,6 +17,10 @@ public interface ElevatorIO {
 
   public default void setTargetPosition(BasePosition position) {}
 
+  public default boolean atTargetPosition() {
+    return false;
+  }
+
   public default void setElevatorOpenLoop(double output) {}
 
   public default void stop() {}

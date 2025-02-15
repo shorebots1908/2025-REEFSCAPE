@@ -18,23 +18,40 @@ public class ElevatorCommands {
         elevator);
   }
 
-  public static Command moveToPosition(Elevator elevator, BasePosition position) {
-    return Commands.run(
+  public static Command setTargetPosition(Elevator elevator, BasePosition position) {
+    return Commands.runOnce(
         () -> {
           elevator.setTargetPosition(position);
         },
         elevator);
   }
+
+  public static Command waitUntilElevatorAtTargetPosition(Elevator elevator) {
+    return Commands.idle(elevator)
+        .until(elevator::atTargetPosition)
+        .withName("WaitUntilElevatorAtTargetPosition");
+  }
+
   public static Command moveElevatorTunable(Elevator elevator, LoggedNetworkNumber number) {
-    return Commands.run( () -> {
+    return Commands.run(() -> {
       elevator.setTargetPosition(new BasePosition(number.get()));
-    }, elevator );
+    }, elevator);
   }
 
   public static Command stop(Elevator elevator) {
-    return Commands.run(
+    return Commands.runOnce(
         () -> {
           elevator.stop();
         });
+  }
+
+  // Auto Commands
+  public static Command upAndDown(Elevator elevator) {
+    return Commands.sequence(
+        setTargetPosition(elevator, new BasePosition(1)),
+        waitUntilElevatorAtTargetPosition(elevator).withTimeout(1),
+        setTargetPosition(elevator, new BasePosition(0)),
+        waitUntilElevatorAtTargetPosition(elevator).withTimeout(1)
+    );
   }
 }

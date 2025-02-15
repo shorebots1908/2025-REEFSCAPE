@@ -14,6 +14,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -77,6 +79,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -166,23 +169,31 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
+    configureAutoCommand(
+        autoChooser,
+        "drive-wheel-radius-characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    configureAutoCommand(
+        autoChooser,
+        "drive-simple-ff-characterization", DriveCommands.feedforwardCharacterization(drive));
+    configureAutoCommand(
+        autoChooser,
+        "drive-sysid-quasistatic-forward",
         drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
+    configureAutoCommand(
+        autoChooser,
+        "drive-sysid-quasistatic-reverse",
         drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    configureAutoCommand(
+        autoChooser,
+        "drive-sysid-dynamic-forward", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    configureAutoCommand(
+        autoChooser,
+        "drive-sysid-dynamic-reverse", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
 
     // Configure the button bindings
     configureButtonBindings();
+
   }
 
   /**
@@ -204,7 +215,7 @@ public class RobotContainer {
 
         controller
         .povLeft()
-        .whileTrue(ElevatorCommands.moveToPosition(elevator, new BasePosition(0.5)));
+        .whileTrue(ElevatorCommands.setTargetPosition(elevator, new BasePosition(0.5)));
 
     // controller.y().onTrue(ElevatorCommands.moveToPosition(null, null));
     // controller.povUp().onTrue(CoralToolCommands.coralPickup(coralIntake));
@@ -265,12 +276,17 @@ public class RobotContainer {
             return 0.0;
         }));
   }
+  private void configureAutoCommand(LoggedDashboardChooser chooser,String name, Command command) {
+        chooser.addOption(name, command);
+        NamedCommands.registerCommand(name, command);
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
+
   public Command getAutonomousCommand() {
     return DriveCommands.autoPath(drive);
     // return DriveCommands.goToFieldPoint(drive, FieldPoint.REEF_AB);

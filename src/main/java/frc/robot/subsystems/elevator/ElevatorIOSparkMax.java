@@ -35,6 +35,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
   LoggedNetworkNumber elevatorP = new LoggedNetworkNumber("/Tuning/Elevator/P", 1);
   LoggedNetworkNumber elevatorI = new LoggedNetworkNumber("/Tuning/Elevator/I", 0);
   LoggedNetworkNumber elevatorD = new LoggedNetworkNumber("/Tuning/Elevator/D", 0);
+  LoggedNetworkNumber elevatorThreshold = new LoggedNetworkNumber("/Tuning/Elevator/Threshold", 1);
 
   public ElevatorIOSparkMax(ElevatorConfig config) {
     leftMotor = new SparkMax(config.leftMotorCanId, MotorType.kBrushless);
@@ -72,6 +73,13 @@ public class ElevatorIOSparkMax implements ElevatorIO {
   public void setTargetPosition(BasePosition position) {
     double encoderTargetPosition = position.toRange(encoderLowerLimit, encoderUpperLimit);
     controller.setReference(encoderTargetPosition, ControlType.kPosition);
+    
+  }
+  public boolean atTargetPosition() {
+    double distance = leftEncoder.getPosition() - inputs.positionRad;
+    double distanceAbsolute = Math.abs(distance);
+    
+    return distanceAbsolute < elevatorThreshold.get();
   }
 
   public void setElevatorOpenLoop(double output) {
