@@ -12,8 +12,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
-import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
@@ -42,17 +40,15 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     leftEncoder = leftMotor.getEncoder();
     rightMotor = new SparkMax(config.rightMotorCanId, MotorType.kBrushless);
     controller = leftMotor.getClosedLoopController();
-    
-    //left motor config
+
+    // left motor config
     SparkMaxConfig leaderConfig = new SparkMaxConfig();
-    leaderConfig.closedLoop.apply(new ClosedLoopConfig()
-    .p(elevatorP.get())
-    .i(elevatorI.get())
-    .d(elevatorD.get()));
+    leaderConfig.closedLoop.apply(
+        new ClosedLoopConfig().p(elevatorP.get()).i(elevatorI.get()).d(elevatorD.get()));
     leftMotor.configure(
         leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    //right motor config
+    // right motor config
     SparkMaxConfig followConfig = new SparkMaxConfig();
     followConfig.follow(9, true);
     rightMotor.configure(
@@ -73,21 +69,21 @@ public class ElevatorIOSparkMax implements ElevatorIO {
   public void setTargetPosition(BasePosition position) {
     double encoderTargetPosition = position.toRange(encoderLowerLimit, encoderUpperLimit);
     controller.setReference(encoderTargetPosition, ControlType.kPosition);
-    
   }
+
   public boolean atTargetPosition() {
     double distance = leftEncoder.getPosition() - inputs.positionRad;
     double distanceAbsolute = Math.abs(distance);
-    
+
     return distanceAbsolute < elevatorThreshold.get();
   }
 
   public void setElevatorOpenLoop(double output) {
-    if(output > 0 && inputs.atUpper) {
+    if (output > 0 && inputs.atUpper) {
       leftMotor.stopMotor();
       return;
     }
-    if(output < 0 && inputs.atLower) {
+    if (output < 0 && inputs.atLower) {
       leftMotor.stopMotor();
       return;
     }
@@ -95,13 +91,13 @@ public class ElevatorIOSparkMax implements ElevatorIO {
   }
 
   public void periodic() {
-    if(inputs.atLower) {
+    if (inputs.atLower) {
       leftMotor.getEncoder().setPosition(0);
       lowerEncoderLimit.set(0);
     }
 
-    if(inputs.atUpper) {
-     upperEncoderLimit.set(leftEncoder.getPosition());
+    if (inputs.atUpper) {
+      upperEncoderLimit.set(leftEncoder.getPosition());
     }
   }
 }

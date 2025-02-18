@@ -21,6 +21,7 @@ public class Elevator extends SubsystemBase {
   public void setTargetPosition(BasePosition position) {
     io.setTargetPosition(position);
   }
+
   public boolean atTargetPosition() {
     return io.atTargetPosition();
   }
