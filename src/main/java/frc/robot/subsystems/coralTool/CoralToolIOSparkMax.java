@@ -27,7 +27,7 @@ public class CoralToolIOSparkMax implements CoralToolIO {
     // left motor is the leader
     leftMotor = new SparkMax(config.leftMotorCanId, MotorType.kBrushless);
     rightMotor = new SparkMax(config.rightMotorCanId, MotorType.kBrushless);
-    wristMotor = new SparkMax(config.rightMotorCanId, MotorType.kBrushless);
+    wristMotor = new SparkMax(config.wristMotorCanId, MotorType.kBrushed);
     SparkMaxConfig followConfig = new SparkMaxConfig();
     followConfig.follow(config.leftMotorCanId, true);
     rightMotor.configure(
