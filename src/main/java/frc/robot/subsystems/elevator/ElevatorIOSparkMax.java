@@ -45,23 +45,20 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     leaderConfig
         .idleMode(IdleMode.kBrake)
         .apply(
-            new SoftLimitConfig()
-                .forwardSoftLimit(upperEncoderLimit)
-                .forwardSoftLimitEnabled(true))
+            new SoftLimitConfig().forwardSoftLimit(upperEncoderLimit).forwardSoftLimitEnabled(true))
         .apply(
             new ClosedLoopConfig()
-                .p(5.0)
+                .p(1.0)
                 .i(0.0)
                 .d(0.0)
                 .apply(
                     new MAXMotionConfig()
-                        .maxVelocity(300.0)
-                        .maxAcceleration(40.0)));
+                        .maxVelocity(1200.0)
+                        .maxAcceleration(1200.0)
+                        .allowedClosedLoopError(0.3)));
 
     leftMotor.configure(
-        leaderConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
+        leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // right motor config
     SparkMaxConfig followConfig = new SparkMaxConfig();
