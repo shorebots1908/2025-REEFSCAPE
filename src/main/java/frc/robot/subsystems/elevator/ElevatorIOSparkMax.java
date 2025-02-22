@@ -11,8 +11,11 @@ import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.MAXMotionConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.subsystems.BasePosition;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class ElevatorIOSparkMax implements ElevatorIO {
@@ -22,18 +25,21 @@ public class ElevatorIOSparkMax implements ElevatorIO {
   private final RelativeEncoder leftEncoder;
   private final SparkClosedLoopController controller;
   private ElevatorIO.ElevatorIOInputs inputs = new ElevatorIOInputs();
-  private double encoderUpperLimit = 0;
-  private double encoderLowerLimit = 0;
+  private double targetEncoderPosition = 0;
+  private boolean atTarget = false;
 
   private SparkLimitSwitch limitUpper;
   private SparkLimitSwitch limitLower;
 
-  LoggedNetworkNumber upperEncoderLimit = new LoggedNetworkNumber("/Tuning/Elevator/Upper", 50);
-  LoggedNetworkNumber lowerEncoderLimit = new LoggedNetworkNumber("/Tuning/Elevator/Lower", 0);
-  LoggedNetworkNumber elevatorP = new LoggedNetworkNumber("/Tuning/Elevator/P", 1);
-  LoggedNetworkNumber elevatorI = new LoggedNetworkNumber("/Tuning/Elevator/I", 0);
-  LoggedNetworkNumber elevatorD = new LoggedNetworkNumber("/Tuning/Elevator/D", 0);
-  LoggedNetworkNumber elevatorThreshold = new LoggedNetworkNumber("/Tuning/Elevator/Threshold", 1);
+  LoggedNetworkNumber upperEncoderLimit = new LoggedNetworkNumber("/Tuning/Elevator/Upper", 63.7);
+  LoggedNetworkNumber lowerEncoderLimit = new LoggedNetworkNumber("/Tuning/Elevator/Lower", 0.0);
+  LoggedNetworkNumber elevatorP = new LoggedNetworkNumber("/Tuning/Elevator/P", 5.0);
+  LoggedNetworkNumber elevatorI = new LoggedNetworkNumber("/Tuning/Elevator/I", 0.0);
+  LoggedNetworkNumber elevatorD = new LoggedNetworkNumber("/Tuning/Elevator/D", 0.0);
+  LoggedNetworkNumber elevatorThreshold =
+      new LoggedNetworkNumber("/Tuning/Elevator/Threshold", 1.0);
+  LoggedNetworkNumber elevatorMaxVel = new LoggedNetworkNumber("/Tuning/Elevator/MaxVel", 100.0);
+  LoggedNetworkNumber elevatorMaxAccel = new LoggedNetworkNumber("/Tuning/Elevator/MaxAccel", 10.0);
 
   public ElevatorIOSparkMax(ElevatorConfig config) {
     leftMotor = new SparkMax(config.leftMotorCanId, MotorType.kBrushless);
@@ -43,14 +49,34 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
     // left motor config
     SparkMaxConfig leaderConfig = new SparkMaxConfig();
+    // leaderConfig.limitSwitch.forwardLimitSwitchEnabled(true);
+    // leaderConfig.limitSwitch.reverseLimitSwitchEnabled(true);
+    leaderConfig.softLimit.forwardSoftLimitEnabled(true);
+    leaderConfig.softLimit.forwardSoftLimit(upperEncoderLimit.get() - 1.0);
+    leaderConfig.idleMode(IdleMode.kBrake);
+
     leaderConfig.closedLoop.apply(
-        new ClosedLoopConfig().p(elevatorP.get()).i(elevatorI.get()).d(elevatorD.get()));
+        new ClosedLoopConfig()
+            .p(elevatorP.get())
+            .i(elevatorI.get())
+            .d(elevatorD.get())
+            .apply(
+                new MAXMotionConfig()
+                    .maxVelocity(elevatorMaxVel.get())
+                    .maxAcceleration(elevatorMaxAccel.get())));
+
+    // leaderConfig
+    //     .closedLoop
+    //     .maxMotion
+    //     .maxVelocity(elevatorMaxVel.get())
+    //     .maxAcceleration(elevatorMaxAccel.get());
     leftMotor.configure(
         leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // right motor config
     SparkMaxConfig followConfig = new SparkMaxConfig();
     followConfig.follow(9, true);
+    followConfig.idleMode(IdleMode.kBrake);
     rightMotor.configure(
         followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -67,15 +93,11 @@ public class ElevatorIOSparkMax implements ElevatorIO {
   }
 
   public void setTargetPosition(BasePosition position) {
-    double encoderTargetPosition = position.toRange(encoderLowerLimit, encoderUpperLimit);
-    controller.setReference(encoderTargetPosition, ControlType.kPosition);
+    targetEncoderPosition = position.toRange(lowerEncoderLimit.get(), upperEncoderLimit.get());
   }
 
   public boolean atTargetPosition() {
-    double distance = leftEncoder.getPosition() - inputs.positionRad;
-    double distanceAbsolute = Math.abs(distance);
-
-    return distanceAbsolute < elevatorThreshold.get();
+    return atTarget;
   }
 
   public void setElevatorOpenLoop(double output) {
@@ -90,7 +112,16 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     leftMotor.setVoltage(output);
   }
 
+  @Override
   public void periodic() {
+    double distance = targetEncoderPosition - inputs.positionRad;
+    double distanceAbsolute = Math.abs(distance);
+    atTarget = distanceAbsolute < elevatorThreshold.get();
+    Logger.recordOutput("/Elevator/DistanceToTarget", distanceAbsolute);
+    Logger.recordOutput("/Elevator/AtTarget", atTarget);
+
+    controller.setReference(targetEncoderPosition, ControlType.kMAXMotionPositionControl);
+
     if (inputs.atLower) {
       leftMotor.getEncoder().setPosition(0);
       lowerEncoderLimit.set(0);
@@ -99,5 +130,12 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     if (inputs.atUpper) {
       upperEncoderLimit.set(leftEncoder.getPosition());
     }
+
+    Logger.recordOutput(
+        "/Elevator/BasePositionLower",
+        new BasePosition(0).toRange(lowerEncoderLimit.get(), upperEncoderLimit.get()));
+    Logger.recordOutput(
+        "Elevator/BasePositionUpper",
+        new BasePosition(1).toRange(lowerEncoderLimit.get(), upperEncoderLimit.get()));
   }
 }

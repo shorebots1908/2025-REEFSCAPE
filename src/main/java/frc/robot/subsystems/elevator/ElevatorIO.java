@@ -24,4 +24,6 @@ public interface ElevatorIO {
   public default void setElevatorOpenLoop(double output) {}
 
   public default void stop() {}
+
+  public default void periodic() {}
 }

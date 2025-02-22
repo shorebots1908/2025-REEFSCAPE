@@ -54,7 +54,6 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -113,6 +112,15 @@ public class RobotContainer {
         "drive-sysid-dynamic-reverse",
         drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    configureAutoCommand(
+        autoChooser,
+        "Elevator Top",
+        ElevatorCommands.setTargetPosition(elevator, new BasePosition(1.0)));
+    configureAutoCommand(
+        autoChooser,
+        "Elevator Bottom",
+        ElevatorCommands.setTargetPosition(elevator, new BasePosition(0.0)));
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -131,13 +139,6 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
-    elevator.setDefaultCommand(
-        ElevatorCommands.moveElevatorTunable(
-            elevator, new LoggedNetworkNumber("/Tuning/Elevator/Target", 0)));
-
-    controller
-        .povLeft()
-        .whileTrue(ElevatorCommands.setTargetPosition(elevator, new BasePosition(0.5)));
 
     // controller.y().onTrue(ElevatorCommands.moveToPosition(null, null));
     // controller.povUp().onTrue(CoralToolCommands.coralPickup(coralIntake));
@@ -149,7 +150,13 @@ public class RobotContainer {
     // The joystick gives us -1, 1
     controller
         .rightBumper()
-        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> controller.getRightY()));
+        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> controller.getRightY() * -12));
+
+    controller.povUp().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(1.0)));
+
+    controller.povDown().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(0)));
+    controller.povLeft().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(0.3)));
+    controller.povRight().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(0.6)));
 
     // Lock to 0° when A button is held
     controller
@@ -161,14 +168,14 @@ public class RobotContainer {
                 () -> -controller.getLeftX(),
                 () -> new Rotation2d()));
 
-    controller
-        .rightBumper()
-        .onTrue(
-            DriveCommands.joystickDriveRobotRelative(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> -controller.getRightX()));
+    //     controller
+    //         .rightBumper()
+    //         .onTrue(
+    //             DriveCommands.joystickDriveRobotRelative(
+    //                 drive,
+    //                 () -> -controller.getLeftY(),
+    //                 () -> -controller.getLeftX(),
+    //                 () -> -controller.getRightX()));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

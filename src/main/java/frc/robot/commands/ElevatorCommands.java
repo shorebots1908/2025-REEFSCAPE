@@ -58,4 +58,10 @@ public class ElevatorCommands {
         setTargetPosition(elevator, new BasePosition(0)),
         waitUntilElevatorAtTargetPosition(elevator).withTimeout(1));
   }
+
+  public static Command goToPosition(Elevator elevator, BasePosition position) {
+    return Commands.sequence(
+        setTargetPosition(elevator, position),
+        waitUntilElevatorAtTargetPosition(elevator).withTimeout(1));
+  }
 }
