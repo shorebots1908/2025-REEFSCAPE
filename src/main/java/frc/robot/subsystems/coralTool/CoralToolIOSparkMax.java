@@ -21,8 +21,8 @@ public class CoralToolIOSparkMax implements CoralToolIO {
   private final SparkClosedLoopController wristController;
   private final SparkAbsoluteEncoder coralEncoder;
   private CoralToolIO.CoralToolIOInputs inputs = new CoralToolIOInputs();
-  private double limitLower = 0.365;
-  private double limitUpper = 0.02;
+  private double limitLower = 0.0;
+  private double limitUpper = 0.375;
   private double targetEncoderPosition = 0;
   private double coralThreshold = 1.0;
   private boolean atTarget = false;
@@ -69,6 +69,8 @@ public class CoralToolIOSparkMax implements CoralToolIO {
     atTarget = distanceAbsolute < coralThreshold;
     Logger.recordOutput("/Elevator/DistanceToTarget", distanceAbsolute);
     Logger.recordOutput("/Elevator/AtTarget", atTarget);
+
+    wristController.setReference(targetEncoderPosition, ControlType.kPosition);
   }
 
   public boolean atTargetPosition() {
@@ -87,7 +89,7 @@ public class CoralToolIOSparkMax implements CoralToolIO {
 
   @Override
   public void setTargetPosition(BasePosition position) {
-    wristController.setReference(position.toRange(limitLower, limitUpper), ControlType.kPosition);
+    targetEncoderPosition = position.toRange(limitLower, limitUpper);
   }
 
   public boolean isHolding() {
