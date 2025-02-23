@@ -11,6 +11,7 @@ public interface CoralToolIO {
     public Rotation2d yawPosition = new Rotation2d();
     public double yawVelocityRadPerSec = 0.0;
     public double[] odometryYawTimestamps = new double[] {};
+    public double positionRevs = 0.0;
     public Rotation2d[] odometryYawPositions = new Rotation2d[] {};
   }
 
@@ -31,4 +32,12 @@ public interface CoralToolIO {
   }
 
   public default void feedStop() {}
+
+  public default void periodic() {}
+
+  public default boolean atTargetPosition() {
+    return false;
+  }
+
+  public default void setTargetPosition(BasePosition position) {}
 }

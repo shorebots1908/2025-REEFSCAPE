@@ -1,13 +1,17 @@
 package frc.robot.subsystems.coralTool;
 
-import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.subsystems.BasePosition;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class CoralToolIOSparkMax implements CoralToolIO {
@@ -15,49 +19,70 @@ public class CoralToolIOSparkMax implements CoralToolIO {
   private final SparkMax rightMotor;
   private final SparkMax wristMotor;
   private final SparkClosedLoopController wristController;
-  LoggedNetworkNumber coralP = new LoggedNetworkNumber("/Tuning/Coral/P", 1.0);
+  private final SparkAbsoluteEncoder coralEncoder;
+  private CoralToolIO.CoralToolIOInputs inputs = new CoralToolIOInputs();
+  private double limitLower = 0.365;
+  private double limitUpper = 0.02;
+  private double targetEncoderPosition = 0;
+  private double coralThreshold = 1.0;
+  private boolean atTarget = false;
+  LoggedNetworkNumber coralP = new LoggedNetworkNumber("/Tuning/Coral/P", 2.0);
   LoggedNetworkNumber coralI = new LoggedNetworkNumber("/Tuning/Coral/I", 0);
   LoggedNetworkNumber coralD = new LoggedNetworkNumber("/Tuning/Coral/D", 0);
-  LoggedNetworkNumber coralLower = new LoggedNetworkNumber("/Tuning/Coral/Lower", 0);
-  LoggedNetworkNumber coralUpper = new LoggedNetworkNumber("/Tuning/Coral/Upper", 1);
-  LoggedNetworkNumber coralMaxVelocity = new LoggedNetworkNumber("/Tuning/Coral/Vel", 5);
-  LoggedNetworkNumber coralMaxAcceleration = new LoggedNetworkNumber("/Tuning/Coral/Accel", 0.5);
+  LoggedNetworkNumber coralMaxVelocity = new LoggedNetworkNumber("/Tuning/Coral/Vel", 1000);
+  LoggedNetworkNumber coralMaxAcceleration = new LoggedNetworkNumber("/Tuning/Coral/Accel", 60);
 
   public CoralToolIOSparkMax(CoralToolConfig config) {
     // left motor is the leader
     leftMotor = new SparkMax(config.leftMotorCanId, MotorType.kBrushless);
     rightMotor = new SparkMax(config.rightMotorCanId, MotorType.kBrushless);
     wristMotor = new SparkMax(config.wristMotorCanId, MotorType.kBrushed);
+    coralEncoder = wristMotor.getAbsoluteEncoder();
     SparkMaxConfig followConfig = new SparkMaxConfig();
+
     followConfig.follow(config.leftMotorCanId, true);
     rightMotor.configure(
         followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     wristController = wristMotor.getClosedLoopController();
-    SparkMaxConfig motionConfig = new SparkMaxConfig();
+    SparkMaxConfig wristConfig = new SparkMaxConfig();
 
     // Set PID gains
-    motionConfig.closedLoop.p(coralP.get()).i(coralI.get()).d(coralD.get()).outputRange(-1, 1);
+    wristConfig.closedLoop.p(coralP.get()).i(coralI.get()).d(coralD.get());
 
     // Set MAXMotion parameters
-    motionConfig
+    wristConfig
         .closedLoop
         .maxMotion
         .maxVelocity(coralMaxVelocity.get())
         .maxAcceleration(coralMaxAcceleration.get());
-
+    wristConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+    wristConfig.apply(
+        new SoftLimitConfig().forwardSoftLimit(limitLower).reverseSoftLimit(limitUpper));
     wristMotor.configure(
-        motionConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void updateInputs(CoralToolIO.CoralToolIOInputs inputs) {
     // TODO
   }
 
-  public void periodic() {}
+  public void periodic() {
+    double position = coralEncoder.getPosition();
+    Logger.recordOutput("/Coral/CoralWristEncoder", position);
+    double distance = targetEncoderPosition - inputs.positionRevs;
+    double distanceAbsolute = Math.abs(distance);
+    atTarget = distanceAbsolute < coralThreshold;
+    Logger.recordOutput("/Elevator/DistanceToTarget", distanceAbsolute);
+    Logger.recordOutput("/Elevator/AtTarget", atTarget);
+  }
+
+  public boolean atTargetPosition() {
+    return atTarget;
+  }
 
   @Override
   public void setWristOpenLoop(double output) {
-    wristMotor.setVoltage(output);
+    wristMotor.setVoltage(output * 12);
   }
 
   @Override
@@ -68,7 +93,7 @@ public class CoralToolIOSparkMax implements CoralToolIO {
   @Override
   public void setWristPosition(BasePosition position) {
     wristController.setReference(
-        position.toRange(coralLower.get(), coralUpper.get()), SparkBase.ControlType.kPosition);
+        position.toRange(limitLower, limitUpper), ControlType.kMAXMotionPositionControl);
   }
 
   public boolean isHolding() {

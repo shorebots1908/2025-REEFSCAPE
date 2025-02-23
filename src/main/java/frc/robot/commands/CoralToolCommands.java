@@ -19,6 +19,14 @@ public class CoralToolCommands {
         coralTool);
   }
 
+  public static Command setTargetPosition(CoralTool coralTool, BasePosition position) {
+    return Commands.runOnce(
+        () -> {
+          coralTool.setTargetPosition(position);
+        },
+        coralTool);
+  }
+
   public static Command pickup(CoralTool coralTool) {
     return Commands.sequence(feedOut(coralTool));
   }
@@ -67,6 +75,12 @@ public class CoralToolCommands {
         coralTool);
   }
 
+  public static Command waitUntilCoralAtTargetPosition(CoralTool coralTool) {
+    return Commands.idle(coralTool)
+        .until(coralTool::atTargetPosition)
+        .withName("WaitUntilCoralAtTargetPosition");
+  }
+
   public static Command waitUntilCoralIsHolding(CoralTool coralTool, boolean holding) {
     return Commands.idle(coralTool)
         .until(
@@ -78,5 +92,17 @@ public class CoralToolCommands {
               }
             })
         .withName("WaitUntilCoralIsHolding");
+  }
+
+  public static Command waitUntilElevatorAtTargetPosition(CoralTool coralTool) {
+    return Commands.idle(coralTool)
+        .until(coralTool::atTargetPosition)
+        .withName("WaitUntilElevatorAtTargetPosition");
+  }
+
+  public static Command goToPosition(CoralTool coralTool, BasePosition position) {
+    return Commands.sequence(
+        setTargetPosition(coralTool, position),
+        waitUntilCoralAtTargetPosition(coralTool).withTimeout(1));
   }
 }

@@ -157,16 +157,18 @@ public class RobotContainer {
     controller.povDown().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(0)));
     controller.povLeft().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(0.3)));
     controller.povRight().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(0.6)));
+    controller.a().onTrue(CoralToolCommands.goToPosition(coralTool, new BasePosition(0.5)));
+    // .whileTrue(CoralToolCommands.goToPosition(coralTool, new BasePosition(Massive)))
 
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+    //     controller
+    //         .a()
+    //         .whileTrue(
+    //             DriveCommands.joystickDriveAtAngle(
+    //                 drive,
+    //                 () -> -controller.getLeftY(),
+    //                 () -> -controller.getLeftX(),
+    //                 () -> new Rotation2d()));
 
     //     controller
     //         .rightBumper()

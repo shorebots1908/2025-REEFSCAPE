@@ -42,4 +42,16 @@ public class CoralTool extends SubsystemBase {
   public boolean isEmpty() {
     return false;
   }
+
+  public void periodic() {
+    io.periodic();
+  }
+
+  public boolean atTargetPosition() {
+    return io.atTargetPosition();
+  }
+
+  public void setTargetPosition(BasePosition position) {
+    io.setTargetPosition(position);
+  }
 }
