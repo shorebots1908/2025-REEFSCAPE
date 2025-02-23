@@ -26,7 +26,7 @@ public class CoralToolIOSparkMax implements CoralToolIO {
   private double targetEncoderPosition = 0;
   private double coralThreshold = 1.0;
   private boolean atTarget = false;
-  LoggedNetworkNumber coralP = new LoggedNetworkNumber("/Tuning/Coral/P", 2.0);
+  LoggedNetworkNumber coralP = new LoggedNetworkNumber("/Tuning/Coral/P", 5.0);
   LoggedNetworkNumber coralI = new LoggedNetworkNumber("/Tuning/Coral/I", 0);
   LoggedNetworkNumber coralD = new LoggedNetworkNumber("/Tuning/Coral/D", 0);
   LoggedNetworkNumber coralMaxVelocity = new LoggedNetworkNumber("/Tuning/Coral/Vel", 1000);
@@ -49,10 +49,14 @@ public class CoralToolIOSparkMax implements CoralToolIO {
     // Set PID gains
     wristConfig.closedLoop.p(coralP.get()).i(coralI.get()).d(coralD.get());
 
-    wristConfig.closedLoopRampRate(0.5);
+    wristConfig.closedLoopRampRate(0.1);
     wristConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
     wristConfig.apply(
-        new SoftLimitConfig().forwardSoftLimit(limitLower).reverseSoftLimit(limitUpper));
+        new SoftLimitConfig()
+            .forwardSoftLimit(limitUpper)
+            .forwardSoftLimitEnabled(true)
+            .reverseSoftLimit(limitLower)
+            .reverseSoftLimitEnabled(true));
     wristMotor.configure(
         wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
