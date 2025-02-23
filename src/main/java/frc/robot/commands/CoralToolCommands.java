@@ -19,14 +19,6 @@ public class CoralToolCommands {
         coralTool);
   }
 
-  public static Command setTargetPosition(CoralTool coralTool, BasePosition position) {
-    return Commands.runOnce(
-        () -> {
-          coralTool.setTargetPosition(position);
-        },
-        coralTool);
-  }
-
   public static Command pickup(CoralTool coralTool) {
     return Commands.sequence(feedOut(coralTool));
   }
@@ -59,10 +51,10 @@ public class CoralToolCommands {
         coralTool);
   }
 
-  public static Command setWristPosition(CoralTool coralTool, BasePosition position) {
+  public static Command setTargetPosition(CoralTool coralTool, BasePosition position) {
     return Commands.runOnce(
         () -> {
-          coralTool.setWristPosition(position);
+          coralTool.setTargetPosition(position);
         },
         coralTool);
   }

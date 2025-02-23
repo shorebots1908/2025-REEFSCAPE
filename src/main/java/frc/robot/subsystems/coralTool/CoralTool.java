@@ -16,8 +16,8 @@ public class CoralTool extends SubsystemBase {
     io.setWristOpenLoop(output);
   }
 
-  public void setWristPosition(BasePosition output) {
-    io.setWristPosition(output);
+  public void setTargetPosition(BasePosition output) {
+    io.setTargetPosition(output);
   }
 
   public void setFeedOpenLoop(double output) {
@@ -49,9 +49,5 @@ public class CoralTool extends SubsystemBase {
 
   public boolean atTargetPosition() {
     return io.atTargetPosition();
-  }
-
-  public void setTargetPosition(BasePosition position) {
-    io.setTargetPosition(position);
   }
 }

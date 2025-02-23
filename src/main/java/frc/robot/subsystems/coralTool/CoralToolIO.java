@@ -21,8 +21,6 @@ public interface CoralToolIO {
 
   public default void setFeedOpenLoop(double output) {}
 
-  public default void setWristPosition(BasePosition position) {}
-
   public default boolean isHolding() {
     return false;
   }

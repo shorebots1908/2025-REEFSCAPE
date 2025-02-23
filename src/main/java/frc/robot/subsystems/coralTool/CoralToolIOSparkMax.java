@@ -49,12 +49,7 @@ public class CoralToolIOSparkMax implements CoralToolIO {
     // Set PID gains
     wristConfig.closedLoop.p(coralP.get()).i(coralI.get()).d(coralD.get());
 
-    // Set MAXMotion parameters
-    wristConfig
-        .closedLoop
-        .maxMotion
-        .maxVelocity(coralMaxVelocity.get())
-        .maxAcceleration(coralMaxAcceleration.get());
+    wristConfig.closedLoopRampRate(0.5);
     wristConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
     wristConfig.apply(
         new SoftLimitConfig().forwardSoftLimit(limitLower).reverseSoftLimit(limitUpper));
@@ -91,9 +86,8 @@ public class CoralToolIOSparkMax implements CoralToolIO {
   }
 
   @Override
-  public void setWristPosition(BasePosition position) {
-    wristController.setReference(
-        position.toRange(limitLower, limitUpper), ControlType.kMAXMotionPositionControl);
+  public void setTargetPosition(BasePosition position) {
+    wristController.setReference(position.toRange(limitLower, limitUpper), ControlType.kPosition);
   }
 
   public boolean isHolding() {
