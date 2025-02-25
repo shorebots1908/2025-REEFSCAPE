@@ -21,20 +21,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.CoralToolCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
+import frc.robot.commands.IntakeCommands;
 import frc.robot.subsystems.BasePosition;
-import frc.robot.subsystems.ballerIntake.BallerIntake;
-import frc.robot.subsystems.ballerIntake.BallerIntakeConfig;
-import frc.robot.subsystems.ballerIntake.BallerIntakeIO;
-import frc.robot.subsystems.ballerIntake.BallerIntakeIOSim;
-import frc.robot.subsystems.ballerIntake.BallerIntakeIOSparkMax;
-import frc.robot.subsystems.coralTool.CoralTool;
-import frc.robot.subsystems.coralTool.CoralToolConfig;
-import frc.robot.subsystems.coralTool.CoralToolIO;
-import frc.robot.subsystems.coralTool.CoralToolIOSim;
-import frc.robot.subsystems.coralTool.CoralToolIOSparkMax;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -46,6 +36,11 @@ import frc.robot.subsystems.elevator.ElevatorConfig;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSparkMax;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeConfig;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -64,8 +59,8 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final Elevator elevator;
-  private final BallerIntake ballerIntake;
-  private final CoralTool coralTool;
+  private final Intake coralIntake;
+  // private final Intake algaeIntake; // TODO enable algae intake
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -77,9 +72,9 @@ public class RobotContainer {
   public RobotContainer() {
     drive = initDrive();
     vision = initVision();
-    elevator = initElevator();
-    ballerIntake = initBallerIntake();
-    coralTool = initCoralTool();
+    elevator = initElevator(new ElevatorConfig(9, 10));
+    coralIntake = initIntake(new IntakeConfig("Coral", 11, 12, 19, 5.0, 0.0, 0.0, 0.0, 0.375));
+    // algaeIntake = initIntake(new IntakeConfig("Algae", 0, 0, 0, 0, 0, 0, 0, 0));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -150,13 +145,13 @@ public class RobotContainer {
     controller.povRight().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(0.6)));
 
     // Coral commands
-    controller.a().onTrue(CoralToolCommands.goToPosition(coralTool, new BasePosition(0.3)));
-    controller.y().onTrue(CoralToolCommands.goToPosition(coralTool, new BasePosition(0.8)));
+    controller.a().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(0.3)));
+    controller.y().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(0.8)));
     controller
         .leftBumper()
         .whileTrue(
-            CoralToolCommands.moveByJoystick(
-                coralTool,
+            IntakeCommands.moveByJoystick(
+                coralIntake,
                 () -> -controller.getRightY(),
                 () -> {
                   if (controller.y().getAsBoolean()) {
@@ -235,11 +230,11 @@ public class RobotContainer {
     }
   }
 
-  private Elevator initElevator() {
+  private Elevator initElevator(ElevatorConfig config) {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        return new Elevator(new ElevatorIOSparkMax(new ElevatorConfig(9, 10)));
+        return new Elevator(new ElevatorIOSparkMax(config));
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -251,35 +246,19 @@ public class RobotContainer {
     }
   }
 
-  public BallerIntake initBallerIntake() {
+  public Intake initIntake(IntakeConfig config) {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        return new BallerIntake(new BallerIntakeIOSparkMax(new BallerIntakeConfig(13, 14)));
+        return new Intake(new IntakeIOSparkMax(config));
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        return new BallerIntake(new BallerIntakeIOSim());
+        return new Intake(new IntakeIOSim());
 
       default:
         // Replayed robot, disable IO implementations
-        return new BallerIntake(new BallerIntakeIO() {});
-    }
-  }
-
-  public CoralTool initCoralTool() {
-    switch (Constants.currentMode) {
-      case REAL:
-        // Real robot, instantiate hardware IO implementations
-        return new CoralTool(new CoralToolIOSparkMax(new CoralToolConfig(11, 12, 19)));
-
-      case SIM:
-        // Sim robot, instantiate physics sim IO implementations
-        return new CoralTool(new CoralToolIOSim());
-
-      default:
-        // Replayed robot, disable IO implementations
-        return new CoralTool(new CoralToolIO() {});
+        return new Intake(new IntakeIO() {});
     }
   }
 }
