@@ -1,12 +1,12 @@
-package frc.robot.subsystems.coralTool;
+package frc.robot.subsystems.intake;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface CoralToolIO {
+public interface IntakeIO {
   @AutoLog
-  public static class CoralToolIOInputs {
+  public static class IntakeIOInputs {
     public boolean connected = false;
     public Rotation2d yawPosition = new Rotation2d();
     public double yawVelocityRadPerSec = 0.0;
@@ -17,7 +17,7 @@ public interface CoralToolIO {
 
   public default void periodic() {}
 
-  public default void updateInputs(CoralToolIOInputs inputs) {}
+  public default void updateInputs(IntakeIOInputs inputs) {}
 
   public default void setTargetPosition(BasePosition position) {}
 

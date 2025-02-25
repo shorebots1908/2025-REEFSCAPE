@@ -1,4 +1,4 @@
-package frc.robot.subsystems.coralTool;
+package frc.robot.subsystems.intake;
 
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -13,37 +13,38 @@ import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
-public class CoralToolIOSparkMax implements CoralToolIO {
+public class IntakeIOSparkMax implements IntakeIO {
   private final SparkMax leftMotor;
   private final SparkMax rightMotor;
   private final SparkMax wristMotor;
   private final SparkClosedLoopController wristController;
   private final SparkAbsoluteEncoder wristEncoder;
-  private CoralToolIO.CoralToolIOInputs inputs = new CoralToolIOInputs();
-  private double limitLower = 0.0;
-  private double limitUpper = 0.375;
-  private double targetEncoderPosition = 0;
-  private double coralThreshold = 1.0;
-  private boolean atTarget = false;
-  LoggedNetworkNumber coralP = new LoggedNetworkNumber("/Tuning/Coral/P", 5.0);
-  LoggedNetworkNumber coralI = new LoggedNetworkNumber("/Tuning/Coral/I", 0);
-  LoggedNetworkNumber coralD = new LoggedNetworkNumber("/Tuning/Coral/D", 0);
-  LoggedNetworkNumber coralMaxVelocity = new LoggedNetworkNumber("/Tuning/Coral/Vel", 1000);
-  LoggedNetworkNumber coralMaxAcceleration = new LoggedNetworkNumber("/Tuning/Coral/Accel", 60);
+  private IntakeConfig config;
+  private IntakeIO.IntakeIOInputs inputs = new IntakeIOInputs();
 
-  public CoralToolIOSparkMax(CoralToolConfig config) {
+  // The target position the wrist will try to reach
+  private double targetEncoderPosition = 0;
+
+  // How close the wrist needs to be to be "close enough"
+  private double targetThreshold = 1.0;
+
+  // Whether the wrist is currently close enough
+  private boolean atTarget = false;
+
+  public IntakeIOSparkMax(IntakeConfig config) {
+    this.config = config;
+
     // Left wheel is leader
-    leftMotor = new SparkMax(config.leftMotorCanId, MotorType.kBrushless);
-    rightMotor = new SparkMax(config.rightMotorCanId, MotorType.kBrushless);
-    wristMotor = new SparkMax(config.wristMotorCanId, MotorType.kBrushed);
+    leftMotor = new SparkMax(config.leftMotorId, MotorType.kBrushless);
+    rightMotor = new SparkMax(config.rightMotorId, MotorType.kBrushless);
+    wristMotor = new SparkMax(config.wristMotorId, MotorType.kBrushed);
     wristEncoder = wristMotor.getAbsoluteEncoder();
     wristController = wristMotor.getClosedLoopController();
 
     // Right wheel follows left wheel
     SparkMaxConfig followConfig = new SparkMaxConfig();
-    followConfig.follow(config.leftMotorCanId, true);
+    followConfig.follow(config.leftMotorId, true);
     rightMotor.configure(
         followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -53,15 +54,15 @@ public class CoralToolIOSparkMax implements CoralToolIO {
         .closedLoopRampRate(0.1)
         .apply(
             new ClosedLoopConfig()
-                .p(coralP.get())
-                .i(coralI.get())
-                .d(coralD.get())
+                .p(config.pGain)
+                .i(config.iGain)
+                .d(config.dGain)
                 .feedbackSensor(FeedbackSensor.kAbsoluteEncoder))
         .apply(
             new SoftLimitConfig()
-                .forwardSoftLimit(limitUpper)
+                .forwardSoftLimit(config.encoderUpperLimit)
                 .forwardSoftLimitEnabled(true)
-                .reverseSoftLimit(limitLower)
+                .reverseSoftLimit(config.encoderLowerLimit)
                 .reverseSoftLimitEnabled(true));
     wristMotor.configure(
         wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -69,17 +70,17 @@ public class CoralToolIOSparkMax implements CoralToolIO {
 
   public void periodic() {
     double position = wristEncoder.getPosition();
-    Logger.recordOutput("/Coral/CoralWristEncoder", position);
     double distance = targetEncoderPosition - inputs.positionRevs;
     double distanceAbsolute = Math.abs(distance);
-    atTarget = distanceAbsolute < coralThreshold;
-    Logger.recordOutput("/Coral/DistanceToTarget", distanceAbsolute);
-    Logger.recordOutput("/Coral/AtTarget", atTarget);
-
+    atTarget = distanceAbsolute < targetThreshold;
     wristController.setReference(targetEncoderPosition, ControlType.kPosition);
+
+    Logger.recordOutput(String.format("/%s/WristEncoder", config.name), position);
+    Logger.recordOutput(String.format("/%s/DistanceToTarget", config.name), distanceAbsolute);
+    Logger.recordOutput(String.format("/%s/AtTarget", config.name), atTarget);
   }
 
-  public void updateInputs(CoralToolIO.CoralToolIOInputs inputs) {
+  public void updateInputs(IntakeIO.IntakeIOInputs inputs) {
     // TODO
   }
 
@@ -99,7 +100,7 @@ public class CoralToolIOSparkMax implements CoralToolIO {
 
   @Override
   public void setTargetPosition(BasePosition position) {
-    targetEncoderPosition = position.toRange(limitLower, limitUpper);
+    targetEncoderPosition = position.toRange(config.encoderLowerLimit, config.encoderUpperLimit);
   }
 
   public boolean isHolding() {

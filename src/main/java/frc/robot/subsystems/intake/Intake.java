@@ -1,12 +1,12 @@
-package frc.robot.subsystems.coralTool;
+package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.BasePosition;
 
-public class CoralTool extends SubsystemBase {
-  private final CoralToolIO io;
+public class Intake extends SubsystemBase {
+  private final IntakeIO io;
 
-  public CoralTool(CoralToolIO io) {
+  public Intake(IntakeIO io) {
     this.io = io;
   }
 

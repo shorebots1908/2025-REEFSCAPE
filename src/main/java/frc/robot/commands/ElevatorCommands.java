@@ -43,13 +43,6 @@ public class ElevatorCommands {
         elevator);
   }
 
-  public static Command stop(Elevator elevator) {
-    return Commands.runOnce(
-        () -> {
-          elevator.stop();
-        });
-  }
-
   // Auto Commands
   public static Command upAndDown(Elevator elevator) {
     return Commands.sequence(
