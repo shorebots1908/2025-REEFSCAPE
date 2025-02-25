@@ -36,11 +36,13 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
   public ElevatorIOSparkMax(ElevatorConfig config) {
     leftMotor = new SparkMax(config.leftMotorCanId, MotorType.kBrushless);
-    leftEncoder = leftMotor.getEncoder();
     rightMotor = new SparkMax(config.rightMotorCanId, MotorType.kBrushless);
+    leftEncoder = leftMotor.getEncoder();
     controller = leftMotor.getClosedLoopController();
+    limitUpper = leftMotor.getForwardLimitSwitch();
+    limitLower = leftMotor.getReverseLimitSwitch();
 
-    // left motor config
+    // Leader: Left motor config
     SparkMaxConfig leaderConfig = new SparkMaxConfig();
     leaderConfig
         .idleMode(IdleMode.kBrake)
@@ -56,19 +58,41 @@ public class ElevatorIOSparkMax implements ElevatorIO {
                         .maxVelocity(1200.0)
                         .maxAcceleration(1200.0)
                         .allowedClosedLoopError(0.3)));
-
     leftMotor.configure(
         leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    // right motor config
+    // Follower: Right motor config
     SparkMaxConfig followConfig = new SparkMaxConfig();
     followConfig.follow(9, true);
     followConfig.idleMode(IdleMode.kBrake);
     rightMotor.configure(
         followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  }
 
-    limitUpper = leftMotor.getForwardLimitSwitch();
-    limitLower = leftMotor.getReverseLimitSwitch();
+  @Override
+  public void periodic() {
+    double distance = targetEncoderPosition - inputs.positionRad;
+    double distanceAbsolute = Math.abs(distance);
+    atTarget = distanceAbsolute < elevatorThreshold;
+    Logger.recordOutput("/Elevator/DistanceToTarget", distanceAbsolute);
+    Logger.recordOutput("/Elevator/AtTarget", atTarget);
+
+    controller.setReference(targetEncoderPosition, ControlType.kMAXMotionPositionControl);
+
+    if (inputs.atLower) {
+      leftMotor.getEncoder().setPosition(0);
+    }
+
+    if (inputs.atUpper) {
+      upperEncoderLimit = leftEncoder.getPosition();
+    }
+
+    Logger.recordOutput(
+        "/Elevator/BasePositionLower",
+        new BasePosition(0).toRange(lowerEncoderLimit, upperEncoderLimit));
+    Logger.recordOutput(
+        "Elevator/BasePositionUpper",
+        new BasePosition(1).toRange(lowerEncoderLimit, upperEncoderLimit));
   }
 
   public void updateInputs(ElevatorIO.ElevatorIOInputs inputs) {
@@ -97,31 +121,5 @@ public class ElevatorIOSparkMax implements ElevatorIO {
       return;
     }
     leftMotor.setVoltage(output);
-  }
-
-  @Override
-  public void periodic() {
-    double distance = targetEncoderPosition - inputs.positionRad;
-    double distanceAbsolute = Math.abs(distance);
-    atTarget = distanceAbsolute < elevatorThreshold;
-    Logger.recordOutput("/Elevator/DistanceToTarget", distanceAbsolute);
-    Logger.recordOutput("/Elevator/AtTarget", atTarget);
-
-    controller.setReference(targetEncoderPosition, ControlType.kMAXMotionPositionControl);
-
-    if (inputs.atLower) {
-      leftMotor.getEncoder().setPosition(0);
-    }
-
-    if (inputs.atUpper) {
-      upperEncoderLimit = leftEncoder.getPosition();
-    }
-
-    Logger.recordOutput(
-        "/Elevator/BasePositionLower",
-        new BasePosition(0).toRange(lowerEncoderLimit, upperEncoderLimit));
-    Logger.recordOutput(
-        "Elevator/BasePositionUpper",
-        new BasePosition(1).toRange(lowerEncoderLimit, upperEncoderLimit));
   }
 }

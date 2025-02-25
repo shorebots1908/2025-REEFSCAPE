@@ -4,18 +4,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.Logger;
 
-/**
- * TODO:
- *
- * <p>- [ ] Make ElevatorIO an interface - [ ] Add ElevatorIOSpark class - [ ] Move SparkMax classes
- * to ElevatorIOSpark -
- */
 public class Elevator extends SubsystemBase {
   private ElevatorIO io;
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
   public Elevator(ElevatorIO io) {
     this.io = io;
+  }
+
+  @Override
+  public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("Elevator", inputs);
+    io.periodic();
   }
 
   public void setTargetPosition(BasePosition position) {
@@ -44,12 +45,5 @@ public class Elevator extends SubsystemBase {
 
   public double getPosition() {
     return inputs.positionRad;
-  }
-
-  @Override
-  public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Elevator", inputs);
-    io.periodic();
   }
 }

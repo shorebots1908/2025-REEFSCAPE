@@ -13,6 +13,8 @@ public interface ElevatorIO {
     public boolean atLower = false;
   }
 
+  public default void periodic() {}
+
   public default void updateInputs(ElevatorIOInputs inputs) {}
 
   public default void setTargetPosition(BasePosition position) {}
@@ -24,6 +26,4 @@ public interface ElevatorIO {
   public default void setElevatorOpenLoop(double output) {}
 
   public default void stop() {}
-
-  public default void periodic() {}
 }
