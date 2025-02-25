@@ -15,8 +15,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -132,70 +130,28 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Default command, normal field-relative drive
+    // Drive commands
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
+    // Switch to X pattern when X button is pressed
+    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // controller.y().onTrue(ElevatorCommands.moveToPosition(null, null));
-    // controller.povUp().onTrue(CoralToolCommands.coralPickup(coralIntake));
-    // controller.povDown().onTrue(CoralToolCommands.coralPlace(coralIntake));
-
-    // NOTE:
-    // Value gets applied as motor.setVoltage();
-    // Which means the range is maybe -12 - 12
-    // The joystick gives us -1, 1
+    // Elevator commands
     controller
         .rightBumper()
         .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> controller.getRightY() * -12));
-
     controller.povUp().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(1.0)));
-
     controller.povDown().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(0)));
     controller.povLeft().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(0.3)));
     controller.povRight().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(0.6)));
+
+    // Coral commands
     controller.a().onTrue(CoralToolCommands.goToPosition(coralTool, new BasePosition(0.3)));
     controller.y().onTrue(CoralToolCommands.goToPosition(coralTool, new BasePosition(0.8)));
-    // .whileTrue(CoralToolCommands.goToPosition(coralTool, new BasePosition(Massive)))
-
-    // Lock to 0° when A button is held
-    //     controller
-    //         .a()
-    //         .whileTrue(
-    //             DriveCommands.joystickDriveAtAngle(
-    //                 drive,
-    //                 () -> -controller.getLeftY(),
-    //                 () -> -controller.getLeftX(),
-    //                 () -> new Rotation2d()));
-
-    //     controller
-    //         .rightBumper()
-    //         .onTrue(
-    //             DriveCommands.joystickDriveRobotRelative(
-    //                 drive,
-    //                 () -> -controller.getLeftY(),
-    //                 () -> -controller.getLeftX(),
-    //                 () -> -controller.getRightX()));
-
-    // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    // controller.y().onTrue(Commands.runOnce(drive::gyroResetY, drive));
-
-    // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
-
-    // While holding the left bumper, use right Y for coral wrist
     controller
         .leftBumper()
         .whileTrue(
@@ -226,7 +182,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return DriveCommands.autoPath(drive);
-    // return DriveCommands.goToFieldPoint(drive, FieldPoint.REEF_AB);
   }
 
   private Drive initDrive() {
@@ -284,21 +239,7 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        return new Elevator(
-            new ElevatorIOSparkMax(
-                new ElevatorConfig(
-                    // Motor IDs: left, right
-                    9, 10,
-
-                    // TODO LIMIT SWITCHES DIGITAL IDs
-                    //
-                    // Limit switches: lower, upper
-                    0, 0,
-
-                    // TODO MEASURE SANE DEFAULTS
-                    //
-                    // Encoder range values: lower, upper
-                    0, 100)));
+        return new Elevator(new ElevatorIOSparkMax(new ElevatorConfig(9, 10)));
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations

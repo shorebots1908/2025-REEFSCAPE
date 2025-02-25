@@ -15,11 +15,21 @@ public interface CoralToolIO {
     public Rotation2d[] odometryYawPositions = new Rotation2d[] {};
   }
 
+  public default void periodic() {}
+
   public default void updateInputs(CoralToolIOInputs inputs) {}
+
+  public default void setTargetPosition(BasePosition position) {}
+
+  public default boolean atTargetPosition() {
+    return false;
+  }
 
   public default void setWristOpenLoop(double output) {}
 
   public default void setFeedOpenLoop(double output) {}
+
+  public default void feedStop() {}
 
   public default boolean isHolding() {
     return false;
@@ -28,14 +38,4 @@ public interface CoralToolIO {
   public default boolean isEmpty() {
     return false;
   }
-
-  public default void feedStop() {}
-
-  public default void periodic() {}
-
-  public default boolean atTargetPosition() {
-    return false;
-  }
-
-  public default void setTargetPosition(BasePosition position) {}
 }

@@ -10,41 +10,33 @@ public class CoralTool extends SubsystemBase {
     this.io = io;
   }
 
-  public void goToPosition(BasePosition position) {}
-
-  public void setWristOpenLoop(double output) {
-    io.setWristOpenLoop(output);
+  @Override
+  public void periodic() {
+    io.periodic();
   }
 
   public void setTargetPosition(BasePosition output) {
     io.setTargetPosition(output);
   }
 
+  public void setWristOpenLoop(double output) {
+    io.setWristOpenLoop(output);
+  }
+
   public void setFeedOpenLoop(double output) {
     io.setFeedOpenLoop(output);
   }
-
-  public void positionStop() {}
-
-  public void spinIn(double speed) {}
-
-  public void spinOut(double speed) {}
 
   public void feedStop() {
     io.feedStop();
   }
 
   public boolean isHolding() {
-
     return false;
   }
 
   public boolean isEmpty() {
     return false;
-  }
-
-  public void periodic() {
-    io.periodic();
   }
 
   public boolean atTargetPosition() {
