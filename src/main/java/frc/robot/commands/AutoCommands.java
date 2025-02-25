@@ -8,23 +8,23 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
 
 public class AutoCommands {
-  public static Command pickup(Intake coralTool, Elevator elevator) {
+  public static Command pickup(Intake intake, Elevator elevator) {
     return Commands.sequence(
         ElevatorCommands.setTargetPosition(elevator, new BasePosition(0.5)),
         ElevatorCommands.waitUntilElevatorAtTargetPosition(elevator),
-        IntakeCommands.pickup(coralTool),
-        IntakeCommands.waitUntilCoralIsHolding(coralTool, true)
-        // IntakeCommands.feedStop(coralTool)
+        IntakeCommands.pickup(intake),
+        IntakeCommands.waitUntilCoralIsHolding(intake, true)
+        // IntakeCommands.feedStop(intake)
         );
   }
 
-  public static Command score(Intake coralTool, Elevator elevator, BasePosition position) {
+  public static Command score(Intake intake, Elevator elevator, BasePosition position) {
     return Commands.sequence(
         ElevatorCommands.setTargetPosition(elevator, position),
         ElevatorCommands.waitUntilElevatorAtTargetPosition(elevator),
-        IntakeCommands.place(coralTool),
-        IntakeCommands.waitUntilCoralIsHolding(coralTool, false)
-        // IntakeCommands.feedStop(coralTool)
+        IntakeCommands.place(intake),
+        IntakeCommands.waitUntilCoralIsHolding(intake, false)
+        // IntakeCommands.feedStop(intake)
         );
   }
 }

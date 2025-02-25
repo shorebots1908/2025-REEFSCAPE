@@ -60,7 +60,7 @@ public class RobotContainer {
   private final Vision vision;
   private final Elevator elevator;
   private final Intake coralIntake;
-  // private final Intake algaeIntake; // TODO enable algae intake
+  private final Intake algaeIntake; // TODO enable algae intake
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -73,8 +73,8 @@ public class RobotContainer {
     drive = initDrive();
     vision = initVision();
     elevator = initElevator(new ElevatorConfig(9, 10));
-    coralIntake = initIntake(new IntakeConfig("Coral", 11, 12, 19, 5.0, 0.0, 0.0, 0.0, 0.375));
-    // algaeIntake = initIntake(new IntakeConfig("Algae", 0, 0, 0, 0, 0, 0, 0, 0));
+    coralIntake = initIntake(new IntakeConfig("Coral", 11, 12, 19, 5.0, 0.0, 0.0, 0.041, 0.511));
+    algaeIntake = initIntake(new IntakeConfig("Algae", 13, 14, 17, 5.0, 0.0, 0.0, 0.0, 0.0));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -139,14 +139,16 @@ public class RobotContainer {
     controller
         .rightBumper()
         .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> controller.getRightY() * -12));
-    controller.povUp().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(1.0)));
-    controller.povDown().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(0)));
-    controller.povLeft().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(0.3)));
-    controller.povRight().onTrue(ElevatorCommands.goToPosition(elevator, new BasePosition(0.6)));
+    controller.povUp().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.L4));
+    controller.povDown().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.IDLE));
+    controller.povLeft().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.L2));
+    controller.povRight().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.L3));
 
     // Coral commands
-    controller.a().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(0.3)));
-    controller.y().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(0.8)));
+    controller.a().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(0.5)));
+    controller.y().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(1.0)));
+    controller.a().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(0.5)));
+    controller.y().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(1.0)));
     controller
         .leftBumper()
         .whileTrue(

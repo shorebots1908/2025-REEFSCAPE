@@ -9,84 +9,82 @@ import java.util.function.DoubleSupplier;
 public class IntakeCommands {
   public static final double FEED_SPEED = 5.0;
 
-  public static Command moveByJoystick(
-      Intake coralTool, DoubleSupplier wrist, DoubleSupplier wheels) {
+  public static Command moveByJoystick(Intake intake, DoubleSupplier wrist, DoubleSupplier wheels) {
     return Commands.run(
         () -> {
-          coralTool.setWristOpenLoop(wrist.getAsDouble());
-          coralTool.setFeedOpenLoop(wheels.getAsDouble());
+          intake.setWristOpenLoop(wrist.getAsDouble());
+          intake.setFeedOpenLoop(wheels.getAsDouble());
         },
-        coralTool);
+        intake);
   }
 
-  public static Command pickup(Intake coralTool) {
-    return Commands.sequence(feedOut(coralTool));
+  public static Command pickup(Intake intake) {
+    return Commands.sequence(feedOut(intake));
   }
 
-  public static Command place(Intake coralTool) {
-    return Commands.run(() -> {}, coralTool);
+  public static Command place(Intake intake) {
+    return Commands.run(() -> {}, intake);
   }
 
-  public static Command feedIn(Intake coralTool) {
+  public static Command feedIn(Intake intake) {
     return Commands.run(
         () -> {
-          coralTool.setFeedOpenLoop(-FEED_SPEED);
+          intake.setFeedOpenLoop(-FEED_SPEED);
         },
-        coralTool);
+        intake);
   }
 
-  public static Command feedOut(Intake coralTool) {
+  public static Command feedOut(Intake intake) {
     return Commands.run(
         () -> {
-          coralTool.setFeedOpenLoop(FEED_SPEED);
+          intake.setFeedOpenLoop(FEED_SPEED);
         },
-        coralTool);
+        intake);
   }
 
-  public static Command setTargetPosition(Intake coralTool, BasePosition position) {
+  public static Command setTargetPosition(Intake intake, BasePosition position) {
     return Commands.runOnce(
         () -> {
-          coralTool.setTargetPosition(position);
+          intake.setTargetPosition(position);
         },
-        coralTool);
+        intake);
   }
 
-  public static Command isHolding(Intake coralTool) {
+  public static Command isHolding(Intake intake) {
     return Commands.run(
         () -> {
-          coralTool.isHolding();
+          intake.isHolding();
         },
-        coralTool);
+        intake);
   }
 
-  public static Command waitUntilCoralAtTargetPosition(Intake coralTool) {
-    return Commands.idle(coralTool)
-        .until(coralTool::atTargetPosition)
+  public static Command waitUntilCoralAtTargetPosition(Intake intake) {
+    return Commands.idle(intake)
+        .until(intake::atTargetPosition)
         .withName("WaitUntilCoralAtTargetPosition");
   }
 
-  public static Command waitUntilCoralIsHolding(Intake coralTool, boolean holding) {
-    return Commands.idle(coralTool)
+  public static Command waitUntilCoralIsHolding(Intake intake, boolean holding) {
+    return Commands.idle(intake)
         .until(
             () -> {
               if (holding) {
-                return coralTool.isHolding();
+                return intake.isHolding();
               } else {
-                return !coralTool.isHolding();
+                return !intake.isHolding();
               }
             })
         .withName("WaitUntilCoralIsHolding");
   }
 
-  public static Command waitUntilElevatorAtTargetPosition(Intake coralTool) {
-    return Commands.idle(coralTool)
-        .until(coralTool::atTargetPosition)
+  public static Command waitUntilElevatorAtTargetPosition(Intake intake) {
+    return Commands.idle(intake)
+        .until(intake::atTargetPosition)
         .withName("WaitUntilElevatorAtTargetPosition");
   }
 
-  public static Command goToPosition(Intake coralTool, BasePosition position) {
+  public static Command goToPosition(Intake intake, BasePosition position) {
     return Commands.sequence(
-        setTargetPosition(coralTool, position),
-        waitUntilCoralAtTargetPosition(coralTool).withTimeout(1));
+        setTargetPosition(intake, position), waitUntilCoralAtTargetPosition(intake).withTimeout(1));
   }
 }

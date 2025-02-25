@@ -1,5 +1,7 @@
 package frc.robot.subsystems.intake;
 
+import static frc.robot.util.SparkUtil.*;
+
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -61,27 +63,34 @@ public class IntakeIOSparkMax implements IntakeIO {
         .apply(
             new SoftLimitConfig()
                 .forwardSoftLimit(config.encoderUpperLimit)
-                .forwardSoftLimitEnabled(true)
+                .forwardSoftLimitEnabled(false)
                 .reverseSoftLimit(config.encoderLowerLimit)
-                .reverseSoftLimitEnabled(true));
+                .reverseSoftLimitEnabled(false));
     wristMotor.configure(
         wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void periodic() {
-    double position = wristEncoder.getPosition();
+    double position = inputs.positionRevs;
     double distance = targetEncoderPosition - inputs.positionRevs;
     double distanceAbsolute = Math.abs(distance);
     atTarget = distanceAbsolute < targetThreshold;
     wristController.setReference(targetEncoderPosition, ControlType.kPosition);
 
-    Logger.recordOutput(String.format("/%s/WristEncoder", config.name), position);
-    Logger.recordOutput(String.format("/%s/DistanceToTarget", config.name), distanceAbsolute);
-    Logger.recordOutput(String.format("/%s/AtTarget", config.name), atTarget);
+    Logger.recordOutput(String.format("%s/WristEncoder", config.name), position);
+    Logger.recordOutput(String.format("%s/DistanceToTarget", config.name), distanceAbsolute);
+    Logger.recordOutput(String.format("%s/AtTarget", config.name), atTarget);
+  }
+
+  public String name() {
+    return config.name;
   }
 
   public void updateInputs(IntakeIO.IntakeIOInputs inputs) {
     // TODO
+    ifOk(leftMotor, wristEncoder::getPosition, (value) -> inputs.positionRevs = value);
+
+    this.inputs = inputs;
   }
 
   public boolean atTargetPosition() {
@@ -91,6 +100,7 @@ public class IntakeIOSparkMax implements IntakeIO {
   @Override
   public void setWristOpenLoop(double output) {
     wristMotor.setVoltage(output * 12);
+    Logger.recordOutput(String.format("%s/OpenLoopOutput", config.name), output * 12);
   }
 
   @Override
