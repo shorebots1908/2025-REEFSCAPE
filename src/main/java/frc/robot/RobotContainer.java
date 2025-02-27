@@ -18,7 +18,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -133,7 +132,7 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Elevator commands
     controller
@@ -147,13 +146,29 @@ public class RobotContainer {
     // Coral commands
     controller.a().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(0.5)));
     controller.y().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(1.0)));
-    controller.a().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(0.5)));
-    controller.y().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(1.0)));
+    controller.x().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(0.5)));
+    controller.b().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(1.0)));
+    // controller
+    //     .leftBumper()
+    //     .whileTrue(
+    //         IntakeCommands.moveByJoystick(
+    //             coralIntake,
+    //             () -> -controller.getRightY(),
+    //             () -> {
+    //               if (controller.y().getAsBoolean()) {
+    //                 return 5.0;
+    //               }
+    //               if (controller.a().getAsBoolean()) {
+    //                 return -5.0;
+    //               }
+    //               return 0.0;
+    //             }));
+
     controller
         .leftBumper()
         .whileTrue(
             IntakeCommands.moveByJoystick(
-                coralIntake,
+                algaeIntake,
                 () -> -controller.getRightY(),
                 () -> {
                   if (controller.y().getAsBoolean()) {
