@@ -18,6 +18,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -71,9 +72,11 @@ public class RobotContainer {
   public RobotContainer() {
     drive = initDrive();
     vision = initVision();
-    elevator = initElevator(new ElevatorConfig(9, 10));
-    coralIntake = initIntake(new IntakeConfig("Coral", 11, 12, 19, 5.0, 0.0, 0.0, 0.041, 0.511));
-    algaeIntake = initIntake(new IntakeConfig("Algae", 13, 14, 17, 5.0, 0.0, 0.0, 0.0, 0.0));
+    elevator = initElevator(new ElevatorConfig(9, 10, 1.0, 0.0, 0.0, 0.0, 63.7));
+    coralIntake =
+        initIntake(new IntakeConfig("Coral", 11, 12, 19, 5.0, 0.5, 0.0, 0.125, 0.721, true));
+    algaeIntake =
+        initIntake(new IntakeConfig("Algae", 13, 14, 17, 5.0, 0.0, 0.0, 0.04, 0.31, false));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -131,23 +134,53 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
+
+    controller.start().onTrue(Commands.runOnce(drive::gyroReset, drive));
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Elevator commands
     controller
-        .rightBumper()
-        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> controller.getRightY() * -12));
-    controller.povUp().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.L4));
-    controller.povDown().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.IDLE));
-    controller.povLeft().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.L2));
-    controller.povRight().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.L3));
+        .leftTrigger(0.5)
+        .whileTrue(
+            IntakeCommands.moveByJoystick(
+                coralIntake,
+                () -> -controller.getRightY(),
+                () -> {
+                  if (controller.y().getAsBoolean()) {
+                    return 5.0;
+                  }
+                  if (controller.a().getAsBoolean()) {
+                    return -5.0;
+                  }
+                  return 0.0;
+                }));
+
+    // Elevator commands
+    // controller
+    //     .rightBumper()
+    //     .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> controller.getRightY()));
+    controller.povDown().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM));
+    controller.povLeft().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2));
+    controller
+        .povRight()
+        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3));
+    controller.povUp().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4));
 
     // Coral commands
-    controller.a().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(0.5)));
-    controller.y().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(1.0)));
-    controller.x().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(0.5)));
-    controller.b().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(1.0)));
+    // controller.a().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(0.5)));
+    // controller.y().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(1.0)));
+    // controller.x().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(0.5)));
+    // controller.b().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(1.0)));
+    controller.a().whileTrue(IntakeCommands.feedIn(algaeIntake));
+    controller.b().whileTrue(IntakeCommands.feedOut(algaeIntake));
+
+    controller
+        .x()
+        .onTrue(IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE));
+    controller
+        .y()
+        .onTrue(IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
+
     // controller
     //     .leftBumper()
     //     .whileTrue(

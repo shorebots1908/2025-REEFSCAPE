@@ -44,6 +44,10 @@ public class GyroIOPigeon2 implements GyroIO {
     yawPositionQueue = SparkOdometryThread.getInstance().registerSignal(yaw::getValueAsDouble);
   }
 
+  public void reset() {
+    pigeon.reset();
+  }
+
   @Override
   public void updateInputs(GyroIOInputs inputs) {
     inputs.connected = BaseStatusSignal.refreshAll(yaw, yawVelocity).equals(StatusCode.OK);

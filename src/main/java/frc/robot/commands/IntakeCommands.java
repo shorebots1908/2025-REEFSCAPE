@@ -7,7 +7,13 @@ import frc.robot.subsystems.intake.Intake;
 import java.util.function.DoubleSupplier;
 
 public class IntakeCommands {
-  public static final double FEED_SPEED = 5.0;
+  public static final double FEED_SPEED = 0.3;
+  public static final BasePosition CORAL_WRIST_STOW = new BasePosition(1.0);
+  public static final BasePosition CORAL_WRIST_INTAKE = new BasePosition(0.9);
+  public static final BasePosition CORAL_WRIST_SCORE = new BasePosition(0.35);
+
+  public static final BasePosition ALGAE_WRIST_STOW = new BasePosition(1.0);
+  public static final BasePosition ALGAE_WRIST_DEPLOY = new BasePosition(0.0);
 
   public static Command moveByJoystick(Intake intake, DoubleSupplier wrist, DoubleSupplier wheels) {
     return Commands.run(
@@ -19,27 +25,35 @@ public class IntakeCommands {
   }
 
   public static Command pickup(Intake intake) {
-    return Commands.sequence(feedOut(intake));
+    return Commands.sequence(goToPosition(intake, CORAL_WRIST_INTAKE), feedIn(intake));
   }
 
   public static Command place(Intake intake) {
-    return Commands.run(() -> {}, intake);
+    return Commands.sequence(goToPosition(intake, CORAL_WRIST_SCORE), feedOut(intake));
   }
 
   public static Command feedIn(Intake intake) {
     return Commands.run(
-        () -> {
-          intake.setFeedOpenLoop(-FEED_SPEED);
-        },
-        intake);
+            () -> {
+              intake.setFeedOpenLoop(-FEED_SPEED);
+            },
+            intake)
+        .finallyDo(
+            () -> {
+              intake.feedStop();
+            });
   }
 
   public static Command feedOut(Intake intake) {
     return Commands.run(
-        () -> {
-          intake.setFeedOpenLoop(FEED_SPEED);
-        },
-        intake);
+            () -> {
+              intake.setFeedOpenLoop(FEED_SPEED);
+            },
+            intake)
+        .finallyDo(
+            () -> {
+              intake.feedStop();
+            });
   }
 
   public static Command setTargetPosition(Intake intake, BasePosition position) {
@@ -77,14 +91,8 @@ public class IntakeCommands {
         .withName("WaitUntilCoralIsHolding");
   }
 
-  public static Command waitUntilElevatorAtTargetPosition(Intake intake) {
-    return Commands.idle(intake)
-        .until(intake::atTargetPosition)
-        .withName("WaitUntilElevatorAtTargetPosition");
-  }
-
   public static Command goToPosition(Intake intake, BasePosition position) {
     return Commands.sequence(
-        setTargetPosition(intake, position), waitUntilCoralAtTargetPosition(intake).withTimeout(1));
+        setTargetPosition(intake, position), waitUntilCoralAtTargetPosition(intake));
   }
 }

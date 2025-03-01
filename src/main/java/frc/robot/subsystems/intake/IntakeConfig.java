@@ -10,6 +10,7 @@ public class IntakeConfig {
   public final double dGain;
   public final double encoderLowerLimit;
   public final double encoderUpperLimit;
+  public final boolean encoderInvert;
 
   public IntakeConfig(
       String name,
@@ -20,7 +21,8 @@ public class IntakeConfig {
       double i,
       double d,
       double lowerLimit,
-      double upperLimit) {
+      double upperLimit,
+      boolean encoderInvert) {
     this.name = name;
     this.leftMotorId = leftMotorId;
     this.rightMotorId = rightMotorId;
@@ -30,5 +32,6 @@ public class IntakeConfig {
     this.dGain = d;
     this.encoderLowerLimit = lowerLimit;
     this.encoderUpperLimit = upperLimit;
+    this.encoderInvert = encoderInvert;
   }
 }

@@ -231,8 +231,8 @@ public class Drive extends SubsystemBase {
     stop();
   }
 
-  public void gyroResetY() {
-    // gyroIO.reset();
+  public void gyroReset() {
+    gyroIO.reset();
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */

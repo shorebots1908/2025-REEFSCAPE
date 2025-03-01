@@ -9,18 +9,17 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class ElevatorCommands {
   public static final BasePosition BOTTOM = new BasePosition(0.0);
-  public static final BasePosition IDLE = new BasePosition(0.2);
-  public static final BasePosition L2 = new BasePosition(0.3);
-  public static final BasePosition STATION = new BasePosition(0.4);
-  public static final BasePosition L3 = new BasePosition(0.6);
-  public static final BasePosition L4 = new BasePosition(1.0);
+  public static final BasePosition CORAL_L2 = new BasePosition(0.091);
+  public static final BasePosition CORAL_L3 = new BasePosition(0.45);
+  public static final BasePosition CORAL_L4 = new BasePosition(1.0);
 
   public static Command moveByJoystick(Elevator elevator, DoubleSupplier value) {
     return Commands.run(
-        () -> {
-          elevator.setElevatorOpenLoop(value.getAsDouble());
-        },
-        elevator);
+            () -> {
+              elevator.setElevatorOpenLoop(value.getAsDouble());
+            },
+            elevator)
+        .finallyDo(() -> {});
   }
 
   public static Command setTargetPosition(Elevator elevator, BasePosition position) {

@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SoftLimitConfig;
@@ -29,7 +30,7 @@ public class IntakeIOSparkMax implements IntakeIO {
   private double targetEncoderPosition = 0;
 
   // How close the wrist needs to be to be "close enough"
-  private double targetThreshold = 1.0;
+  private double targetThreshold = 0.01;
 
   // Whether the wrist is currently close enough
   private boolean atTarget = false;
@@ -53,6 +54,7 @@ public class IntakeIOSparkMax implements IntakeIO {
     // Wrist motor configuration
     SparkMaxConfig wristConfig = new SparkMaxConfig();
     wristConfig
+        .apply(new AbsoluteEncoderConfig().inverted(true))
         .closedLoopRampRate(0.1)
         .apply(
             new ClosedLoopConfig()
@@ -67,7 +69,7 @@ public class IntakeIOSparkMax implements IntakeIO {
                 .reverseSoftLimit(config.encoderLowerLimit)
                 .reverseSoftLimitEnabled(false));
     wristMotor.configure(
-        wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        wristConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void periodic() {
@@ -75,20 +77,29 @@ public class IntakeIOSparkMax implements IntakeIO {
     double distance = targetEncoderPosition - inputs.positionRevs;
     double distanceAbsolute = Math.abs(distance);
     atTarget = distanceAbsolute < targetThreshold;
-    wristController.setReference(targetEncoderPosition, ControlType.kPosition);
+    BasePosition basePosition =
+        BasePosition.fromRange(config.encoderLowerLimit, config.encoderUpperLimit, position);
 
     Logger.recordOutput(String.format("%s/WristEncoder", config.name), position);
+    Logger.recordOutput(
+        String.format("%s/WristBasePosition", config.name), basePosition.getValue());
     Logger.recordOutput(String.format("%s/DistanceToTarget", config.name), distanceAbsolute);
     Logger.recordOutput(String.format("%s/AtTarget", config.name), atTarget);
+    Logger.recordOutput(
+        String.format("%s/TargetEncoderPosition", config.name), targetEncoderPosition);
   }
 
   public String name() {
     return config.name;
   }
 
+  public void feedStop() {
+    leftMotor.stopMotor();
+  }
+
   public void updateInputs(IntakeIO.IntakeIOInputs inputs) {
     // TODO
-    ifOk(leftMotor, wristEncoder::getPosition, (value) -> inputs.positionRevs = value);
+    ifOk(wristMotor, wristEncoder::getPosition, (value) -> inputs.positionRevs = value);
 
     this.inputs = inputs;
   }
@@ -99,18 +110,19 @@ public class IntakeIOSparkMax implements IntakeIO {
 
   @Override
   public void setWristOpenLoop(double output) {
-    wristMotor.setVoltage(output * 12);
-    Logger.recordOutput(String.format("%s/OpenLoopOutput", config.name), output * 12);
+    wristMotor.set(output);
+    Logger.recordOutput(String.format("%s/OpenLoopOutput", config.name), output);
   }
 
   @Override
   public void setFeedOpenLoop(double output) {
-    leftMotor.setVoltage(output);
+    leftMotor.set(output);
   }
 
   @Override
   public void setTargetPosition(BasePosition position) {
     targetEncoderPosition = position.toRange(config.encoderLowerLimit, config.encoderUpperLimit);
+    wristController.setReference(targetEncoderPosition, ControlType.kPosition);
   }
 
   public boolean isHolding() {
