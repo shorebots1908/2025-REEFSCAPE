@@ -60,7 +60,7 @@ public class RobotContainer {
   private final Vision vision;
   private final Elevator elevator;
   private final Intake coralIntake;
-  private final Intake algaeIntake; // TODO enable algae intake
+  private final Intake algaeIntake;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -74,9 +74,9 @@ public class RobotContainer {
     vision = initVision();
     elevator = initElevator(new ElevatorConfig(9, 10, 1.0, 0.0, 0.0, 0.0, 63.7));
     coralIntake =
-        initIntake(new IntakeConfig("Coral", 11, 12, 19, 5.0, 0.5, 0.0, 0.125, 0.721, true));
+        initIntake(new IntakeConfig("Coral", 11, 12, 19, 10.0, 0.001, 0.0, 0.252, 0.646, true));
     algaeIntake =
-        initIntake(new IntakeConfig("Algae", 13, 14, 17, 5.0, 0.0, 0.0, 0.04, 0.31, false));
+        initIntake(new IntakeConfig("Algae", 13, 14, 17, 10.0, 0.001, 0.0, 0.05, 0.36, false));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -171,15 +171,20 @@ public class RobotContainer {
     // controller.y().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(1.0)));
     // controller.x().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(0.5)));
     // controller.b().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(1.0)));
-    controller.a().whileTrue(IntakeCommands.feedIn(algaeIntake));
-    controller.b().whileTrue(IntakeCommands.feedOut(algaeIntake));
+    controller
+        .a()
+        .whileTrue(
+            IntakeCommands.setTargetPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY));
+    controller
+        .b()
+        .whileTrue(IntakeCommands.setTargetPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW));
 
     controller
         .x()
-        .onTrue(IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE));
+        .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE));
     controller
         .y()
-        .onTrue(IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
+        .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
 
     // controller
     //     .leftBumper()

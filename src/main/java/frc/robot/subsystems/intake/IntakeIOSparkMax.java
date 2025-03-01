@@ -54,8 +54,8 @@ public class IntakeIOSparkMax implements IntakeIO {
     // Wrist motor configuration
     SparkMaxConfig wristConfig = new SparkMaxConfig();
     wristConfig
-        .apply(new AbsoluteEncoderConfig().inverted(true))
-        .closedLoopRampRate(0.1)
+        .apply(new AbsoluteEncoderConfig().inverted(config.encoderInvert))
+        .closedLoopRampRate(1.0)
         .apply(
             new ClosedLoopConfig()
                 .p(config.pGain)
