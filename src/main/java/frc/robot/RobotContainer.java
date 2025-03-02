@@ -25,6 +25,11 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.subsystems.BasePosition;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberConfig;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOSim;
+import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -61,6 +66,7 @@ public class RobotContainer {
   private final Elevator elevator;
   private final Intake coralIntake;
   private final Intake algaeIntake;
+  private final Climber climber;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -76,7 +82,8 @@ public class RobotContainer {
     coralIntake =
         initIntake(new IntakeConfig("Coral", 11, 12, 19, 10.0, 0.001, 0.0, 0.252, 0.646, true));
     algaeIntake =
-        initIntake(new IntakeConfig("Algae", 13, 14, 17, 10.0, 0.001, 0.0, 0.05, 0.36, false));
+        initIntake(new IntakeConfig("Algae", 13, 14, 17, 10.0, 0.001, 0.0, 0.378, 0.695, false));
+    climber = initClimber(new ClimberConfig(15, 16, 5.0, 0.0, 0.0, 0.0, 45.0));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -165,6 +172,77 @@ public class RobotContainer {
         .povRight()
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3));
     controller.povUp().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4));
+    controller
+        .povDown()
+        .and(controller.leftBumper().negate())
+        .and(controller.rightBumper().negate())
+        .onTrue(
+            IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW)
+                .alongWith(
+                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
+                    ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM)));
+    // algae set positions
+    controller
+        .leftBumper()
+        .and(controller.povUp())
+        .onTrue(
+            ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_PROC)
+                .alongWith(
+                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
+                    IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY)));
+    controller
+        .leftBumper()
+        .and(controller.povDown())
+        .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW));
+    controller
+        .leftBumper()
+        .and(controller.povRight())
+        .onTrue(
+            ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L3)
+                .alongWith(
+                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
+                    IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY)));
+    controller
+        .leftBumper()
+        .and(controller.povLeft())
+        .onTrue(
+            ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L2)
+                .alongWith(
+                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
+                    IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY)));
+
+    controller
+        .rightBumper()
+        .and(controller.povUp())
+        .onTrue(
+            ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4)
+                .alongWith(
+                    IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW),
+                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
+    controller
+        .rightBumper()
+        .and(controller.povDown())
+        .onTrue(
+            ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM)
+                .alongWith(
+                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE),
+                    IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW)));
+    controller
+        .rightBumper()
+        .and(controller.povRight())
+        .onTrue(
+            ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3)
+                .alongWith(
+                    IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW),
+                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
+    controller
+        .rightBumper()
+        .and(controller.povLeft())
+        .onTrue(
+            ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2)
+                .alongWith(
+                    IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW),
+                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
 
     // Coral commands
     // controller.a().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(0.5)));
@@ -298,6 +376,22 @@ public class RobotContainer {
       default:
         // Replayed robot, disable IO implementations
         return new Elevator(new ElevatorIO() {});
+    }
+  }
+
+  private Climber initClimber(ClimberConfig config) {
+    switch (Constants.currentMode) {
+      case REAL:
+        // Real robot, instantiate hardware IO implementations
+        return new Climber(new ClimberIOSparkMax(config));
+
+      case SIM:
+        // Sim robot, instantiate physics sim IO implementations
+        return new Climber(new ClimberIOSim());
+
+      default:
+        // Replayed robot, disable IO implementations
+        return new Climber(new ClimberIO() {});
     }
   }
 
