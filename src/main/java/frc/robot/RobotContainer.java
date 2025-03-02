@@ -80,9 +80,9 @@ public class RobotContainer {
     vision = initVision();
     elevator = initElevator(new ElevatorConfig(9, 10, 1.0, 0.0, 0.0, 0.0, 63.7));
     coralIntake =
-        initIntake(new IntakeConfig("Coral", 11, 12, 19, 10.0, 0.001, 0.0, 0.252, 0.646, true));
+        initIntake(new IntakeConfig("Coral", 11, 12, 19, 10.0, 0.001, 0.0, 0.252, 0.646, true, IntakeCommands.CORAL_WRIST_STOW));
     algaeIntake =
-        initIntake(new IntakeConfig("Algae", 13, 14, 17, 10.0, 0.001, 0.0, 0.378, 0.695, false));
+        initIntake(new IntakeConfig("Algae", 13, 14, 17, 10.0, 0.001, 0.0, 0.378, 0.695, false, IntakeCommands.ALGAE_WRIST_STOW));
     climber = initClimber(new ClimberConfig(15, 16, 5.0, 0.0, 0.0, 0.0, 45.0));
 
     // Set up auto routines
@@ -166,12 +166,12 @@ public class RobotContainer {
     // controller
     //     .rightBumper()
     //     .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> controller.getRightY()));
-    controller.povDown().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM));
-    controller.povLeft().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2));
+    // controller.povDown().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM));
+    controller.povLeft().and(controller.leftBumper().negate()).and(controller.rightBumper().negate()).onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2));
     controller
-        .povRight()
+        .povRight().and(controller.leftBumper().negate()).and(controller.rightBumper().negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3));
-    controller.povUp().onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4));
+    controller.povUp().and(controller.leftBumper().negate()).and(controller.rightBumper().negate()).onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4));
     controller
         .povDown()
         .and(controller.leftBumper().negate())

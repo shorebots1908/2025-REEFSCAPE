@@ -1,5 +1,7 @@
 package frc.robot.subsystems.intake;
 
+import frc.robot.subsystems.BasePosition;
+
 public class IntakeConfig {
   public final String name;
   public final int leftMotorId;
@@ -11,6 +13,7 @@ public class IntakeConfig {
   public final double encoderLowerLimit;
   public final double encoderUpperLimit;
   public final boolean encoderInvert;
+  public final BasePosition startPosition;
 
   public IntakeConfig(
       String name,
@@ -22,7 +25,8 @@ public class IntakeConfig {
       double d,
       double lowerLimit,
       double upperLimit,
-      boolean encoderInvert) {
+      boolean encoderInvert,
+      BasePosition startPosition){
     this.name = name;
     this.leftMotorId = leftMotorId;
     this.rightMotorId = rightMotorId;
@@ -33,5 +37,6 @@ public class IntakeConfig {
     this.encoderLowerLimit = lowerLimit;
     this.encoderUpperLimit = upperLimit;
     this.encoderInvert = encoderInvert;
+    this.startPosition = startPosition;
   }
 }

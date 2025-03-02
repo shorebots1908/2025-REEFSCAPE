@@ -37,7 +37,7 @@ public class IntakeIOSparkMax implements IntakeIO {
 
   public IntakeIOSparkMax(IntakeConfig config) {
     this.config = config;
-
+    targetEncoderPosition = config.startPosition.toRange(config.encoderLowerLimit, config.encoderUpperLimit);
     // Left wheel is leader
     leftMotor = new SparkMax(config.leftMotorId, MotorType.kBrushless);
     rightMotor = new SparkMax(config.rightMotorId, MotorType.kBrushless);
