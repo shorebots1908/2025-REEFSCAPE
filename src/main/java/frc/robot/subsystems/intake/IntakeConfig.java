@@ -26,7 +26,7 @@ public class IntakeConfig {
       double lowerLimit,
       double upperLimit,
       boolean encoderInvert,
-      BasePosition startPosition){
+      BasePosition startPosition) {
     this.name = name;
     this.leftMotorId = leftMotorId;
     this.rightMotorId = rightMotorId;
