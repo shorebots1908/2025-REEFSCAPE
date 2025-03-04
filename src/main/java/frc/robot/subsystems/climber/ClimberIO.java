@@ -15,11 +15,9 @@ public interface ClimberIO {
 
   public default void updateInputs(ClimberIOInputs inputs) {}
 
+  public default void setOpenLoop(double output) {}
+
   public default void setTargetPosition(BasePosition position) {}
-
-  public default void setTargetPosition(double position) {}
-
-  public default void goToPosition(BasePosition position) {}
 
   public default boolean atTargetPosition() {
     return false;

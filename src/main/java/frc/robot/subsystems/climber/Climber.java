@@ -19,20 +19,16 @@ public class Climber extends SubsystemBase {
     io.periodic();
   }
 
-  public void setTargetPosition(BasePosition position) {
-    io.setTargetPosition(position);
+  public void setOpenLoop(double output) {
+    io.setOpenLoop(output);
   }
 
-  public void setTargetPosition(double position) {
+  public void setTargetPosition(BasePosition position) {
     io.setTargetPosition(position);
   }
 
   public boolean atTargetPosition() {
     return io.atTargetPosition();
-  }
-
-  public void goToPosition(BasePosition position) {
-    io.goToPosition(position);
   }
 
   public void positionStop() {

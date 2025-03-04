@@ -54,7 +54,7 @@ public class ClimberIOSparkMax implements ClimberIO {
 
     // Follower: Right motor config
     SparkMaxConfig followConfig = new SparkMaxConfig();
-    followConfig.follow(15, true);
+    followConfig.follow(config.leftMotorCanId, true);
     followConfig.idleMode(IdleMode.kBrake);
     rightMotor.configure(
         followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -67,6 +67,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     BasePosition basePosition =
         BasePosition.fromRange(
             config.encoderLowerLimit, config.encoderUpperLimit, inputs.positionTau);
+    Logger.recordOutput("Climber/EncoderPosition", inputs.positionTau);
     Logger.recordOutput("Climber/BasePosition", basePosition.getValue());
   }
 
@@ -76,13 +77,12 @@ public class ClimberIOSparkMax implements ClimberIO {
     this.inputs = inputs;
   }
 
-  public void setTargetPosition(BasePosition position) {
-    targetEncoderPosition = position.toRange(config.encoderLowerLimit, config.encoderUpperLimit);
-    controller.setReference(targetEncoderPosition, ControlType.kMAXMotionPositionControl);
+  public void setOpenLoop(double output) {
+    leftMotor.set(output);
   }
 
-  public void setTargetPosition(double position) {
-    targetEncoderPosition = position;
+  public void setTargetPosition(BasePosition position) {
+    targetEncoderPosition = position.toRange(config.encoderLowerLimit, config.encoderUpperLimit);
     controller.setReference(targetEncoderPosition, ControlType.kMAXMotionPositionControl);
   }
 

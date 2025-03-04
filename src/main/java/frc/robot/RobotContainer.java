@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AutoCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
@@ -69,7 +69,8 @@ public class RobotContainer {
   private final Climber climber;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController player1 = new CommandXboxController(0);
+  private final CommandXboxController player2 = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -112,43 +113,9 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    // Set up SysId routines
-    configureAutoCommand(
-        autoChooser,
-        "drive-wheel-radius-characterization",
-        DriveCommands.wheelRadiusCharacterization(drive));
-    configureAutoCommand(
-        autoChooser,
-        "drive-simple-ff-characterization",
-        DriveCommands.feedforwardCharacterization(drive));
-    configureAutoCommand(
-        autoChooser,
-        "drive-sysid-quasistatic-forward",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    configureAutoCommand(
-        autoChooser,
-        "drive-sysid-quasistatic-reverse",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    configureAutoCommand(
-        autoChooser,
-        "drive-sysid-dynamic-forward",
-        drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    configureAutoCommand(
-        autoChooser,
-        "drive-sysid-dynamic-reverse",
-        drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-    configureAutoCommand(
-        autoChooser,
-        "Elevator Top",
-        ElevatorCommands.setTargetPosition(elevator, new BasePosition(1.0)));
-    configureAutoCommand(
-        autoChooser,
-        "Elevator Bottom",
-        ElevatorCommands.setTargetPosition(elevator, new BasePosition(0.0)));
-
     // Configure the button bindings
     configureButtonBindings();
+    configureAutoCommands();
   }
 
   /**
@@ -158,33 +125,22 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    configurePlayer1();
+    configurePlayer2();
+  }
+
+  private void configurePlayer1() {
     // Drive commands
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -player1.getLeftY(),
+            () -> -player1.getLeftX(),
+            () -> -player1.getRightX()));
 
-    controller.start().onTrue(Commands.runOnce(drive::gyroReset, drive));
+    player1.start().onTrue(Commands.runOnce(drive::gyroReset, drive));
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
-    controller
-        .leftTrigger(0.5)
-        .whileTrue(
-            IntakeCommands.moveByJoystick(
-                coralIntake,
-                () -> -controller.getRightY(),
-                () -> {
-                  if (controller.y().getAsBoolean()) {
-                    return 5.0;
-                  }
-                  if (controller.a().getAsBoolean()) {
-                    return -5.0;
-                  }
-                  return 0.0;
-                }));
 
     // Elevator commands
     // controller
@@ -192,150 +148,211 @@ public class RobotContainer {
     //     .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> controller.getRightY()));
     // controller.povDown().onTrue(ElevatorCommands.goToPosition(elevator,
     // ElevatorCommands.BOTTOM));
-    controller
+    player1
         .povLeft()
-        .and(controller.leftBumper().negate())
-        .and(controller.rightBumper().negate())
+        .and(player1.leftBumper().negate())
+        .and(player1.rightBumper().negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2));
-    controller
+    player1
         .povRight()
-        .and(controller.leftBumper().negate())
-        .and(controller.rightBumper().negate())
+        .and(player1.leftBumper().negate())
+        .and(player1.rightBumper().negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3));
-    controller
+    player1
         .povUp()
-        .and(controller.leftBumper().negate())
-        .and(controller.rightBumper().negate())
+        .and(player1.leftBumper().negate())
+        .and(player1.rightBumper().negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4));
-    controller
+    // Elevator down with stow
+    // player1
+    //     .povDown()
+    //     .and(player1.leftBumper().negate())
+    //     .and(player1.rightBumper().negate())
+    //     .onTrue(
+    //         IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW)
+    //             .alongWith(
+    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
+    //                 ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM)));
+    
+    // Elevator down, no stow
+    player1
         .povDown()
-        .and(controller.leftBumper().negate())
-        .and(controller.rightBumper().negate())
-        .onTrue(
-            IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW)
-                .alongWith(
-                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
-                    ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM)));
-    // algae set positions
-    controller
-        .leftBumper()
-        .and(controller.povUp())
-        .onTrue(
-            ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_PROC)
-                .alongWith(
-                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
-                    IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY)));
-    controller
-        .leftBumper()
-        .and(controller.povDown())
-        .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW));
-    controller
-        .leftBumper()
-        .and(controller.povRight())
-        .onTrue(
-            ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L3)
-                .alongWith(
-                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
-                    IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY)));
-    controller
-        .leftBumper()
-        .and(controller.povLeft())
-        .onTrue(
-            ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L2)
-                .alongWith(
-                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
-                    IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY)));
+        .and(player1.leftBumper().negate())
+        .and(player1.rightBumper().negate())
+        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM));
 
-    controller
-        .rightBumper()
-        .and(controller.povUp())
-        .onTrue(
-            ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4)
-                .alongWith(
-                    IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW),
-                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
-    controller
-        .rightBumper()
-        .and(controller.povDown())
-        .onTrue(
-            ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM)
-                .alongWith(
-                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE),
-                    IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW)));
-    controller
-        .rightBumper()
-        .and(controller.povRight())
-        .onTrue(
-            ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3)
-                .alongWith(
-                    IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW),
-                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
-    controller
-        .rightBumper()
-        .and(controller.povLeft())
-        .onTrue(
-            ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2)
-                .alongWith(
-                    IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW),
-                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
+    // Algae set positions
+    // player1
+    //     .leftBumper()
+    //     .and(player1.povUp())
+    //     .onTrue(
+    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_PROC)
+    //             .alongWith(
+    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
+    //                 IntakeCommands.goToPosition(algaeIntake,
+    // IntakeCommands.ALGAE_WRIST_DEPLOY)));
+    // player1
+    //     .leftBumper()
+    //     .and(player1.povDown())
+    //     .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW));
+    // player1
+    //     .leftBumper()
+    //     .and(player1.povRight())
+    //     .onTrue(
+    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L3)
+    //             .alongWith(
+    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
+    //                 IntakeCommands.goToPosition(algaeIntake,
+    // IntakeCommands.ALGAE_WRIST_DEPLOY)));
+    // player1
+    //     .leftBumper()
+    //     .and(player1.povLeft())
+    //     .onTrue(
+    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L2)
+    //             .alongWith(
+    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
+    //                 IntakeCommands.goToPosition(algaeIntake,
+    // IntakeCommands.ALGAE_WRIST_DEPLOY)));
+
+    // player1
+    //     .rightBumper()
+    //     .and(player1.povUp())
+    //     .onTrue(
+    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4)
+    //             .alongWith(
+    //                 IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW),
+    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
+    // player1
+    //     .rightBumper()
+    //     .and(player1.povDown())
+    //     .onTrue(
+    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM)
+    //             .alongWith(
+    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE),
+    //                 IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW)));
+    // player1
+    //     .rightBumper()
+    //     .and(player1.povRight())
+    //     .onTrue(
+    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3)
+    //             .alongWith(
+    //                 IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW),
+    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
+    // player1
+    //     .rightBumper()
+    //     .and(player1.povLeft())
+    //     .onTrue(
+    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2)
+    //             .alongWith(
+    //                 IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW),
+    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
 
     // Coral commands
     // controller.a().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(0.5)));
     // controller.y().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(1.0)));
     // controller.x().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(0.5)));
     // controller.b().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(1.0)));
-    controller
+    player1
         .a()
         .whileTrue(
             IntakeCommands.setTargetPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY));
-    controller
+    player1
         .b()
         .whileTrue(IntakeCommands.setTargetPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW));
 
-    controller
+    player1
         .x()
         .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE));
-    controller
+    player1
         .y()
         .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
+  }
 
-    // controller
-    //     .leftBumper()
+  private void configurePlayer2() {
+    // Manual coral commands
+    coralIntake.setDefaultCommand(
+        IntakeCommands.moveByJoystick(coralIntake, () -> -player2.getLeftY() * 0.5, () -> 0.0));
+    player2.x().whileTrue(IntakeCommands.feedOut(coralIntake));
+    player2.a().whileTrue(IntakeCommands.feedIn(coralIntake));
+
+    algaeIntake.setDefaultCommand(
+        IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY() * 0.5, () -> 0.0));
+    player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake));
+    player2.b().whileTrue(IntakeCommands.feedOut(algaeIntake));
+
+    player2
+        .leftBumper()
+        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> 0.3))
+        .onFalse(ElevatorCommands.moveByJoystick(elevator, () -> 0.0));
+    player2
+        .rightBumper()
+        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> -0.3))
+        .onFalse(ElevatorCommands.moveByJoystick(elevator, () -> 0.0));
+
+    // player2
+    //     .leftTrigger(0.5)
     //     .whileTrue(
     //         IntakeCommands.moveByJoystick(
     //             coralIntake,
-    //             () -> -controller.getRightY(),
+    //             () -> -player2.getRightY(),
     //             () -> {
-    //               if (controller.y().getAsBoolean()) {
+    //               if (player2.y().getAsBoolean()) {
     //                 return 5.0;
     //               }
-    //               if (controller.a().getAsBoolean()) {
+    //               if (player2.a().getAsBoolean()) {
     //                 return -5.0;
     //               }
     //               return 0.0;
     //             }));
 
-    controller
-        .leftBumper()
-        .whileTrue(
-            IntakeCommands.moveByJoystick(
-                algaeIntake,
-                () -> -controller.getRightY(),
-                () -> {
-                  if (controller.y().getAsBoolean()) {
-                    return 5.0;
-                  }
-                  if (controller.a().getAsBoolean()) {
-                    return -5.0;
-                  }
-                  return 0.0;
-                }));
+    // // Manual climber commands
+    // player2
+    //     .rightTrigger(0.5)
+    //     .whileTrue(ClimberCommands.joystick(climber, () -> player2.getRightY()))
+    //     .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
   }
 
-  private void configureAutoCommand(
-      LoggedDashboardChooser<Command> chooser, String name, Command command) {
-    chooser.addOption(name, command);
+  private void configureAutoCommand(String name, Command command) {
+    autoChooser.addOption(name, command);
     NamedCommands.registerCommand(name, command);
+  }
+
+  private void configureAutoCommands() {
+    // // Set up SysId routines
+    // configureAutoCommand(
+    //     autoChooser,
+    //     "drive-wheel-radius-characterization",
+    //     DriveCommands.wheelRadiusCharacterization(drive));
+    // configureAutoCommand(
+    //     autoChooser,
+    //     "drive-simple-ff-characterization",
+    //     DriveCommands.feedforwardCharacterization(drive));
+    // configureAutoCommand(
+    //     autoChooser,
+    //     "drive-sysid-quasistatic-forward",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // configureAutoCommand(
+    //     autoChooser,
+    //     "drive-sysid-quasistatic-reverse",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // configureAutoCommand(
+    //     autoChooser,
+    //     "drive-sysid-dynamic-forward",
+    //     drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // configureAutoCommand(
+    //     autoChooser,
+    //     "drive-sysid-dynamic-reverse",
+    //     drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    configureAutoCommand(
+        "elevator-top", ElevatorCommands.setTargetPosition(elevator, new BasePosition(1.0)));
+    configureAutoCommand(
+        "elevator-bottom", ElevatorCommands.setTargetPosition(elevator, new BasePosition(0.0)));
+
+    configureAutoCommand(
+        "score-l3", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L3));
+    configureAutoCommand(
+        "score-l4", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L3));
   }
 
   /**
@@ -344,7 +361,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return DriveCommands.autoPath(drive);
+    return autoChooser.get();
+    // return DriveCommands.autoPath(drive);
   }
 
   private Drive initDrive() {
@@ -383,14 +401,17 @@ public class RobotContainer {
         // Real robot, instantiate hardware IO implementations
         return new Vision(
             drive::addVisionMeasurement,
-            new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0));
+            new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0),
+            new VisionIOPhotonVision(VisionConstants.camera1Name, VisionConstants.robotToCamera1));
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
         return new Vision(
             drive::addVisionMeasurement,
             new VisionIOPhotonVisionSim(
-                VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose));
+                VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
+            new VisionIOPhotonVisionSim(
+                VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
 
       default:
         // Replayed robot, disable IO implementations
