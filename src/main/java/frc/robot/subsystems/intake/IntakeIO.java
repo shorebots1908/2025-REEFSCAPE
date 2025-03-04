@@ -8,6 +8,7 @@ public interface IntakeIO {
   public static class IntakeIOInputs {
     public boolean connected = false;
     public double positionRevs = 0.0;
+    public int sensorValue = 0;
   }
 
   public default void periodic() {}

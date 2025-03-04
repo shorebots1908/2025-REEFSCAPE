@@ -9,7 +9,7 @@ import frc.robot.subsystems.intake.Intake;
 public class AutoCommands {
   public static Command pickup(Intake intake, Elevator elevator) {
     return Commands.sequence(
-        ElevatorCommands.setTargetPosition(elevator, new BasePosition(0.5)),
+        ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.BOTTOM),
         ElevatorCommands.waitUntilElevatorAtTargetPosition(elevator),
         IntakeCommands.pickup(intake),
         IntakeCommands.waitUntilCoralIsHolding(intake, true)

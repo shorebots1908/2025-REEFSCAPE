@@ -87,11 +87,14 @@ public class RobotContainer {
                 11,
                 12,
                 19,
-                10.0,
+                0,
+                3335,
+                6.0,
                 0.001,
                 0.0,
+                0.5,
                 0.252,
-                0.646,
+                0.669,
                 true,
                 IntakeCommands.CORAL_WRIST_STOW));
     algaeIntake =
@@ -101,11 +104,14 @@ public class RobotContainer {
                 13,
                 14,
                 17,
-                10.0,
+                1,
+                3335,
+                6.0,
                 0.001,
                 0.0,
-                0.378,
-                0.695,
+                0.5,
+                0.399,
+                0.674,
                 false,
                 IntakeCommands.ALGAE_WRIST_STOW));
     climber = initClimber(new ClimberConfig(15, 16, 5.0, 0.0, 0.0, 0.0, 45.0));
@@ -173,7 +179,7 @@ public class RobotContainer {
     //             .alongWith(
     //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
     //                 ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM)));
-    
+
     // Elevator down, no stow
     player1
         .povDown()
@@ -269,14 +275,23 @@ public class RobotContainer {
   }
 
   private void configurePlayer2() {
-    // Manual coral commands
-    coralIntake.setDefaultCommand(
-        IntakeCommands.moveByJoystick(coralIntake, () -> -player2.getLeftY() * 0.5, () -> 0.0));
+    // // Manual coral commands
+    // coralIntake.setDefaultCommand(
+    //     IntakeCommands.moveByJoystick(coralIntake, () -> -player2.getLeftY() * 0.5, () -> 0.0));
+    player2
+        .rightTrigger(0.5)
+        .whileTrue(IntakeCommands.moveByJoystick(coralIntake, () -> player2.getRightY(), () -> 0.0))
+        .onFalse(IntakeCommands.moveByJoystick(coralIntake, () -> 0.0, () -> 0.0));
     player2.x().whileTrue(IntakeCommands.feedOut(coralIntake));
     player2.a().whileTrue(IntakeCommands.feedIn(coralIntake));
 
-    algaeIntake.setDefaultCommand(
-        IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY() * 0.5, () -> 0.0));
+    // algaeIntake.setDefaultCommand(
+    //     IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY() * 0.5, () -> 0.0));
+    player2
+        .leftTrigger(0.5)
+        .whileTrue(IntakeCommands.moveByJoystick(algaeIntake, () -> player2.getLeftY(), () -> 0.0))
+        .onFalse(IntakeCommands.moveByJoystick(algaeIntake, () -> 0.0, () -> 0.0));
+
     player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake));
     player2.b().whileTrue(IntakeCommands.feedOut(algaeIntake));
 
@@ -349,6 +364,9 @@ public class RobotContainer {
     configureAutoCommand(
         "elevator-bottom", ElevatorCommands.setTargetPosition(elevator, new BasePosition(0.0)));
 
+    configureAutoCommand("pickup", AutoCommands.pickup(coralIntake, elevator));
+    configureAutoCommand(
+        "score-l3", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L2));
     configureAutoCommand(
         "score-l3", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L3));
     configureAutoCommand(

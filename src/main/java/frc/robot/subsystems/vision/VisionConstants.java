@@ -17,6 +17,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 
 public class VisionConstants {
   // AprilTag layout
@@ -25,28 +26,18 @@ public class VisionConstants {
 
   // Camera names, must match names configured on coprocessor
   public static String camera0Name = "camera0";
-  public static String camera1Name = "camera1";
+  public static String camera1Name = "camera1";  
 
-  //   private static LoggedNetworkNumber robotToCamera0TunableX =
-  //       new LoggedNetworkNumber("/Tuning/RobotToCamera0X", -0.37);
-  //   private static LoggedNetworkNumber robotToCamera0TunableY =
-  //       new LoggedNetworkNumber("/Tuning/RobotToCamera0Y", 0.0);
-  //   private static LoggedNetworkNumber robotToCamera0TunableZ =
-  //       new LoggedNetworkNumber("/Tuning/RobotToCamera0Z", 0.16);
-  // Robot to camera transforms14.5 meters, 6 and a quarter inches
-  // (Not used by Limelight, configure in web UI instead)
-  public static Transform3d robotToCamera0 =
-      new Transform3d(-0.37, 0.0, 0.15875, new Rotation3d(0.0, 0.0, Math.PI));
-  public static Transform3d robotToCamera1 =
-      new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
-
-  //   public static Transform3d robotToCamera0() {
-  //     return new Transform3d(
-  //         robotToCamera0TunableX.get(),
-  //         robotToCamera0TunableY.get(),
-  //         robotToCamera0TunableZ.get(),
-  //         new Rotation3d(0.0, 0.0, 0.0));
-  //   }
+  public static Transform3d robotToCamera0 = new Transform3d(
+    Units.inchesToMeters(10.5),
+    Units.inchesToMeters(6.25),
+    Units.inchesToMeters(30.625),
+    new Rotation3d(0.0, 0.0, 0.0));
+  public static Transform3d robotToCamera1 = new Transform3d(
+    Units.inchesToMeters(8), 
+    Units.inchesToMeters(6.25),
+    Units.inchesToMeters(29.5),
+    new Rotation3d(0.0, 0.0, Math.PI));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
