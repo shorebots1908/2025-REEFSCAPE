@@ -26,18 +26,20 @@ public class VisionConstants {
 
   // Camera names, must match names configured on coprocessor
   public static String camera0Name = "camera0";
-  public static String camera1Name = "camera1";  
+  public static String camera1Name = "camera1";
 
-  public static Transform3d robotToCamera0 = new Transform3d(
-    Units.inchesToMeters(10.5),
-    Units.inchesToMeters(6.25),
-    Units.inchesToMeters(30.625),
-    new Rotation3d(0.0, 0.0, 0.0));
-  public static Transform3d robotToCamera1 = new Transform3d(
-    Units.inchesToMeters(8), 
-    Units.inchesToMeters(6.25),
-    Units.inchesToMeters(29.5),
-    new Rotation3d(0.0, 0.0, Math.PI));
+  public static Transform3d robotToCamera0 =
+      new Transform3d(
+          Units.inchesToMeters(10.5),
+          Units.inchesToMeters(6.25),
+          Units.inchesToMeters(30.625),
+          new Rotation3d(0.0, 0.0, 0.0));
+  public static Transform3d robotToCamera1 =
+      new Transform3d(
+          Units.inchesToMeters(8),
+          Units.inchesToMeters(6.25),
+          Units.inchesToMeters(29.5),
+          new Rotation3d(0.0, 0.0, Math.PI));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;

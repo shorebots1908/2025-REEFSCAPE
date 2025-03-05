@@ -15,6 +15,7 @@ public class IntakeConfig {
   public final double rampRate;
   public final double encoderLowerLimit;
   public final double encoderUpperLimit;
+  public final boolean wristInvert;
   public final boolean encoderInvert;
   public final BasePosition startPosition;
 
@@ -31,6 +32,7 @@ public class IntakeConfig {
       double rampRate,
       double lowerLimit,
       double upperLimit,
+      boolean wristInvert,
       boolean encoderInvert,
       BasePosition startPosition) {
     this.name = name;
@@ -45,6 +47,7 @@ public class IntakeConfig {
     this.rampRate = rampRate;
     this.encoderLowerLimit = lowerLimit;
     this.encoderUpperLimit = upperLimit;
+    this.wristInvert = wristInvert;
     this.encoderInvert = encoderInvert;
     this.startPosition = startPosition;
   }

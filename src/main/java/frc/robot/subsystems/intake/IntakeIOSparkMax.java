@@ -12,8 +12,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SoftLimitConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.AnalogInput;
 import frc.robot.subsystems.BasePosition;
@@ -48,25 +48,23 @@ public class IntakeIOSparkMax implements IntakeIO {
     wristEncoder = wristMotor.getAbsoluteEncoder();
     wristController = wristMotor.getClosedLoopController();
     sensor = new AnalogInput(config.sensorId);
-    
+
     // Leader: Left motor config
     SparkMaxConfig leaderConfig = new SparkMaxConfig();
-    leaderConfig
-      .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(20);
-    leftMotor.configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    leaderConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20);
+    leftMotor.configure(
+        leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // Follower: Right motor config
     SparkMaxConfig followConfig = new SparkMaxConfig();
-    followConfig
-      .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(20)
-      .follow(config.leftMotorId, true);
-    rightMotor.configure(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    followConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).follow(config.leftMotorId, true);
+    rightMotor.configure(
+        followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // Wrist motor configuration
     SparkMaxConfig wristConfig = new SparkMaxConfig();
     wristConfig
+        .inverted(config.wristInvert)
         .apply(new AbsoluteEncoderConfig().inverted(config.encoderInvert))
         .closedLoopRampRate(config.rampRate)
         .apply(
@@ -81,7 +79,8 @@ public class IntakeIOSparkMax implements IntakeIO {
                 .forwardSoftLimitEnabled(false)
                 .reverseSoftLimit(config.encoderLowerLimit)
                 .reverseSoftLimitEnabled(false));
-    wristMotor.configure(wristConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    wristMotor.configure(
+        wristConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void periodic() {
@@ -93,10 +92,12 @@ public class IntakeIOSparkMax implements IntakeIO {
         BasePosition.fromRange(config.encoderLowerLimit, config.encoderUpperLimit, position);
 
     Logger.recordOutput(String.format("%s/WristEncoder", config.name), position);
-    Logger.recordOutput(String.format("%s/WristBasePosition", config.name), basePosition.getValue());
+    Logger.recordOutput(
+        String.format("%s/WristBasePosition", config.name), basePosition.getValue());
     Logger.recordOutput(String.format("%s/DistanceToTarget", config.name), distanceAbsolute);
     Logger.recordOutput(String.format("%s/AtTarget", config.name), atTarget);
-    Logger.recordOutput(String.format("%s/TargetEncoderPosition", config.name), targetEncoderPosition);
+    Logger.recordOutput(
+        String.format("%s/TargetEncoderPosition", config.name), targetEncoderPosition);
     Logger.recordOutput(String.format("%s/SensorValue", config.name), inputs.sensorValue);
     Logger.recordOutput(String.format("%s/SensorHolding", config.name), isHolding());
   }

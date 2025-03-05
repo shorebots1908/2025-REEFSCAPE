@@ -7,22 +7,24 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
 
 public class AutoCommands {
-  public static Command pickup(Intake intake, Elevator elevator) {
+  public static Command pickup(Intake coral, Elevator elevator) {
     return Commands.sequence(
         ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.BOTTOM),
         ElevatorCommands.waitUntilElevatorAtTargetPosition(elevator),
-        IntakeCommands.pickup(intake),
-        IntakeCommands.waitUntilCoralIsHolding(intake, true)
+        IntakeCommands.pickup(coral),
+        IntakeCommands.waitUntilCoralIsHolding(coral, true)
         // IntakeCommands.feedStop(intake)
         );
   }
 
-  public static Command score(Intake intake, Elevator elevator, BasePosition position) {
+  public static Command score(Intake coral, Elevator elevator, BasePosition position) {
     return Commands.sequence(
-        ElevatorCommands.setTargetPosition(elevator, position),
-        ElevatorCommands.waitUntilElevatorAtTargetPosition(elevator),
-        IntakeCommands.place(intake),
-        IntakeCommands.waitUntilCoralIsHolding(intake, false)
+        IntakeCommands.goToPosition(coral, IntakeCommands.CORAL_WRIST_DOWN).withTimeout(0.5),
+        ElevatorCommands.setTargetPosition(elevator, position).withTimeout(0.1),
+        ElevatorCommands.waitUntilElevatorAtTargetPosition(elevator).withTimeout(2),
+        IntakeCommands.goToPosition(coral, IntakeCommands.CORAL_WRIST_SCORE).withTimeout(0.5),
+        IntakeCommands.feedOut(coral).withTimeout(0.5),
+        IntakeCommands.waitUntilCoralIsHolding(coral, false)
         // IntakeCommands.feedStop(intake)
         );
   }
