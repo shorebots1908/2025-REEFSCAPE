@@ -260,13 +260,19 @@ public class RobotContainer {
     // controller.y().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(1.0)));
     // controller.x().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(0.5)));
     // controller.b().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(1.0)));
-    player1
-        .a()
-        .whileTrue(
-            IntakeCommands.setTargetPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY));
+    // player1
+    //    .a()
+    //    .whileTrue(
+    // player1
+    //    .b()
+    //    .whileTrue(IntakeCommands.setTargetPosition(algaeIntake,
+    // IntakeCommands.ALGAE_WRIST_STOW));
+
     player1
         .b()
-        .whileTrue(IntakeCommands.setTargetPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW));
+        .whileTrue(
+            IntakeCommands.feedOut(
+                coralIntake)); 
 
     player1
         .x()
@@ -278,24 +284,55 @@ public class RobotContainer {
 
   private void configurePlayer2() {
     // // Manual coral commands
+    // copied commands from player1 -MZ
+    player2
+        .povLeft()
+        .and(player2.leftBumper().negate())
+        .and(player2.rightBumper().negate())
+        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2));
+    player2
+        .povRight()
+        .and(player2.leftBumper().negate())
+        .and(player2.rightBumper().negate())
+        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3));
+    player2
+        .povUp()
+        .and(player2.leftBumper().negate())
+        .and(player2.rightBumper().negate())
+        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4));
+    player2
+        .povDown()
+        .and(player2.leftBumper().negate())
+        .and(player2.rightBumper().negate())
+        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM));
+
     // coralIntake.setDefaultCommand(
     //     IntakeCommands.moveByJoystick(coralIntake, () -> -player2.getLeftY() * 0.5, () -> 0.0));
     player2
         .leftTrigger(0.5)
-        .whileTrue(IntakeCommands.moveByJoystick(coralIntake, () -> player2.getLeftY(), () -> 0.0))
+        .whileTrue(IntakeCommands.moveByJoystick(coralIntake, () -> -player2.getLeftY(), () -> 0.0))
         .onFalse(IntakeCommands.moveByJoystick(coralIntake, () -> 0.0, () -> 0.0));
-    player2.x().whileTrue(IntakeCommands.feedOut(coralIntake));
+    player2
+        .x()
+        .whileTrue(
+            IntakeCommands.feedOut(
+                coralIntake)); 
     player2.a().whileTrue(IntakeCommands.feedIn(coralIntake));
 
     // algaeIntake.setDefaultCommand(
     //     IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY() * 0.5, () -> 0.0));
     player2
         .rightTrigger(0.5)
-        .whileTrue(IntakeCommands.moveByJoystick(algaeIntake, () -> player2.getRightY(), () -> 0.0))
+        .whileTrue(
+            IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY(), () -> 0.0))
         .onFalse(IntakeCommands.moveByJoystick(algaeIntake, () -> 0.0, () -> 0.0));
 
     player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake));
     player2.b().whileTrue(IntakeCommands.feedOut(algaeIntake));
+
+    player2
+        .start()
+        .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
 
     player2
         .leftBumper()

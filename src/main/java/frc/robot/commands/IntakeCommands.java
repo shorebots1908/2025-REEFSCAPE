@@ -36,7 +36,7 @@ public class IntakeCommands {
   public static Command feedIn(Intake intake) {
     return Commands.run(
             () -> {
-              intake.setFeedOpenLoop(-FEED_SPEED);
+              intake.setFeedOpenLoop(FEED_SPEED);
             },
             intake)
         .finallyDo(
@@ -48,7 +48,7 @@ public class IntakeCommands {
   public static Command feedOut(Intake intake) {
     return Commands.run(
             () -> {
-              intake.setFeedOpenLoop(FEED_SPEED);
+              intake.setFeedOpenLoop(-FEED_SPEED);
             },
             intake)
         .finallyDo(
