@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AutoCommands;
+import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
@@ -277,6 +278,12 @@ public class RobotContainer {
     player1
         .y()
         .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
+
+    // Manual climber commands
+    player1
+        .rightTrigger(0.5)
+        .whileTrue(ClimberCommands.joystick(climber, () -> player1.getRightY()))
+        .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
   }
 
   private void configurePlayer2() {
