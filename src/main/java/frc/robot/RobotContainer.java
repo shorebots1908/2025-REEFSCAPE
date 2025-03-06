@@ -15,6 +15,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -426,14 +427,29 @@ public class RobotContainer {
         "elevator-top", ElevatorCommands.setTargetPosition(elevator, new BasePosition(1.0)));
     configureAutoCommand(
         "elevator-bottom", ElevatorCommands.setTargetPosition(elevator, new BasePosition(0.0)));
+    configureAutoCommand(
+        "elevator-l4",
+        Commands.sequence(
+            IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE),
+            ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4)));
 
     configureAutoCommand("pickup", AutoCommands.pickup(coralIntake, elevator));
+    configureAutoCommand(
+        "score-l1", AutoCommands.score(coralIntake, elevator, ElevatorCommands.BOTTOM));
     configureAutoCommand(
         "score-l2", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L2));
     configureAutoCommand(
         "score-l3", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L3));
     configureAutoCommand(
         "score-l4", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L4));
+    configureAutoCommand("feed-out", IntakeCommands.feedOut(coralIntake));
+
+    configureAutoCommand("auto1", new PathPlannerAuto("auto1"));
+    configureAutoCommand("auto2", new PathPlannerAuto("auto2"));
+
+    configureAutoCommand("auto1path1", DriveCommands.followPath(drive, "auto1path1"));
+    configureAutoCommand("auto1path2", DriveCommands.followPath(drive, "auto1path2"));
+    configureAutoCommand("auto1path3", DriveCommands.followPath(drive, "auto1path3"));
   }
 
   /**

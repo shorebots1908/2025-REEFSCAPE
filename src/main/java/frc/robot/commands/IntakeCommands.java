@@ -11,7 +11,7 @@ public class IntakeCommands {
   public static final BasePosition CORAL_WRIST_DOWN = new BasePosition(0.0);
   public static final BasePosition CORAL_WRIST_STOW = new BasePosition(1.0);
   public static final BasePosition CORAL_WRIST_INTAKE = new BasePosition(0.81);
-  public static final BasePosition CORAL_WRIST_SCORE = new BasePosition(0.44);
+  public static final BasePosition CORAL_WRIST_SCORE = new BasePosition(0.57);
 
   public static final BasePosition ALGAE_WRIST_STOW = new BasePosition(0.8);
   public static final BasePosition ALGAE_WRIST_DEPLOY = new BasePosition(0.2);

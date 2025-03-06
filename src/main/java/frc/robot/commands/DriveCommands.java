@@ -70,11 +70,11 @@ public class DriveCommands {
         .getTranslation();
   }
 
-  public static Command autoPath(Drive drive) {
+  public static Command followPath(Drive drive, String name) {
     //
     try {
       // Load the path you want to follow using its name in the GUI
-      PathPlannerPath path = PathPlannerPath.fromPathFile("path5");
+      PathPlannerPath path = PathPlannerPath.fromPathFile(name);
 
       // Create a path following command using AutoBuilder. This will also trigger event markers.
       return AutoBuilder.followPath(path);

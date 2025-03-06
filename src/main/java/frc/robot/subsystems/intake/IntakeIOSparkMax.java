@@ -32,7 +32,7 @@ public class IntakeIOSparkMax implements IntakeIO {
   private double targetEncoderPosition = 0;
 
   // How close the wrist needs to be to be "close enough"
-  private double targetThreshold = 0.01;
+  private double targetThreshold = 0.05;
 
   // Whether the wrist is currently close enough
   private boolean atTarget = false;
