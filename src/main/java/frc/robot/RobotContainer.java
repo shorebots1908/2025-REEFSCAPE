@@ -79,7 +79,7 @@ public class RobotContainer {
   public RobotContainer() {
     drive = initDrive();
     vision = initVision();
-    elevator = initElevator(new ElevatorConfig(9, 10, 1.0, 0.0, 0.0, 0.0, 63.7));
+    elevator = initElevator(new ElevatorConfig(9, 10, 1.0, 0.0, 0.0, 0.0, 64.5));
     coralIntake =
         initIntake(
             new IntakeConfig(
@@ -268,11 +268,8 @@ public class RobotContainer {
     //    .whileTrue(IntakeCommands.setTargetPosition(algaeIntake,
     // IntakeCommands.ALGAE_WRIST_STOW));
 
-    player1
-        .b()
-        .whileTrue(
-            IntakeCommands.feedOut(
-                coralIntake)); 
+    player1.b().whileTrue(IntakeCommands.feedIn(coralIntake));
+    player1.a().whileTrue(IntakeCommands.feedOut(coralIntake));
 
     player1
         .x()
@@ -289,21 +286,28 @@ public class RobotContainer {
         .povLeft()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
+        .and(player2.rightTrigger(0.5).negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2));
     player2
         .povRight()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
+        .and(player2.rightTrigger(0.5).negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3));
     player2
         .povUp()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
-        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4));
+        .and(player2.rightTrigger(0.5).negate())
+        .onTrue(
+            ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4)
+                .andThen(
+                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
     player2
         .povDown()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
+        .and(player2.rightTrigger(0.5).negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM));
 
     // coralIntake.setDefaultCommand(
@@ -312,12 +316,8 @@ public class RobotContainer {
         .leftTrigger(0.5)
         .whileTrue(IntakeCommands.moveByJoystick(coralIntake, () -> -player2.getLeftY(), () -> 0.0))
         .onFalse(IntakeCommands.moveByJoystick(coralIntake, () -> 0.0, () -> 0.0));
-    player2
-        .x()
-        .whileTrue(
-            IntakeCommands.feedOut(
-                coralIntake)); 
-    player2.a().whileTrue(IntakeCommands.feedIn(coralIntake));
+    player2.x().whileTrue(IntakeCommands.feedIn(coralIntake));
+    player2.a().whileTrue(IntakeCommands.feedOut(coralIntake));
 
     // algaeIntake.setDefaultCommand(
     //     IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY() * 0.5, () -> 0.0));
@@ -326,6 +326,23 @@ public class RobotContainer {
         .whileTrue(
             IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY(), () -> 0.0))
         .onFalse(IntakeCommands.moveByJoystick(algaeIntake, () -> 0.0, () -> 0.0));
+
+    player2
+        .rightTrigger(0.5)
+        .and(player2.povUp())
+        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L3));
+    player2
+        .rightTrigger(0.5)
+        .and(player2.povRight())
+        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L2));
+    player2
+        .rightTrigger(0.5)
+        .and(player2.povDown())
+        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_PROC));
+    player2
+        .rightTrigger(0.5)
+        .and(player2.povLeft())
+        .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW));
 
     player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake));
     player2.b().whileTrue(IntakeCommands.feedOut(algaeIntake));
@@ -359,11 +376,11 @@ public class RobotContainer {
     //               return 0.0;
     //             }));
 
-    // // Manual climber commands
-    // player2
-    //     .rightTrigger(0.5)
-    //     .whileTrue(ClimberCommands.joystick(climber, () -> player2.getRightY()))
-    //     .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
+    // Manual climber commands
+    // player1
+    // .rightTrigger(0.5)
+    // .whileTrue(climberCommands.joystick(climber, () -> player2.getRightY()))
+    // .onFalse(climberCommands.joystick(climber, () -> 0.0));
   }
 
   private void configureAutoCommand(String name, Command command) {
