@@ -34,21 +34,15 @@ public class IntakeCommands {
   }
 
   public static Command feedIn(Intake intake) {
-    return Commands.run(
-            () -> {
-              intake.setFeedOpenLoop(FEED_SPEED);
-            },
-            intake)
-        .finallyDo(
-            () -> {
-              intake.feedStop();
-            });
+    return feedIn(intake, FEED_SPEED);
   }
 
   public static Command feedIn(Intake intake, double feedSpeed) {
+    // Absolute value of feedSpeed
+    double speed = feedSpeed > 0 ? feedSpeed : -feedSpeed;
     return Commands.run(
             () -> {
-              intake.setFeedOpenLoop(feedSpeed);
+              intake.setFeedOpenLoop(speed);
             },
             intake)
         .finallyDo(
@@ -58,21 +52,16 @@ public class IntakeCommands {
   }
 
   public static Command feedOut(Intake intake) {
-    return Commands.run(
-            () -> {
-              intake.setFeedOpenLoop(-FEED_SPEED);
-            },
-            intake)
-        .finallyDo(
-            () -> {
-              intake.feedStop();
-            });
+    // Negation happens inside this call
+    return feedOut(intake, FEED_SPEED);
   }
 
   public static Command feedOut(Intake intake, double feedSpeed) {
+    // Absolute value of feedSpeed
+    double speed = feedSpeed > 0 ? feedSpeed : -feedSpeed;
     return Commands.run(
             () -> {
-              intake.setFeedOpenLoop(-feedSpeed);
+              intake.setFeedOpenLoop(-speed);
             },
             intake)
         .finallyDo(
