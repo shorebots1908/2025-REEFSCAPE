@@ -373,7 +373,8 @@ public class RobotContainer {
             new RepeatCommand(
                 IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW)));
 
-    player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake, 0.7));
+    // player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake, 0.7));
+    player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake));
     player2.b().whileTrue(IntakeCommands.feedOut(algaeIntake));
 
     player2
