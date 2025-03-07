@@ -343,12 +343,11 @@ public class RobotContainer {
         .rightTrigger(0.5)
         .whileTrue(
             // removed deadbnd code, didn't seem to work -MZ
-            // IntakeCommands.moveByJoystick(
-            //          algaeIntake, () -> -MathUtil.applyDeadband(player2.getRightY(), 0.7), () ->
-            // 0.0))
-            //   .onFalse(IntakeCommands.moveByJoystick(algaeIntake, () -> 0.0, () -> 0.0));
-            IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY(), () -> 0.0))
+            IntakeCommands.moveByJoystick(
+                algaeIntake, () -> -MathUtil.applyDeadband(player2.getRightY(), 0.07), () -> 0.0))
         .onFalse(IntakeCommands.moveByJoystick(algaeIntake, () -> 0.0, () -> 0.0));
+    //    IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY(), () -> 0.0))
+    // .onFalse(IntakeCommands.moveByJoystick(algaeIntake, () -> 0.0, () -> 0.0));
 
     player2
         .rightTrigger(0.5)
