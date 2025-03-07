@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "auto1path1"
+            "pathName": "drive+elevator - 1pc"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "score-l1"
+            "name": "elevator-l4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
           }
         }
       ]

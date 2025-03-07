@@ -126,7 +126,7 @@ public class IntakeIOSparkMax implements IntakeIO {
 
   @Override
   public void setWristOpenLoop(double output) {
-    wristMotor.set(output * 0.5); // lowered wrist speed for Grayson
+    wristMotor.set(output);
     Logger.recordOutput(String.format("%s/OpenLoopOutput", config.name), output);
   }
 

@@ -16,10 +16,12 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AutoCommands;
 import frc.robot.commands.ClimberCommands;
@@ -109,10 +111,10 @@ public class RobotContainer {
                 17,
                 1,
                 3335,
-                6.0,
+                9.0,
                 0.001,
                 0.0,
-                2.0,
+                0.7,
                 0.411,
                 0.659,
                 true,
@@ -318,11 +320,19 @@ public class RobotContainer {
         .and(player2.rightTrigger(0.5).negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM));
 
+    player2
+        .back()
+        .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY));
+
     // coralIntake.setDefaultCommand(
     //     IntakeCommands.moveByJoystick(coralIntake, () -> -player2.getLeftY() * 0.5, () -> 0.0));
     player2
         .leftTrigger(0.5)
-        .whileTrue(IntakeCommands.moveByJoystick(coralIntake, () -> -player2.getLeftY(), () -> 0.0))
+        .whileTrue(
+            IntakeCommands.moveByJoystick(
+                coralIntake,
+                () -> -MathUtil.applyDeadband(player2.getLeftY(), 0.07) * 0.5,
+                () -> 0.0))
         .onFalse(IntakeCommands.moveByJoystick(coralIntake, () -> 0.0, () -> 0.0));
     player2.x().whileTrue(IntakeCommands.feedIn(coralIntake));
     player2.a().whileTrue(IntakeCommands.feedOut(coralIntake));
@@ -332,27 +342,38 @@ public class RobotContainer {
     player2
         .rightTrigger(0.5)
         .whileTrue(
+            // removed deadbnd code, didn't seem to work -MZ
+            // IntakeCommands.moveByJoystick(
+            //          algaeIntake, () -> -MathUtil.applyDeadband(player2.getRightY(), 0.7), () ->
+            // 0.0))
+            //   .onFalse(IntakeCommands.moveByJoystick(algaeIntake, () -> 0.0, () -> 0.0));
             IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY(), () -> 0.0))
         .onFalse(IntakeCommands.moveByJoystick(algaeIntake, () -> 0.0, () -> 0.0));
 
     player2
         .rightTrigger(0.5)
         .and(player2.povUp())
-        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L3));
+        .onTrue(
+            new RepeatCommand(ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L3)));
     player2
         .rightTrigger(0.5)
         .and(player2.povRight())
-        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L2));
+        .onTrue(
+            new RepeatCommand(ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L2)));
     player2
         .rightTrigger(0.5)
         .and(player2.povDown())
-        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_PROC));
+        .onTrue(
+            new RepeatCommand(
+                ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_PROC)));
     player2
         .rightTrigger(0.5)
         .and(player2.povLeft())
-        .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW));
+        .onTrue(
+            new RepeatCommand(
+                IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW)));
 
-    player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake));
+    player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake, 0.7));
     player2.b().whileTrue(IntakeCommands.feedOut(algaeIntake));
 
     player2

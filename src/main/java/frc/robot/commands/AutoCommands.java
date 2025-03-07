@@ -28,4 +28,16 @@ public class AutoCommands {
         // IntakeCommands.feedStop(intake)
         );
   }
+
+  public static Command scoreL4(Intake coral, Elevator elevator, BasePosition position) {
+    return Commands.sequence(
+        IntakeCommands.goToPosition(coral, IntakeCommands.CORAL_WRIST_DOWN).withTimeout(1.0),
+        ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.CORAL_L4).withTimeout(1.0),
+        ElevatorCommands.waitUntilElevatorAtTargetPosition(elevator).withTimeout(2),
+        IntakeCommands.goToPosition(coral, IntakeCommands.CORAL_WRIST_SCORE).withTimeout(0.5),
+        IntakeCommands.feedOut(coral).withTimeout(0.5),
+        IntakeCommands.waitUntilCoralIsHolding(coral, false)
+        // IntakeCommands.feedStop(intake)
+        );
+  }
 }
