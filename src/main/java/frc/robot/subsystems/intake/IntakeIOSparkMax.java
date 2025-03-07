@@ -49,17 +49,17 @@ public class IntakeIOSparkMax implements IntakeIO {
     wristController = wristMotor.getClosedLoopController();
     sensor = new AnalogInput(config.sensorId);
 
-    // Leader: Left motor config
-    SparkMaxConfig leaderConfig = new SparkMaxConfig();
-    leaderConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20);
+    // Left motor config
+    SparkMaxConfig leftConfig = new SparkMaxConfig();
+    leftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20);
     leftMotor.configure(
-        leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    // Follower: Right motor config
-    SparkMaxConfig followConfig = new SparkMaxConfig();
-    followConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).follow(config.leftMotorId, true);
+    // Right motor config
+    SparkMaxConfig rightConfig = new SparkMaxConfig();
+    rightConfig.idleMode(IdleMode.kBrake).inverted(true).smartCurrentLimit(20);
     rightMotor.configure(
-        followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // Wrist motor configuration
     SparkMaxConfig wristConfig = new SparkMaxConfig();
@@ -110,6 +110,7 @@ public class IntakeIOSparkMax implements IntakeIO {
   @Override
   public void feedStop() {
     leftMotor.stopMotor();
+    rightMotor.stopMotor();
   }
 
   @Override
@@ -133,6 +134,7 @@ public class IntakeIOSparkMax implements IntakeIO {
   @Override
   public void setFeedOpenLoop(double output) {
     leftMotor.set(output);
+    rightMotor.set(output);
   }
 
   @Override
