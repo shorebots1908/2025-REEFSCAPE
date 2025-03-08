@@ -484,6 +484,8 @@ public class RobotContainer {
 
     configureAutoCommand("auto1", new PathPlannerAuto("auto1"));
     configureAutoCommand("auto2", new PathPlannerAuto("auto2"));
+    configureAutoCommand("auto3", new PathPlannerAuto("auto3"));
+
 
     configureAutoCommand("auto1path1", DriveCommands.followPath(drive, "auto1path1"));
     configureAutoCommand("auto1path2", DriveCommands.followPath(drive, "auto1path2"));
