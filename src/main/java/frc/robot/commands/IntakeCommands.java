@@ -13,8 +13,10 @@ public class IntakeCommands {
   public static final BasePosition CORAL_WRIST_INTAKE = new BasePosition(0.81);
   public static final BasePosition CORAL_WRIST_SCORE = new BasePosition(0.48);
 
-  public static final BasePosition ALGAE_WRIST_STOW = new BasePosition(0.8);
-  public static final BasePosition ALGAE_WRIST_DEPLOY = new BasePosition(0.2);
+  // public static final BasePosition ALGAE_WRIST_STOW = new BasePosition(0.8);
+  // public static final BasePosition ALGAE_WRIST_DEPLOY = new BasePosition(0.2);
+  public static final BasePosition ALGAE_WRIST_STOW = new BasePosition(0.9);
+  public static final BasePosition ALGAE_WRIST_DEPLOY = new BasePosition(0.128);
 
   public static Command moveByJoystick(Intake intake, DoubleSupplier wrist, DoubleSupplier wheels) {
     return Commands.run(

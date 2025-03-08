@@ -52,8 +52,7 @@ public class IntakeIOSparkMax implements IntakeIO {
     // Left motor config
     SparkMaxConfig leftConfig = new SparkMaxConfig();
     leftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20);
-    leftMotor.configure(
-        leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // Right motor config
     SparkMaxConfig rightConfig = new SparkMaxConfig();

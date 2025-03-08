@@ -111,12 +111,12 @@ public class RobotContainer {
                 17,
                 1,
                 3335,
-                9.0,
+                7.0,
                 0.001,
                 0.0,
-                0.7,
-                0.411,
-                0.659,
+                1.0,
+                0.371,
+                0.681,
                 true,
                 false,
                 IntakeCommands.ALGAE_WRIST_STOW));
@@ -320,9 +320,9 @@ public class RobotContainer {
         .and(player2.rightTrigger(0.5).negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM));
 
-    player2
-        .back()
-        .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY));
+    // player2
+    //     .back()
+    //     .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY));
 
     // coralIntake.setDefaultCommand(
     //     IntakeCommands.moveByJoystick(coralIntake, () -> -player2.getLeftY() * 0.5, () -> 0.0));
@@ -334,8 +334,25 @@ public class RobotContainer {
                 () -> -MathUtil.applyDeadband(player2.getLeftY(), 0.07) * 0.5,
                 () -> 0.0))
         .onFalse(IntakeCommands.moveByJoystick(coralIntake, () -> 0.0, () -> 0.0));
-    player2.x().whileTrue(IntakeCommands.feedIn(coralIntake));
-    player2.a().whileTrue(IntakeCommands.feedOut(coralIntake));
+    // Without right trigger, X and A feed coral
+    player2
+        .x()
+        .and(player2.rightTrigger(0.5).negate())
+        .whileTrue(IntakeCommands.feedIn(coralIntake));
+    player2
+        .a()
+        .and(player2.rightTrigger(0.5).negate())
+        .whileTrue(IntakeCommands.feedOut(coralIntake));
+
+    // With right trigger, X and A set algae wrist
+    player2
+        .x()
+        .and(player2.rightTrigger(0.5))
+        .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW));
+    player2
+        .a()
+        .and(player2.rightTrigger(0.5))
+        .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY));
 
     // algaeIntake.setDefaultCommand(
     //     IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY() * 0.5, () -> 0.0));
@@ -364,16 +381,16 @@ public class RobotContainer {
         .and(player2.povDown())
         .onTrue(
             new RepeatCommand(
-                ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_PROC)));
-    player2
-        .rightTrigger(0.5)
-        .and(player2.povLeft())
-        .onTrue(
-            new RepeatCommand(
-                IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW)));
+                ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_PROCESSOR)));
+    // player2
+    //     .rightTrigger(0.5)
+    //     .and(player2.povLeft())
+    //     .onTrue(
+    //         new RepeatCommand(
+    //             IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW)));
 
     // player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake, 0.7));
-    player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake));
+    player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake, 0.6));
     player2.b().whileTrue(IntakeCommands.feedOut(algaeIntake));
 
     player2

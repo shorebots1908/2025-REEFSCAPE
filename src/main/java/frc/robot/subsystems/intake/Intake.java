@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.Logger;
@@ -17,6 +18,12 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs(io.name(), inputs);
     io.periodic();
+
+    Command active = this.getCurrentCommand();
+    if (active != null) {
+      String commandName = active.getName();
+      Logger.recordOutput("Intake/ActiveCommand", commandName);
+    }
   }
 
   public void setTargetPosition(BasePosition output) {

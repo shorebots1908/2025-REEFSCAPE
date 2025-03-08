@@ -14,7 +14,7 @@ public class ElevatorCommands {
   public static final BasePosition CORAL_L4 = new BasePosition(1.0);
   public static final BasePosition ALGAE_L2 = new BasePosition(0.60);
   public static final BasePosition ALGAE_L3 = new BasePosition(0.92);
-  public static final BasePosition ALGAE_PROC = new BasePosition(0.23);
+  public static final BasePosition ALGAE_PROCESSOR = new BasePosition(0.23);
 
   public static Command moveByJoystick(Elevator elevator, DoubleSupplier value) {
     return Commands.run(
