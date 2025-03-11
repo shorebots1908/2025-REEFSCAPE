@@ -21,14 +21,11 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.AutoCommands;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
-import frc.robot.subsystems.BasePosition;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberConfig;
 import frc.robot.subsystems.climber.ClimberIO;
@@ -296,19 +293,19 @@ public class RobotContainer {
         .povLeft()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
-        .and(player2.rightTrigger(0.5).negate())
+        // .and(player2.rightTrigger(0.5).negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2));
     player2
         .povRight()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
-        .and(player2.rightTrigger(0.5).negate())
+        // .and(player2.rightTrigger(0.5).negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3));
     player2
         .povUp()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
-        .and(player2.rightTrigger(0.5).negate())
+        // .and(player2.rightTrigger(0.5).negate())
         .onTrue(
             ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4)
                 .andThen(
@@ -317,7 +314,7 @@ public class RobotContainer {
         .povDown()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
-        .and(player2.rightTrigger(0.5).negate())
+        // .and(player2.rightTrigger(0.5).negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM));
 
     // player2
@@ -343,45 +340,51 @@ public class RobotContainer {
         .a()
         .and(player2.rightTrigger(0.5).negate())
         .whileTrue(IntakeCommands.feedOut(coralIntake));
+    player2.a().and(player2.rightTrigger(0.5)).whileTrue(IntakeCommands.feedOut(coralIntake, 0.15));
 
     // With right trigger, X and A set algae wrist
-    player2
-        .x()
-        .and(player2.rightTrigger(0.5))
-        .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW));
-    player2
-        .a()
-        .and(player2.rightTrigger(0.5))
-        .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY));
+    // Algae wrist disabled at 3/9/25 competition
+    // player2
+    //     .x()
+    //     .and(player2.rightTrigger(0.5))
+    //     .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW));
+    // player2
+    //     .a()
+    //     .and(player2.rightTrigger(0.5))
+    //     .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY));
 
     // algaeIntake.setDefaultCommand(
     //     IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY() * 0.5, () -> 0.0));
-    player2
-        .rightTrigger(0.5)
-        .whileTrue(
-            // removed deadbnd code, didn't seem to work -MZ
-            IntakeCommands.moveByJoystick(
-                algaeIntake, () -> -MathUtil.applyDeadband(player2.getRightY(), 0.07), () -> 0.0))
-        .onFalse(IntakeCommands.moveByJoystick(algaeIntake, () -> 0.0, () -> 0.0));
+    // player2
+    //     .rightTrigger(0.5)
+    //     .and(player2.back().negate())
+    //     .whileTrue(
+    //         // removed deadbnd code, didn't seem to work -MZ
+    //         IntakeCommands.moveByJoystick(
+    //             algaeIntake, () -> -MathUtil.applyDeadband(player2.getRightY(), 0.07), () ->
+    // 0.0))
+    //     .onFalse(IntakeCommands.moveByJoystick(algaeIntake, () -> 0.0, () -> 0.0));
     //    IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY(), () -> 0.0))
     // .onFalse(IntakeCommands.moveByJoystick(algaeIntake, () -> 0.0, () -> 0.0));
 
-    player2
-        .rightTrigger(0.5)
-        .and(player2.povUp())
-        .onTrue(
-            new RepeatCommand(ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L3)));
-    player2
-        .rightTrigger(0.5)
-        .and(player2.povRight())
-        .onTrue(
-            new RepeatCommand(ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L2)));
-    player2
-        .rightTrigger(0.5)
-        .and(player2.povDown())
-        .onTrue(
-            new RepeatCommand(
-                ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_PROCESSOR)));
+    // player2
+    //     .rightTrigger(0.5)
+    //     .and(player2.povUp())
+    //     .onTrue(
+    //         new RepeatCommand(ElevatorCommands.goToPosition(elevator,
+    // ElevatorCommands.ALGAE_L3)));
+    // player2
+    //     .rightTrigger(0.5)
+    //     .and(player2.povRight())
+    //     .onTrue(
+    //         new RepeatCommand(ElevatorCommands.goToPosition(elevator,
+    // ElevatorCommands.ALGAE_L2)));
+    // player2
+    //     .rightTrigger(0.5)
+    //     .and(player2.povDown())
+    //     .onTrue(
+    //         new RepeatCommand(
+    //             ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_PROCESSOR)));
     // player2
     //     .rightTrigger(0.5)
     //     .and(player2.povLeft())
@@ -390,8 +393,8 @@ public class RobotContainer {
     //             IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW)));
 
     // player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake, 0.7));
-    player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake, 0.6));
-    player2.b().whileTrue(IntakeCommands.feedOut(algaeIntake));
+    // player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake, 0.6));
+    // player2.b().whileTrue(IntakeCommands.feedOut(algaeIntake));
 
     player2
         .start()
@@ -423,10 +426,10 @@ public class RobotContainer {
     //             }));
 
     // Manual climber commands
-    // player1
-    // .rightTrigger(0.5)
-    // .whileTrue(climberCommands.joystick(climber, () -> player2.getRightY()))
-    // .onFalse(climberCommands.joystick(climber, () -> 0.0));
+    // player2
+    //     .back()
+    //     .whileTrue(ClimberCommands.joystick(climber, () -> player2.getRightY()))
+    //     .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
   }
 
   private void configureAutoCommand(String name, Command command) {
@@ -461,32 +464,50 @@ public class RobotContainer {
     //     "drive-sysid-dynamic-reverse",
     //     drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    configureAutoCommand(
-        "elevator-top", ElevatorCommands.setTargetPosition(elevator, new BasePosition(1.0)));
-    configureAutoCommand(
-        "elevator-bottom", ElevatorCommands.setTargetPosition(elevator, new BasePosition(0.0)));
-    configureAutoCommand(
-        "elevator-l4",
-        Commands.sequence(
-            IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE),
-            ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4)));
+    // configureAutoCommand(
+    //     "elevator-top", ElevatorCommands.setTargetPosition(elevator, new BasePosition(1.0)));
+    // configureAutoCommand(
+    //     "elevator-bottom", ElevatorCommands.setTargetPosition(elevator, new BasePosition(0.0)));
+    // configureAutoCommand(
+    //     "elevator-l4",
+    //     Commands.sequence(
+    //         IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE),
+    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4)));
 
-    configureAutoCommand("pickup", AutoCommands.pickup(coralIntake, elevator));
+    // configureAutoCommand("pickup", AutoCommands.pickup(coralIntake, elevator));
+    // configureAutoCommand(
+    //     "score-l1", AutoCommands.score(coralIntake, elevator, ElevatorCommands.BOTTOM));
+    // configureAutoCommand(
+    //     "score-l2", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L2));
+    // configureAutoCommand(
+    //     "score-l3", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L3));
+    // configureAutoCommand(
+    //     "score-l4", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L4));
+
     configureAutoCommand(
-        "score-l1", AutoCommands.score(coralIntake, elevator, ElevatorCommands.BOTTOM));
+        "elevator-l1", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.BOTTOM));
     configureAutoCommand(
-        "score-l2", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L2));
+        "elevator-l2", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.CORAL_L2));
     configureAutoCommand(
-        "score-l3", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L3));
+        "elevator-l3", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.CORAL_L3));
     configureAutoCommand(
-        "score-l4", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L4));
+        "elevator-l4", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.CORAL_L4));
+
+    configureAutoCommand("feed-in", IntakeCommands.feedIn(coralIntake));
     configureAutoCommand("feed-out", IntakeCommands.feedOut(coralIntake));
+    configureAutoCommand("feed-spit", IntakeCommands.feedOut(coralIntake, 0.2));
+    configureAutoCommand(
+        "coral-accept",
+        IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE));
+    configureAutoCommand(
+        "coral-dispense",
+        IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
 
     configureAutoCommand("auto1", new PathPlannerAuto("auto1"));
     configureAutoCommand("auto2", new PathPlannerAuto("auto2"));
     configureAutoCommand("auto3", new PathPlannerAuto("auto3"));
-
-
+    configureAutoCommand("auto4", new PathPlannerAuto("auto4"));
+    configureAutoCommand("midcompauto", new PathPlannerAuto("midcompauto"));
     configureAutoCommand("auto1path1", DriveCommands.followPath(drive, "auto1path1"));
     configureAutoCommand("auto1path2", DriveCommands.followPath(drive, "auto1path2"));
     configureAutoCommand("auto1path3", DriveCommands.followPath(drive, "auto1path3"));

@@ -3,13 +3,17 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "test",
+    "GraysonPaths",
     "auto1paths",
     "auto2paths",
-    "misc"
+    "auto4paths",
+    "misc",
+    "test"
   ],
   "autoFolders": [
-    "abby autos"
+    "GraysonAutos",
+    "abby autos",
+    "drive.foreward.autos"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
