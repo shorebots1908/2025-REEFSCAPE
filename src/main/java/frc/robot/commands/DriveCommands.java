@@ -86,7 +86,7 @@ public class DriveCommands {
 
   public static Command goToFieldPoint(Drive drive, Pose2d point) {
 
-    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(FieldPoint.REEF_AB);
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(drive.getPose(), FieldPoint.REEF_AB);
 
     PathConstraints defaultConstraints = new PathConstraints(3.0, 3.0, 9.42478, 12.5664);
 
@@ -96,7 +96,7 @@ public class DriveCommands {
             defaultConstraints,
             null, // The ideal starting state, this is only relevant for pre-planned paths, so can
             // be null for on-the-fly paths.
-            new GoalEndState(0.0, Rotation2d.fromDegrees(0)));
+            new GoalEndState(0.0, point.getRotation()));
 
     return AutoBuilder.followPath(toReefAB);
   }
