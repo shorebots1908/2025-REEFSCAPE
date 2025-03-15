@@ -15,7 +15,6 @@ package frc.robot.subsystems.vision;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -24,7 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonUtils;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
@@ -43,7 +41,7 @@ public class VisionIOPhotonVision implements VisionIO {
   }
 
   public void getPose(double yaw, double distance) {
-    
+    yaw = robotToCamera.getY();
   }
 
   @Override

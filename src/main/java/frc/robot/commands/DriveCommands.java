@@ -86,11 +86,11 @@ public class DriveCommands {
 
   public static Command goToFieldPoint(Drive drive, Pose2d point) {
 
-    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(drive.getPose(), FieldPoint.REEF_AB);
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(drive.getPose(), point);
 
     PathConstraints defaultConstraints = new PathConstraints(3.0, 3.0, 9.42478, 12.5664);
 
-    PathPlannerPath toReefAB =
+    PathPlannerPath scorePath =
         new PathPlannerPath(
             waypoints,
             defaultConstraints,
@@ -98,8 +98,23 @@ public class DriveCommands {
             // be null for on-the-fly paths.
             new GoalEndState(0.0, point.getRotation()));
 
-    return AutoBuilder.followPath(toReefAB);
+    return AutoBuilder.followPath(scorePath);
   }
+
+    public static Pose2d selectPoint(Drive drive) {
+
+      if(FieldPoint.scorePoses.isEmpty()) {
+        FieldPoint.initScorePoses();
+      }
+      Pose2d currentPose = drive.getPose();
+      Pose2d selectedPose = currentPose.nearest(FieldPoint.scorePoses);
+      return selectedPose;
+
+    }
+
+    public static Command goToAutoSelectedPosition(Drive drive) {
+      return goToFieldPoint(drive, selectPoint(drive));
+    }
 
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).

@@ -44,7 +44,7 @@ public class IntakeIOSparkMax implements IntakeIO {
     // Left wheel is leader
     leftMotor = new SparkMax(config.leftMotorId, MotorType.kBrushless);
     rightMotor = new SparkMax(config.rightMotorId, MotorType.kBrushless);
-    wristMotor = new SparkMax(config.wristMotorId, MotorType.kBrushed);
+    wristMotor = new SparkMax(config.wristMotorId, MotorType.kBrushless);
     wristEncoder = wristMotor.getAbsoluteEncoder();
     wristController = wristMotor.getClosedLoopController();
     sensor = new AnalogInput(config.sensorId);

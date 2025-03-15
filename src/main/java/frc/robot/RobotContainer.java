@@ -94,8 +94,8 @@ public class RobotContainer {
                 0.001,
                 0.0,
                 0.5,
-                0.252,
-                0.669,
+                0.313,
+                5.125,
                 false,
                 true,
                 IntakeCommands.CORAL_WRIST_STOW));
@@ -560,7 +560,8 @@ public class RobotContainer {
         return new Vision(
             drive::addVisionMeasurement,
             new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0),
-            new VisionIOPhotonVision(VisionConstants.camera1Name, VisionConstants.robotToCamera1));
+            new VisionIOPhotonVision(VisionConstants.camera1Name, VisionConstants.robotToCamera1),
+            new VisionIOPhotonVision(VisionConstants.camera2Name, VisionConstants.robotToCamera2));
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -569,7 +570,9 @@ public class RobotContainer {
             new VisionIOPhotonVisionSim(
                 VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
             new VisionIOPhotonVisionSim(
-                VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
+                VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose),
+            new VisionIOPhotonVisionSim(
+                VisionConstants.camera2Name, VisionConstants.robotToCamera2, drive::getPose));
 
       default:
         // Replayed robot, disable IO implementations
