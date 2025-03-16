@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -43,7 +44,18 @@ public class FieldPoint {
       new Pose2d(0.8482500000000001, 6.76475, new Rotation2d());
   public static final Pose2d CORAL_BARGE2 = new Pose2d(1.56, 7.27175, new Rotation2d());
 
-  public static void initScorePoses() {
+  public static Pose2d flipPose(Pose2d pose) {
+    Pose2d flippedPose;
+    flippedPose =
+        new Pose2d(
+            (FlippingUtil.fieldSizeX - pose.getX()),
+            (FlippingUtil.fieldSizeY - pose.getY()),
+            pose.getRotation().plus(Rotation2d.fromRadians(Math.PI)));
+    return flippedPose;
+  }
+
+  public static void initScorePoses(boolean isFlipped) {
+
     scorePoses.add(REEF_AB);
     scorePoses.add(REEF_CD);
     scorePoses.add(REEF_EF);
@@ -51,6 +63,15 @@ public class FieldPoint {
     scorePoses.add(REEF_IJ);
     scorePoses.add(REEF_KL);
     scorePoses.add(CORAL_PROCESSOR1);
-    scorePoses.add(CORAL_PROCESSOR2);
+    // scorePoses.add(CORAL_PROCESSOR2);
+    if (isFlipped) {
+      for (int i = 0; i < scorePoses.size(); i++) {
+        scorePoses.set(i, flipPose(scorePoses.get(i)));
+      }
+    }
+  }
+
+  public static void initScorePoses() {
+    initScorePoses(false);
   }
 }

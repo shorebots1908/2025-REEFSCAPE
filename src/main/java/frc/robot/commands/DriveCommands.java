@@ -88,7 +88,7 @@ public class DriveCommands {
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(drive.getPose(), point);
 
-    PathConstraints defaultConstraints = new PathConstraints(3.0, 3.0, 9.42478, 12.5664);
+    PathConstraints defaultConstraints = new PathConstraints(0.5, 3.0, 9.42478, 12.5664);
 
     PathPlannerPath scorePath =
         new PathPlannerPath(
@@ -97,14 +97,16 @@ public class DriveCommands {
             null, // The ideal starting state, this is only relevant for pre-planned paths, so can
             // be null for on-the-fly paths.
             new GoalEndState(0.0, point.getRotation()));
-    // scorePath.flipPath()
+    scorePath.flipPath();
     return AutoBuilder.followPath(scorePath);
   }
 
   public static Pose2d selectPoint(Drive drive) {
 
     if (FieldPoint.scorePoses.isEmpty()) {
-      FieldPoint.initScorePoses();
+      FieldPoint.initScorePoses(
+          DriverStation.getAlliance().isPresent()
+              && DriverStation.getAlliance().get() == Alliance.Red);
     }
     Pose2d currentPose = drive.getPose();
     Pose2d selectedPose = currentPose.nearest(FieldPoint.scorePoses);

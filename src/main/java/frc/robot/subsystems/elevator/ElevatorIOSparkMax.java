@@ -89,6 +89,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     Logger.recordOutput(
         "Elevator/BasePositionUpper",
         new BasePosition(1).toRange(config.encoderLowerLimit, config.encoderUpperLimit));
+    Logger.recordOutput("Elevator/EncoderPosition", inputs.positionRad);
   }
 
   public void updateInputs(ElevatorIO.ElevatorIOInputs inputs) {
