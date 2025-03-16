@@ -97,21 +97,51 @@ public class DriveCommands {
             null, // The ideal starting state, this is only relevant for pre-planned paths, so can
             // be null for on-the-fly paths.
             new GoalEndState(0.0, point.getRotation()));
-    scorePath.flipPath();
+
+    return AutoBuilder.followPath(scorePath);
+  }
+
+  public static Command generatePath(Drive drive, List<Pose2d> poseSet) {
+
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poseSet);
+
+    PathConstraints defaultConstraints = new PathConstraints(0.5, 3.0, 9.42478, 12.5664);
+
+    PathPlannerPath scorePath =
+        new PathPlannerPath(
+            waypoints,
+            defaultConstraints,
+            null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+            // be null for on-the-fly paths.
+            new GoalEndState(0.0, poseSet.get(0).getRotation()));
+
+    return AutoBuilder.followPath(scorePath);
+  }
+
+  public static Command generatePath(Drive drive) {
+    int pathIndex = FieldPoint.START_POSES.indexOf(selectPoint(drive));
+    List<Waypoint> waypoints =
+        PathPlannerPath.waypointsFromPoses(
+            FieldPoint.START_POSES.get(pathIndex), FieldPoint.LEFT_POSES.get(pathIndex));
+
+    PathConstraints defaultConstraints = new PathConstraints(0.5, 3.0, 9.42478, 12.5664);
+
+    PathPlannerPath scorePath =
+        new PathPlannerPath(
+            waypoints,
+            defaultConstraints,
+            null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+            // be null for on-the-fly paths.
+            new GoalEndState(0.0, FieldPoint.START_POSES.get(pathIndex).getRotation()));
+
     return AutoBuilder.followPath(scorePath);
   }
 
   public static Pose2d selectPoint(Drive drive) {
-
-    if (FieldPoint.scorePoses.isEmpty()) {
-      FieldPoint.initScorePoses(
-          DriverStation.getAlliance().isPresent()
-              && DriverStation.getAlliance().get() == Alliance.Red);
-    }
-    Pose2d currentPose = drive.getPose();
-    Pose2d selectedPose = currentPose.nearest(FieldPoint.scorePoses);
-    return selectedPose;
+    return drive.getPose().nearest(FieldPoint.START_POSES);
   }
+
+  public static void composeScorePathSets() {}
 
   public static Command goToAutoSelectedPosition(Drive drive) {
     return goToFieldPoint(drive, selectPoint(drive));

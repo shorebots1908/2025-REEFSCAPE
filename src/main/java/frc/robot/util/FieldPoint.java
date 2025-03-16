@@ -20,7 +20,7 @@ public class FieldPoint {
   }
 
   public static List<Pose2d> scorePoses = new ArrayList<>();
-
+  // old points
   public static final Pose2d START_1 = new Pose2d(8.2095, 7.27175, new Rotation2d());
   public static final Pose2d START_2 = new Pose2d(8.2095, 6.17, new Rotation2d());
   public static final Pose2d START_3 = new Pose2d(8.2095, 5.0584999999999996, new Rotation2d());
@@ -43,6 +43,25 @@ public class FieldPoint {
   public static final Pose2d CORAL_BARGE1 =
       new Pose2d(0.8482500000000001, 6.76475, new Rotation2d());
   public static final Pose2d CORAL_BARGE2 = new Pose2d(1.56, 7.27175, new Rotation2d());
+
+  // new poses
+  public static List<Pose2d> START_POSES = new ArrayList<>();
+  public static List<Pose2d> LEFT_POSES = new ArrayList<>();
+  public static List<Pose2d> RIGHT_POSES = new ArrayList<>();
+  public static final Pose2d AB_START = new Pose2d(2.9083, 4.0259, new Rotation2d(0));
+  public static final Pose2d AB_LEFT = new Pose2d(3.28295, 4.191, new Rotation2d(0));
+  public static final Pose2d AB_RIGHT = new Pose2d(3.28295, 3.8608, new Rotation2d(0));
+  public static final Pose2d CD_START = new Pose2d(4.073906, 3.306318, new Rotation2d(Math.PI / 3));
+  public static final Pose2d CD_LEFT =
+      new Pose2d(3.743600206, 3.0644211, new Rotation2d(Math.PI / 3));
+  public static final Pose2d CD_RIGHT =
+      new Pose2d(4.029561794, 2.8993211, new Rotation2d(Math.PI / 3));
+  public static final Pose2d KL_START =
+      new Pose2d(4.073906, 4.745482, new Rotation2d(5 * Math.PI / 3));
+  public static final Pose2d KL_LEFT =
+      new Pose2d(4.029561794, 5.1524789, new Rotation2d(5 * Math.PI / 3));
+  public static final Pose2d KL_RIGHT =
+      new Pose2d(3.743600206, 4.9873789, new Rotation2d(5 * Math.PI / 3));
 
   public static Pose2d flipPose(Pose2d pose) {
     Pose2d flippedPose;
@@ -73,5 +92,23 @@ public class FieldPoint {
 
   public static void initScorePoses() {
     initScorePoses(false);
+  }
+
+  public static void initDerivedPoses() {
+    if (START_POSES.isEmpty()) {
+      START_POSES.add(AB_START);
+      START_POSES.add(CD_START);
+      START_POSES.add(KL_START);
+    }
+    if (LEFT_POSES.isEmpty()) {
+      LEFT_POSES.add(AB_LEFT);
+      LEFT_POSES.add(CD_LEFT);
+      LEFT_POSES.add(KL_LEFT);
+    }
+    if (RIGHT_POSES.isEmpty()) {
+      RIGHT_POSES.add(AB_RIGHT);
+      RIGHT_POSES.add(CD_RIGHT);
+      RIGHT_POSES.add(KL_RIGHT);
+    }
   }
 }

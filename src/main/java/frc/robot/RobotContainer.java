@@ -51,6 +51,7 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.FieldPoint;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -124,6 +125,8 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     configureAutoCommands();
+
+    configureScorePaths();
   }
 
   /**
@@ -148,7 +151,7 @@ public class RobotContainer {
 
     player1.start().onTrue(Commands.runOnce(drive::gyroReset, drive));
 
-  
+    player1.rightTrigger(0.5).whileTrue(DriveCommands.generatePath(drive));
 
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -438,6 +441,10 @@ public class RobotContainer {
   private void configureAutoCommand(String name, Command command) {
     autoChooser.addOption(name, command);
     NamedCommands.registerCommand(name, command);
+  }
+
+  private void configureScorePaths() {
+    FieldPoint.initDerivedPoses();
   }
 
   private void configureAutoCommands() {
