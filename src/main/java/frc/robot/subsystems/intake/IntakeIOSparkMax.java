@@ -75,9 +75,9 @@ public class IntakeIOSparkMax implements IntakeIO {
         .apply(
             new SoftLimitConfig()
                 .forwardSoftLimit(config.encoderUpperLimit)
-                .forwardSoftLimitEnabled(false)
+                .forwardSoftLimitEnabled(true)
                 .reverseSoftLimit(config.encoderLowerLimit)
-                .reverseSoftLimitEnabled(false));
+                .reverseSoftLimitEnabled(true));
     wristMotor.configure(
         wristConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }

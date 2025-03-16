@@ -94,10 +94,10 @@ public class RobotContainer {
                 0.001,
                 0.0,
                 0.5,
-                0.313,
-                5.125,
-                false,
+                0.58,
+                3.1,
                 true,
+                false,
                 IntakeCommands.CORAL_WRIST_STOW));
     algaeIntake =
         initIntake(
@@ -152,6 +152,7 @@ public class RobotContainer {
     player1.start().onTrue(Commands.runOnce(drive::gyroReset, drive));
 
     player1.rightTrigger(0.5).whileTrue(DriveCommands.generatePath(drive));
+    player1.leftTrigger(0.5).whileTrue(DriveCommands.followPath(drive, "ABApproach"));
 
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -313,9 +314,9 @@ public class RobotContainer {
         .and(player2.rightBumper().negate())
         // .and(player2.rightTrigger(0.5).negate())
         .onTrue(
-            ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4)
-                .andThen(
-                    IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
+            ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4));
+                // .andThen(
+                //     IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
     player2
         .povDown()
         .and(player2.leftBumper().negate())
@@ -408,11 +409,11 @@ public class RobotContainer {
 
     player2
         .leftBumper()
-        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> 0.3))
+        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> 0.4))
         .onFalse(ElevatorCommands.moveByJoystick(elevator, () -> 0.0));
     player2
         .rightBumper()
-        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> -0.3))
+        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> -0.4))
         .onFalse(ElevatorCommands.moveByJoystick(elevator, () -> 0.0));
 
     // player2

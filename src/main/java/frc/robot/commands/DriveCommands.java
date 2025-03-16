@@ -119,12 +119,13 @@ public class DriveCommands {
   }
 
   public static Command generatePath(Drive drive) {
+    FieldPoint.initDerivedPoses();
     int pathIndex = FieldPoint.START_POSES.indexOf(selectPoint(drive));
     List<Waypoint> waypoints =
         PathPlannerPath.waypointsFromPoses(
             FieldPoint.START_POSES.get(pathIndex), FieldPoint.LEFT_POSES.get(pathIndex));
 
-    PathConstraints defaultConstraints = new PathConstraints(0.5, 3.0, 9.42478, 12.5664);
+    PathConstraints defaultConstraints = new PathConstraints(0.05, 0.05, 9.42478, 12.5664);
 
     PathPlannerPath scorePath =
         new PathPlannerPath(

@@ -48,7 +48,11 @@ public class FieldPoint {
   public static List<Pose2d> START_POSES = new ArrayList<>();
   public static List<Pose2d> LEFT_POSES = new ArrayList<>();
   public static List<Pose2d> RIGHT_POSES = new ArrayList<>();
-  public static final Pose2d AB_START = new Pose2d(2.9083, 4.0259, new Rotation2d(0));
+  public static final Pose2d AB_START =
+      new Pose2d(
+          1.9083,
+          4.0259,
+          new Rotation2d(0)); // x should be 2.9083 for proper scaling with current values.
   public static final Pose2d AB_LEFT = new Pose2d(3.28295, 4.191, new Rotation2d(0));
   public static final Pose2d AB_RIGHT = new Pose2d(3.28295, 3.8608, new Rotation2d(0));
   public static final Pose2d CD_START = new Pose2d(4.073906, 3.306318, new Rotation2d(Math.PI / 3));
