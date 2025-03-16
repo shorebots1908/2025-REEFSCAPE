@@ -1,26 +1,25 @@
 package frc.robot.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FieldPoint {
-    public static enum pose {
-        REEF_AB,
-        REEF_CD,
-        REEF_GH,
-        REEF_IJ,
-        REEF_KL,
-        REEF_EF,
-        CORAL_PROCESSOR1,
-        CORAL_PROCESSOR2
-    } 
+  public static enum pose {
+    REEF_AB,
+    REEF_CD,
+    REEF_GH,
+    REEF_IJ,
+    REEF_KL,
+    REEF_EF,
+    CORAL_PROCESSOR1,
+    CORAL_PROCESSOR2
+  }
 
-    public static List<Pose2d> scorePoses = new ArrayList<>();
-
+  public static List<Pose2d> scorePoses = new ArrayList<>();
 
   public static final Pose2d START_1 = new Pose2d(8.2095, 7.27175, new Rotation2d());
   public static final Pose2d START_2 = new Pose2d(8.2095, 6.17, new Rotation2d());
@@ -45,7 +44,18 @@ public class FieldPoint {
       new Pose2d(0.8482500000000001, 6.76475, new Rotation2d());
   public static final Pose2d CORAL_BARGE2 = new Pose2d(1.56, 7.27175, new Rotation2d());
 
-  public static void initScorePoses() {
+  public static Pose2d flipPose(Pose2d pose) {
+    Pose2d flippedPose;
+    flippedPose =
+        new Pose2d(
+            (FlippingUtil.fieldSizeX - pose.getX()),
+            (FlippingUtil.fieldSizeY - pose.getY()),
+            pose.getRotation().plus(Rotation2d.fromRadians(Math.PI)));
+    return flippedPose;
+  }
+
+  public static void initScorePoses(boolean isFlipped) {
+
     scorePoses.add(REEF_AB);
     scorePoses.add(REEF_CD);
     scorePoses.add(REEF_EF);
@@ -53,8 +63,15 @@ public class FieldPoint {
     scorePoses.add(REEF_IJ);
     scorePoses.add(REEF_KL);
     scorePoses.add(CORAL_PROCESSOR1);
-    scorePoses.add(CORAL_PROCESSOR2);
-
+    // scorePoses.add(CORAL_PROCESSOR2);
+    if (isFlipped) {
+      for (int i = 0; i < scorePoses.size(); i++) {
+        scorePoses.set(i, flipPose(scorePoses.get(i)));
+      }
+    }
   }
 
+  public static void initScorePoses() {
+    initScorePoses(false);
+  }
 }

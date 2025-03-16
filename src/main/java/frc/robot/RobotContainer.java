@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
@@ -117,7 +116,7 @@ public class RobotContainer {
                 true,
                 false,
                 IntakeCommands.ALGAE_WRIST_STOW));
-    climber = initClimber(new ClimberConfig(15, 16, 5.0, 0.0, 0.0, 0.0, 45.0));
+    climber = initClimber(new ClimberConfig(15, 16, 5.0, 0.0, 0.0, 0.0, 67.95));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -148,6 +147,9 @@ public class RobotContainer {
             () -> -player1.getRightX()));
 
     player1.start().onTrue(Commands.runOnce(drive::gyroReset, drive));
+
+  
+
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
@@ -278,13 +280,14 @@ public class RobotContainer {
     player1
         .y()
         .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
-
-    // Manual climber commands
-    player1
-        .rightTrigger(0.5)
-        .whileTrue(ClimberCommands.joystick(climber, () -> player1.getRightY()))
-        .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
   }
+
+  // Manual climber commands
+  //   player1
+  //       .rightTrigger(0.5)
+  //       .whileTrue(ClimberCommands.joystick(climber, () -> player1.getRightY()))
+  //       .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
+  //
 
   private void configurePlayer2() {
     // // Manual coral commands

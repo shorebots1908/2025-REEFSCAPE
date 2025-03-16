@@ -8,13 +8,13 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class ElevatorCommands {
-  public static final BasePosition BOTTOM = new BasePosition(0.0);
-  public static final BasePosition CORAL_L2 = new BasePosition(0.07);
-  public static final BasePosition CORAL_L3 = new BasePosition(0.45);
-  public static final BasePosition CORAL_L4 = new BasePosition(1.0);
-  public static final BasePosition ALGAE_L2 = new BasePosition(0.60);
-  public static final BasePosition ALGAE_L3 = new BasePosition(0.92);
-  public static final BasePosition ALGAE_PROCESSOR = new BasePosition(0.23);
+  public static final BasePosition BOTTOM = new BasePosition(0.0); // 0
+  public static final BasePosition CORAL_L2 = new BasePosition(0.066); // 4.515
+  public static final BasePosition CORAL_L3 = new BasePosition(0.427); // 29.025
+  public static final BasePosition CORAL_L4 = new BasePosition(0.949); // 64.5
+  public static final BasePosition ALGAE_L2 = new BasePosition(0.569); // 38.7
+  public static final BasePosition ALGAE_L3 = new BasePosition(0.873); // 59.34
+  public static final BasePosition ALGAE_PROCESSOR = new BasePosition(0.218); // 14.835
 
   public static Command moveByJoystick(Elevator elevator, DoubleSupplier value) {
     return Commands.run(
