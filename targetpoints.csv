@@ -1,0 +1,23 @@
+blue reef face,apriltag,field x inches,field y inches,x normal scalar,y normal scalar,field x meters,field y meters,pathstart offset x meters,pathstart offset y meters,angle
+AB,18,144,158.5,-1,0,3.6576,4.0259,2.9083,4.0259,0
+CD,17,160.39,130.17,-0.5,-0.866,4.073906,3.306318,4.073906,3.306318,5.235987756
+EF,22,193.1,130.17,0.5,-0.866,4.90474,3.306318,4.90474,3.306318,4.188790205
+GH,21,209.49,158.5,1,0,5.321046,4.0259,5.321046,4.0259,3.141592654
+IJ,20,193.1,186.83,0.5,0.866,4.90474,4.745482,4.90474,4.745482,4.188790205
+KL,19,160.39,186.83,-0.5,0.866,4.073906,4.745482,4.073906,4.745482,5.235987756
+,,,,,,,,,,
+,coral reef resting point separation inches,,,robot dimensions with bumper inches,,,,left target position x meters,left target position y meters,angle
+,13,,,35,,,,3.28295,4.191,0
+,coral reef resting point meters,,,robot dimensions with bumper meters,,,,4.029561794,3.1469711,5.235987756
+,0.3302,,,0.889,,,,5.235045794,3.1469711,4.188790205
+,,,,,,,,5.695696,4.191,3.141592654
+,robot safe position offset inches,,,,,,,5.235045794,5.2350289,4.188790205
+,29.5,,,,,,,4.029561794,5.2350289,5.235987756
+,robot safe position offset meters,,,,,,,,,
+,0.7493,,,,,,,right target position x meters,right target position y meters,angle
+,,,,,,,,3.28295,3.8608,0
+,,,,,,,,3.743600206,2.8167711,5.235987756
+,,,,,,,,4.949084206,2.8167711,4.188790205
+,,,,,,,,5.695696,3.8608,3.141592654
+,,,,,,,,4.949084206,4.9048289,4.188790205
+,,,,,,,,3.743600206,4.9048289,5.235987756
