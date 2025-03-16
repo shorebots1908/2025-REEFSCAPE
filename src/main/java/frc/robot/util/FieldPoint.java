@@ -1,26 +1,24 @@
 package frc.robot.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FieldPoint {
-    public static enum pose {
-        REEF_AB,
-        REEF_CD,
-        REEF_GH,
-        REEF_IJ,
-        REEF_KL,
-        REEF_EF,
-        CORAL_PROCESSOR1,
-        CORAL_PROCESSOR2
-    } 
+  public static enum pose {
+    REEF_AB,
+    REEF_CD,
+    REEF_GH,
+    REEF_IJ,
+    REEF_KL,
+    REEF_EF,
+    CORAL_PROCESSOR1,
+    CORAL_PROCESSOR2
+  }
 
-    public static List<Pose2d> scorePoses = new ArrayList<>();
-
+  public static List<Pose2d> scorePoses = new ArrayList<>();
 
   public static final Pose2d START_1 = new Pose2d(8.2095, 7.27175, new Rotation2d());
   public static final Pose2d START_2 = new Pose2d(8.2095, 6.17, new Rotation2d());
@@ -54,7 +52,5 @@ public class FieldPoint {
     scorePoses.add(REEF_KL);
     scorePoses.add(CORAL_PROCESSOR1);
     scorePoses.add(CORAL_PROCESSOR2);
-
   }
-
 }
