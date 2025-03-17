@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
@@ -90,9 +91,9 @@ public class RobotContainer {
                 19,
                 0,
                 3335,
-                6.0,
-                0.001,
-                0.0,
+                0.3, // was 6.0
+                0.0001, // was 0.001
+                3, // was 0.0
                 0.5,
                 0.58,
                 3.1,
@@ -151,8 +152,8 @@ public class RobotContainer {
 
     player1.start().onTrue(Commands.runOnce(drive::gyroReset, drive));
 
-    player1.rightTrigger(0.5).whileTrue(DriveCommands.generatePath(drive));
-    player1.leftTrigger(0.5).whileTrue(DriveCommands.followPath(drive, "ABApproach"));
+    // player1.rightTrigger(0.5).whileTrue(DriveCommands.generatePath(drive));
+    // player1.leftTrigger(0.5).whileTrue(DriveCommands.followPath(drive, "ABApproach"));
 
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -284,14 +285,13 @@ public class RobotContainer {
     player1
         .y()
         .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
-  }
 
-  // Manual climber commands
-  //   player1
-  //       .rightTrigger(0.5)
-  //       .whileTrue(ClimberCommands.joystick(climber, () -> player1.getRightY()))
-  //       .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
-  //
+    // Manual climber commands
+    player1
+        .rightTrigger(0.5)
+        .whileTrue(ClimberCommands.joystick(climber, () -> player1.getRightY()))
+        .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
+  }
 
   private void configurePlayer2() {
     // // Manual coral commands
@@ -313,10 +313,9 @@ public class RobotContainer {
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
         // .and(player2.rightTrigger(0.5).negate())
-        .onTrue(
-            ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4));
-                // .andThen(
-                //     IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
+        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4));
+    // .andThen(
+    //     IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
     player2
         .povDown()
         .and(player2.leftBumper().negate())
@@ -409,11 +408,11 @@ public class RobotContainer {
 
     player2
         .leftBumper()
-        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> 0.4))
+        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> 0.5))
         .onFalse(ElevatorCommands.moveByJoystick(elevator, () -> 0.0));
     player2
         .rightBumper()
-        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> -0.4))
+        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> -0.5))
         .onFalse(ElevatorCommands.moveByJoystick(elevator, () -> 0.0));
 
     // player2
