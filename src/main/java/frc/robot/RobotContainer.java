@@ -17,11 +17,13 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.AlignCommands;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
@@ -53,6 +55,8 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.FieldPoint;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -69,6 +73,8 @@ public class RobotContainer {
   private final Intake coralIntake;
   private final Intake algaeIntake;
   private final Climber climber;
+  private final List<Pose2d> faces;
+  private final List<Pose2d> poses;
 
   // Controller
   private final CommandXboxController player1 = new CommandXboxController(0);
@@ -122,6 +128,12 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+    faces = AlignCommands.reefFaces();
+    poses =
+        faces.stream()
+            .flatMap((face) -> AlignCommands.faceToReefPair(face).stream())
+            .collect(Collectors.toList());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -278,6 +290,7 @@ public class RobotContainer {
 
     player1.b().whileTrue(IntakeCommands.feedIn(coralIntake));
     player1.a().whileTrue(IntakeCommands.feedOut(coralIntake));
+    player1.leftTrigger().whileTrue(AlignCommands.alignToPose(drive, poses.get(6)));
 
     player1
         .x()

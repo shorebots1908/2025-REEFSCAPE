@@ -5,8 +5,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.subsystems.drive.Drive;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class AlignCommands {
    */
   public static Command alignToPose(Drive drive, Pose2d targetPose) {
     // AlignConfig is P, I, D, Velocity, Acceleration
-    var alignConfig = new AlignConfig(1, 0, 0, 1, 1);
+    var alignConfig = new AlignConfig(0.8, 0, 0, 15, 30);
     return alignToPose(drive, targetPose, alignConfig);
   }
 
@@ -58,18 +59,22 @@ public class AlignCommands {
             config.i,
             config.d,
             new TrapezoidProfile.Constraints(config.velocity, config.acceleration));
+    xPid.setTolerance(0.03);
     var yPid =
         new ProfiledPIDController(
             config.p,
             config.i,
             config.d,
             new TrapezoidProfile.Constraints(config.velocity, config.acceleration));
+    yPid.setTolerance(0.03);
     var rPid =
         new ProfiledPIDController(
             config.p,
             config.i,
             config.d,
             new TrapezoidProfile.Constraints(config.velocity, config.acceleration));
+    rPid.enableContinuousInput(-Math.PI, Math.PI);
+    rPid.setTolerance(Units.degreesToRadians(50));
 
     return alignToPose(drive, targetPose, xPid, yPid, rPid);
   }
@@ -84,26 +89,35 @@ public class AlignCommands {
       ProfiledPIDController xPid,
       ProfiledPIDController yPid,
       ProfiledPIDController rPid) {
-    var initialPose = drive.getPose();
-    xPid.reset(initialPose.getX());
-    yPid.reset(initialPose.getY());
-    rPid.reset(initialPose.getRotation().getRadians());
 
-    return Commands.run(
+    return new FunctionalCommand(
+        // initialize
+        () -> {
+          var initialPose = drive.getPose();
+          xPid.reset(initialPose.getX());
+          yPid.reset(initialPose.getY());
+          rPid.reset(initialPose.getRotation().getRadians());
+        },
+        // execute
         () -> {
           var drivePose = drive.getPose();
-          var xErr = Math.abs(drivePose.getX() - targetPose.getX());
-          var yErr = Math.abs(drivePose.getY() - targetPose.getY());
-          var rErr =
-              Math.abs(
-                  drivePose.getRotation().getRadians() - targetPose.getRotation().getRadians());
-          var xOut = xPid.calculate(xErr);
-          var yOut = yPid.calculate(yErr);
-          var rOut = rPid.calculate(rErr);
+
+          var xOut = xPid.calculate(drivePose.getX(), targetPose.getX());
+          var yOut = yPid.calculate(drivePose.getY(), targetPose.getY());
+          var rOut =
+              -rPid.calculate(
+                  drivePose.getRotation().getRadians() + Math.PI,
+                  targetPose.getRotation().getRadians());
           var fieldSpeeds = new ChassisSpeeds(xOut, yOut, rOut);
           var driveSpeeds =
               ChassisSpeeds.fromFieldRelativeSpeeds(fieldSpeeds, drivePose.getRotation());
           drive.runVelocity(driveSpeeds);
+        },
+        // end
+        (interrupted) -> {},
+        // is finished
+        () -> {
+          return xPid.atGoal() && yPid.atGoal() && rPid.atGoal();
         },
         drive);
   }

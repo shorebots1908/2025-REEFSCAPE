@@ -112,6 +112,7 @@ public class Robot extends LoggedRobot {
             .collect(Collectors.toList());
     Logger.recordOutput("RobotContainer/ReefFaces", faces.toArray(new Pose2d[faces.size()]));
     Logger.recordOutput("RobotContainer/reefPoses", poses.toArray(new Pose2d[poses.size()]));
+    Logger.recordOutput("RobotContainer/TargetPose", poses.get(6));
   }
 
   @Override
