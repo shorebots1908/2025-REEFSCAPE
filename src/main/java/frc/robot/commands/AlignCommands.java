@@ -44,8 +44,8 @@ public class AlignCommands {
    */
   public static Command alignToPose(Drive drive, Pose2d targetPose) {
     // AlignConfig is P, I, D, Velocity, Acceleration
-    var translationConfig = new AlignConfig(0.8, 0, 0, 15, 50.0);
-    var rotationConfig = new AlignConfig(0.125, 0.0, 0.1, 2.0, 50.0);
+    var translationConfig = new AlignConfig(1.6, 0.0001, 0.5, 15, 50.0);
+    var rotationConfig = new AlignConfig(0.075, 0.0001, 0.1, 2.0, 50.0);
     return alignToPose(drive, targetPose, translationConfig, rotationConfig);
   }
 
@@ -112,7 +112,7 @@ public class AlignCommands {
               -rPid.calculate(
                   drivePose.getRotation().getRadians() + Math.PI,
                   targetPose.getRotation().getRadians());
-          var fieldSpeeds = new ChassisSpeeds(xOut, yOut, rOut * 0.7);
+          var fieldSpeeds = new ChassisSpeeds(xOut, yOut, rOut);
           var driveSpeeds =
               ChassisSpeeds.fromFieldRelativeSpeeds(fieldSpeeds, drivePose.getRotation());
           drive.runVelocity(driveSpeeds);
@@ -132,7 +132,7 @@ public class AlignCommands {
   public static List<Pose2d> reefFaces() {
     // Geometry setup: Need a center point and radius for the reef circle
     var reefCenter = new Pose2d(4.4895, 4.026, Rotation2d.fromRadians(0.0));
-    var reefRadius = 0.8315 + 0.44;
+    var reefRadius = 1.2;
     return reefFaces(reefCenter, reefRadius);
   }
 

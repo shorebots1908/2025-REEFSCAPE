@@ -87,7 +87,7 @@ public class RobotContainer {
   public RobotContainer() {
     drive = initDrive();
     vision = initVision();
-    elevator = initElevator(new ElevatorConfig(9, 10, 1.0, 0.0, 0.0, 0.0, 64.5));
+    elevator = initElevator(new ElevatorConfig(9, 10, 1.0, 0.0, 0.0, 0.0, 68.0));
     coralIntake =
         initIntake(
             new IntakeConfig(

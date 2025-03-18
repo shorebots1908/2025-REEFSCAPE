@@ -48,7 +48,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         .idleMode(IdleMode.kBrake)
         .apply(
             new SoftLimitConfig()
-                .forwardSoftLimit(config.encoderUpperLimit)
+                .forwardSoftLimit(config.encoderUpperLimit - 0.5)
                 .forwardSoftLimitEnabled(true))
         .apply(
             new ClosedLoopConfig()
@@ -57,8 +57,8 @@ public class ElevatorIOSparkMax implements ElevatorIO {
                 .d(config.dGain)
                 .apply(
                     new MAXMotionConfig()
-                        .maxVelocity(1200.0)
-                        .maxAcceleration(1200.0)
+                        .maxVelocity(3600.0)
+                        .maxAcceleration(2400.0)
                         .allowedClosedLoopError(0.3)));
     leftMotor.configure(
         leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
