@@ -44,35 +44,39 @@ public class AlignCommands {
    */
   public static Command alignToPose(Drive drive, Pose2d targetPose) {
     // AlignConfig is P, I, D, Velocity, Acceleration
-    var alignConfig = new AlignConfig(0.8, 0, 0, 15, 30);
-    return alignToPose(drive, targetPose, alignConfig);
+    var translationConfig = new AlignConfig(0.8, 0, 0, 15, 50.0);
+    var rotationConfig = new AlignConfig(0.125, 0.0, 0.1, 2.0, 50.0);
+    return alignToPose(drive, targetPose, translationConfig, rotationConfig);
   }
 
   /**
    * Provide an AlignConfig with custom gains for P, I, D, and contraints for Velocity and
    * Acceleration, and get a Command that drives with those characteristics.
    */
-  public static Command alignToPose(Drive drive, Pose2d targetPose, AlignConfig config) {
+  public static Command alignToPose(
+      Drive drive, Pose2d targetPose, AlignConfig translationConfig, AlignConfig rotationConfig) {
     var xPid =
         new ProfiledPIDController(
-            config.p,
-            config.i,
-            config.d,
-            new TrapezoidProfile.Constraints(config.velocity, config.acceleration));
-    xPid.setTolerance(0.03);
+            translationConfig.p,
+            translationConfig.i,
+            translationConfig.d,
+            new TrapezoidProfile.Constraints(
+                translationConfig.velocity, translationConfig.acceleration));
+    xPid.setTolerance(0.3);
     var yPid =
         new ProfiledPIDController(
-            config.p,
-            config.i,
-            config.d,
-            new TrapezoidProfile.Constraints(config.velocity, config.acceleration));
-    yPid.setTolerance(0.03);
+            translationConfig.p,
+            translationConfig.i,
+            translationConfig.d,
+            new TrapezoidProfile.Constraints(
+                translationConfig.velocity, translationConfig.acceleration));
+    yPid.setTolerance(0.3);
     var rPid =
         new ProfiledPIDController(
-            config.p,
-            config.i,
-            config.d,
-            new TrapezoidProfile.Constraints(config.velocity, config.acceleration));
+            rotationConfig.p,
+            rotationConfig.i,
+            rotationConfig.d,
+            new TrapezoidProfile.Constraints(rotationConfig.velocity, rotationConfig.acceleration));
     rPid.enableContinuousInput(-Math.PI, Math.PI);
     rPid.setTolerance(Units.degreesToRadians(50));
 
@@ -108,7 +112,7 @@ public class AlignCommands {
               -rPid.calculate(
                   drivePose.getRotation().getRadians() + Math.PI,
                   targetPose.getRotation().getRadians());
-          var fieldSpeeds = new ChassisSpeeds(xOut, yOut, rOut);
+          var fieldSpeeds = new ChassisSpeeds(xOut, yOut, rOut * 0.7);
           var driveSpeeds =
               ChassisSpeeds.fromFieldRelativeSpeeds(fieldSpeeds, drivePose.getRotation());
           drive.runVelocity(driveSpeeds);
