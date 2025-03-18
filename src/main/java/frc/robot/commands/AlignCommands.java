@@ -98,8 +98,8 @@ public class AlignCommands {
               Math.abs(
                   drivePose.getRotation().getRadians() - targetPose.getRotation().getRadians());
           var xOut = xPid.calculate(xErr);
-          var yOut = xPid.calculate(yErr);
-          var rOut = xPid.calculate(rErr);
+          var yOut = yPid.calculate(yErr);
+          var rOut = rPid.calculate(rErr);
           var fieldSpeeds = new ChassisSpeeds(xOut, yOut, rOut);
           var driveSpeeds =
               ChassisSpeeds.fromFieldRelativeSpeeds(fieldSpeeds, drivePose.getRotation());
@@ -113,8 +113,8 @@ public class AlignCommands {
   /** Generate the reef face poses using the default geometry. */
   public static List<Pose2d> reefFaces() {
     // Geometry setup: Need a center point and radius for the reef circle
-    var reefCenter = new Pose2d(0.0, 0.0, Rotation2d.fromRadians(0.0));
-    var reefRadius = 5.0;
+    var reefCenter = new Pose2d(4.4895, 4.026, Rotation2d.fromRadians(0.0));
+    var reefRadius = 0.8315 + 0.44;
     return reefFaces(reefCenter, reefRadius);
   }
 
@@ -142,9 +142,19 @@ public class AlignCommands {
     return reefFaces;
   }
 
-  public static List<Pose2d> faceToReefPair(Pose2d facePose, double tangentLength) {
-    // TODO
+  public static List<Pose2d> faceToReefPair(Pose2d facePose) {
+    return faceToReefPair(facePose, 0.15);
+  }
 
-    return new ArrayList<>();
+  public static List<Pose2d> faceToReefPair(Pose2d facePose, double tangentLength) {
+    var x = -Math.sin(facePose.getRotation().getRadians());
+    var y = Math.cos(facePose.getRotation().getRadians());
+    var length = Math.sqrt(x * x + y * y);
+    var x2 = x / length * tangentLength;
+    var y2 = y / length * tangentLength;
+    var pose1 = new Pose2d(facePose.getX() + x2, facePose.getY() + y2, facePose.getRotation());
+    var pose2 = new Pose2d(facePose.getX() - x2, facePose.getY() - y2, facePose.getRotation());
+
+    return List.of(pose1, pose2);
   }
 }
