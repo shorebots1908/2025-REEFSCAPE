@@ -516,9 +516,9 @@ public class RobotContainer {
     configureAutoCommand(
         "elevator-l4", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.CORAL_L4));
 
-    configureAutoCommand("feed-in", IntakeCommands.feedIn(coralIntake));
-    configureAutoCommand("feed-out", IntakeCommands.feedOut(coralIntake));
-    configureAutoCommand("feed-spit", IntakeCommands.feedOut(coralIntake, 0.2));
+    configureAutoCommand("feed-in", IntakeCommands.feedIn(coralIntake).withTimeout(1.0));
+    configureAutoCommand("feed-out", IntakeCommands.feedOut(coralIntake, 0.5).withTimeout(1));
+    configureAutoCommand("feed-spit", IntakeCommands.feedOut(coralIntake, 0.2).withTimeout(1));
     configureAutoCommand(
         "coral-accept",
         IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE));
@@ -534,6 +534,7 @@ public class RobotContainer {
     configureAutoCommand("auto4", new PathPlannerAuto("auto4"));
     configureAutoCommand("midcompauto", new PathPlannerAuto("midcompauto"));
     configureAutoCommand("2pieceauto", new PathPlannerAuto("2pieceauto"));
+    configureAutoCommand("2pieceauto2", new PathPlannerAuto("2pieceauto2"));
     configureAutoCommand("auto1path1", DriveCommands.followPath(drive, "auto1path1"));
     configureAutoCommand("auto1path2", DriveCommands.followPath(drive, "auto1path2"));
     configureAutoCommand("auto1path3", DriveCommands.followPath(drive, "auto1path3"));

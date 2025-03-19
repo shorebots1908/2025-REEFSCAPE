@@ -11,33 +11,27 @@
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "elevator-l4"
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2piecepath2"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 1.0
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "coral-dispense"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "feed-out"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "elevator-l1"
+            "pathName": "2piecepath3"
           }
         }
       ]

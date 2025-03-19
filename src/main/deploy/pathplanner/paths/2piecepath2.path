@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.426670919526407,
-        "y": 6.092553865899688
+        "x": 4.0365,
+        "y": 6.5405
       },
       "isLocked": false,
       "linkedName": "2pieceauto1end"
     },
     {
       "anchor": {
-        "x": 1.325120035859485,
-        "y": 7.123949088740336
+        "x": 1.6205443378456101,
+        "y": 7.330060048727372
       },
       "prevControl": {
-        "x": 2.906645657311076,
-        "y": 6.436138776917899
+        "x": 3.202069959297203,
+        "y": 6.642249736904935
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 125.00000000000001
+    "rotation": 126.43085812016233
   },
   "reversed": false,
   "folder": "New Folder",
