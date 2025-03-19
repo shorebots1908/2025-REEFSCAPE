@@ -133,7 +133,7 @@ public class AlignCommands {
   public static List<Pose2d> reefFaces() {
     // Geometry setup: Need a center point and radius for the reef circle
     var reefCenter = new Pose2d(4.4895, 4.026, Rotation2d.fromRadians(0.0));
-    var reefRadius = 1.5;
+    var reefRadius = 1.2;
     return reefFaces(reefCenter, reefRadius);
   }
 
@@ -182,10 +182,23 @@ public class AlignCommands {
     var length = Math.sqrt(x * x + y * y);
     var x2 = x / length * tangentLength;
     var y2 = y / length * tangentLength;
-    var pose1 = new Pose2d(facePose.getX() + x2, facePose.getY() + y2, facePose.getRotation());
-    var pose2 = new Pose2d(facePose.getX() - x2, facePose.getY() - y2, facePose.getRotation());
 
-    return List.of(pose1, pose2);
+    // Allow scaling the tangent to the left reef and right reef independently
+    // This is useful because the robot elevator is slightly off-center
+    var leftScale = 1.1;
+    var rightScale = 0.9;
+    var leftPose =
+        new Pose2d(
+            facePose.getX() + x2 * leftScale,
+            facePose.getY() + y2 * leftScale,
+            facePose.getRotation());
+    var rightPose =
+        new Pose2d(
+            facePose.getX() - x2 * rightScale,
+            facePose.getY() - y2 * rightScale,
+            facePose.getRotation());
+
+    return List.of(leftPose, rightPose);
   }
 
   public static class ToClosestPose extends Command {

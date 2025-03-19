@@ -57,6 +57,7 @@ import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.FieldPoint;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -134,6 +135,8 @@ public class RobotContainer {
         faces.stream()
             .flatMap((face) -> AlignCommands.faceToReefPair(face).stream())
             .collect(Collectors.toList());
+    var poseArray = poses.toArray(new Pose2d[poses.size()]);
+    Logger.recordOutput("RobotContainer/poses", poseArray);
 
     // Configure the button bindings
     configureButtonBindings();
