@@ -525,12 +525,15 @@ public class RobotContainer {
     configureAutoCommand(
         "coral-dispense",
         IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
+    configureAutoCommand(
+        "coral-down", IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_DOWN));
 
     configureAutoCommand("auto1", new PathPlannerAuto("auto1"));
     configureAutoCommand("auto2", new PathPlannerAuto("auto2"));
     configureAutoCommand("auto3", new PathPlannerAuto("auto3"));
     configureAutoCommand("auto4", new PathPlannerAuto("auto4"));
     configureAutoCommand("midcompauto", new PathPlannerAuto("midcompauto"));
+    configureAutoCommand("2pieceauto", new PathPlannerAuto("2pieceauto"));
     configureAutoCommand("auto1path1", DriveCommands.followPath(drive, "auto1path1"));
     configureAutoCommand("auto1path2", DriveCommands.followPath(drive, "auto1path2"));
     configureAutoCommand("auto1path3", DriveCommands.followPath(drive, "auto1path3"));

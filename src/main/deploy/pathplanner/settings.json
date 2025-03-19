@@ -4,6 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "GraysonPaths",
+    "New Folder",
     "auto1paths",
     "auto2paths",
     "auto4paths",
@@ -12,6 +13,7 @@
   ],
   "autoFolders": [
     "GraysonAutos",
+    "2pieceauto",
     "abby autos",
     "drive.foreward.autos"
   ],
