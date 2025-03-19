@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.subsystems.drive.Drive;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * AlignCommands contains static functions for constructing a Command that will drive the Robot to a
@@ -117,9 +118,9 @@ public class AlignCommands {
               ChassisSpeeds.fromFieldRelativeSpeeds(fieldSpeeds, drivePose.getRotation());
           drive.runVelocity(driveSpeeds);
         },
-        // end
+        // end(interrupted)
         (interrupted) -> {},
-        // is finished
+        // isFinished -> boolean
         () -> {
           return xPid.atGoal() && yPid.atGoal() && rPid.atGoal();
         },
@@ -160,6 +161,17 @@ public class AlignCommands {
     return reefFaces;
   }
 
+  /** Return all 12 reef scoring poses. */
+  public static List<Pose2d> reefPoses() {
+    return reefFaces().stream()
+        .flatMap((face) -> faceToReefPair(face).stream())
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Given a pose looking at a face of the reef, calculate and return two poses parallel to the face
+   * pose offset to the left and right.
+   */
   public static List<Pose2d> faceToReefPair(Pose2d facePose) {
     return faceToReefPair(facePose, 0.15);
   }
@@ -174,5 +186,53 @@ public class AlignCommands {
     var pose2 = new Pose2d(facePose.getX() - x2, facePose.getY() - y2, facePose.getRotation());
 
     return List.of(pose1, pose2);
+  }
+
+  public static class ToClosestPose extends Command {
+    private Drive drive;
+    private List<Pose2d> poses;
+    private Command alignCommand;
+
+    public ToClosestPose(Drive drive, List<Pose2d> poses) {
+      this.drive = drive;
+      this.poses = poses;
+    }
+
+    @Override
+    public void initialize() {
+      var drivePose = drive.getPose();
+
+      var closestDistance = Double.MAX_VALUE;
+      var closestPose = poses.get(0);
+
+      for (Pose2d pose : poses) {
+        var xDelta = Math.abs(drivePose.getX() - pose.getX());
+        var yDelta = Math.abs(drivePose.getY() - pose.getY());
+        var distance = Math.sqrt(xDelta * xDelta + yDelta * yDelta);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestPose = pose;
+        }
+      }
+
+      alignCommand = alignToPose(drive, closestPose);
+      alignCommand.initialize();
+    }
+
+    @Override
+    public void execute() {
+      alignCommand.execute();
+    }
+
+    @Override
+    public boolean isFinished() {
+      return alignCommand.isFinished();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+      alignCommand.end(interrupted);
+    }
   }
 }

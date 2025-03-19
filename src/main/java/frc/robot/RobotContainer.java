@@ -290,7 +290,9 @@ public class RobotContainer {
 
     player1.b().whileTrue(IntakeCommands.feedIn(coralIntake));
     player1.a().whileTrue(IntakeCommands.feedOut(coralIntake));
-    player1.leftTrigger().whileTrue(AlignCommands.alignToPose(drive, poses.get(6)));
+
+    // player1.leftTrigger().whileTrue(AlignCommands.alignToPose(drive, poses.get(6)));
+    player1.leftTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, poses));
 
     player1
         .x()
