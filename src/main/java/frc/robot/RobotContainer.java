@@ -140,7 +140,10 @@ public class RobotContainer {
     var poseArray = reefPoses.toArray(new Pose2d[reefPoses.size()]);
     Logger.recordOutput("RobotContainer/poses", poseArray);
 
-    intakePoses = AlignCommands.intakePoses();
+    intakePoses = AlignCommands.intakeStationPoses()
+      .stream()
+      .flatMap((station) -> AlignCommands.intakeStationToIntakePoses(station, 0, 0).stream())
+      .collect(Collectors.toList());
     var intakePoseArray = intakePoses.toArray(new Pose2d[intakePoses.size()]);
     Logger.recordOutput("RobotContainer/intakePoses", intakePoseArray);
 
