@@ -104,15 +104,6 @@ public class Robot extends LoggedRobot {
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
-
-    var faces = AlignCommands.reefFaces();
-    var poses =
-        faces.stream()
-            .flatMap((face) -> AlignCommands.faceToReefPair(face).stream())
-            .collect(Collectors.toList());
-    Logger.recordOutput("RobotContainer/ReefFaces", faces.toArray(new Pose2d[faces.size()]));
-    Logger.recordOutput("RobotContainer/reefPoses", poses.toArray(new Pose2d[poses.size()]));
-    Logger.recordOutput("RobotContainer/TargetPose", poses.get(6));
   }
 
   @Override

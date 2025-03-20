@@ -139,8 +139,8 @@ public class RobotContainer {
         faces.stream()
             .flatMap((face) -> AlignCommands.faceToReefPair(face).stream())
             .collect(Collectors.toList());
-    var poseArray = reefPoses.toArray(new Pose2d[reefPoses.size()]);
-    Logger.recordOutput("RobotContainer/poses", poseArray);
+    var reefPosesArray = reefPoses.toArray(new Pose2d[reefPoses.size()]);
+    Logger.recordOutput("RobotContainer/reefPoses", reefPosesArray);
 
     reefLeftPoses = List.of(
       reefPoses.get(0),
@@ -150,6 +150,8 @@ public class RobotContainer {
       reefPoses.get(8),
       reefPoses.get(10)
     );
+    var reefLeftPosesArray = reefLeftPoses.toArray(new Pose2d[reefLeftPoses.size()]);
+    Logger.recordOutput("RobotContainer/reefLeftPoses", reefLeftPosesArray);
     
     reefRightPoses = List.of(
       reefPoses.get(1),
@@ -159,6 +161,8 @@ public class RobotContainer {
       reefPoses.get(9),
       reefPoses.get(11)
     );
+    var reefRightPosesArray = reefRightPoses.toArray(new Pose2d[reefRightPoses.size()]);
+    Logger.recordOutput("RobotContainer/reefRightPoses", reefRightPosesArray);
 
     intakePoses = AlignCommands.intakeStationPoses()
       .stream()
