@@ -21,8 +21,7 @@ public class WristCommands {
   public static final BasePosition ALGAE_WRIST_STOW = new BasePosition(0.9);
   public static final BasePosition ALGAE_WRIST_DEPLOY = new BasePosition(0.128);
 
-  public static Command moveByJoystick(
-      Wrist wrist, DoubleSupplier wristPosition, DoubleSupplier wheels) {
+  public static Command moveByJoystick(Wrist wrist, DoubleSupplier wristPosition) {
     return Commands.run(
         () -> {
           wrist.setWristOpenLoop(wristPosition.getAsDouble());

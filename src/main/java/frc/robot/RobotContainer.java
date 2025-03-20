@@ -89,6 +89,7 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController player1 = new CommandXboxController(0);
   private final CommandXboxController player2 = new CommandXboxController(1);
+  private final CommandXboxController player3 = new CommandXboxController(2);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -203,6 +204,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     configurePlayer1();
     configurePlayer2();
+    configurePlayer3();
   }
 
   private void configurePlayer1() {
@@ -290,8 +292,8 @@ public class RobotContainer {
         .leftTrigger(0.5)
         .whileTrue(
             WristCommands.moveByJoystick(
-                wrist, () -> -MathUtil.applyDeadband(player2.getLeftY(), 0.07) * 0.5, () -> 0.0))
-        .onFalse(WristCommands.moveByJoystick(wrist, () -> 0.0, () -> 0.0));
+                wrist, () -> -MathUtil.applyDeadband(player2.getLeftY(), 0.07) * 0.5))
+        .onFalse(WristCommands.moveByJoystick(wrist, () -> 0.0));
 
     // Without right trigger, X and A feed coral
     player2
@@ -319,6 +321,141 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> -0.5))
         .onFalse(ElevatorCommands.moveByJoystick(elevator, () -> 0.0));
+  }
+
+  private void configurePlayer3() {
+    // Press start to take over Drive
+    player3.start().toggleOnTrue(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -player3.getLeftY(),
+            () -> -player3.getLeftX(),
+            () -> -player3.getRightX())
+    );
+
+    // A: Coral mode
+    {
+      var trigger = player3
+        .a()
+        .and(player3.b().negate())
+        .and(player3.x().negate())
+        .and(player3.y().negate());
+
+      // Holding A, triggers move wrist
+      trigger
+        .whileTrue(WristCommands.moveByJoystick(wrist, () -> player3.getLeftTriggerAxis() - player3.getRightTriggerAxis()))
+        .onTrue(WristCommands.moveByJoystick(wrist, () -> 0.0));
+
+      // Holding A, bumpers control feed
+      trigger
+        .whileTrue(IntakeCommands.moveByJoystick(
+          coralIntake, 
+          () -> {
+            var left = player3.leftBumper().getAsBoolean();
+            var right = player3.rightBumper().getAsBoolean();
+            if (left && !right) {
+              return 0.5;
+            } else if (right && !left) {
+              return -0.5;
+            } else {
+              return 0.0;
+            }
+          }
+        ));
+
+      // Holding A, D-pad goes to predefined destinations
+      trigger
+        .and(player3.povDown())
+        .onTrue(WristCommands.goToPosition(wrist, WristCommands.CORAL_WRIST_DOWN));
+      trigger
+        .and(player3.povLeft())
+        .onTrue(WristCommands.goToPosition(wrist, WristCommands.CORAL_WRIST_INTAKE));
+      trigger
+        .and(player3.povRight())
+        .onTrue(WristCommands.goToPosition(wrist, WristCommands.CORAL_WRIST_SCORE));
+      // trigger
+      //   .and(player3.povUp())
+      //   .onTrue();
+    }
+
+    // // B: Algae mode
+    // {
+    //   var trigger = player3
+    //     .b()
+    //     .and(player3.a().negate())
+    //     .and(player3.x().negate())
+    //     .and(player3.y().negate());
+
+    //   trigger
+    //     .whileTrue(IntakeCommands.moveByJoystick(
+    //       algaeIntake, 
+    //       () -> player3.getLeftTriggerAxis() - player3.getRightTriggerAxis(), 
+    //       () -> {
+    //         var left = player3.leftBumper().getAsBoolean();
+    //         var right = player3.rightBumper().getAsBoolean();
+    //         if (left && !right) {
+    //           return 0.5;
+    //         } else if (right && !left) {
+    //           return -0.5;
+    //         } else {
+    //           return 0.0;
+    //         }
+    //       }
+    //     ));
+    // }
+
+    // X: Elevator mode
+    {
+      var trigger = player3
+        .x()
+        .and(player3.a().negate())
+        .and(player3.b().negate())
+        .and(player3.y().negate());
+
+      // Holding X, triggers move elevator
+      trigger
+        .and(player3.povDown().negate())
+        .and(player3.povLeft().negate())
+        .and(player3.povRight().negate())
+        .and(player3.povUp().negate())
+        .whileTrue(ElevatorCommands.moveByJoystick(
+          elevator, 
+          () -> player3.getLeftTriggerAxis() - player3.getRightTriggerAxis()
+        ))
+        .onFalse(ElevatorCommands.moveByJoystick(elevator, () -> 0.0));
+
+      // Holding X, D-pad goes to predefined destinations
+      trigger
+        .and(player3.povDown())
+        .onTrue(AutoCommands.smartElevatordown(elevator, wrist, ElevatorCommands.BOTTOM));
+      trigger
+        .and(player3.povLeft())
+        .onTrue(AutoCommands.smartElevatorl3(elevator, wrist, ElevatorCommands.CORAL_L2));
+      trigger
+        .and(player3.povRight())
+        .onTrue(AutoCommands.smartElevatorl3(elevator, wrist, ElevatorCommands.CORAL_L3));
+      trigger
+        .and(player3.povUp())
+        .onTrue(AutoCommands.smartElevator(elevator, wrist, ElevatorCommands.CORAL_L4));
+    }
+
+    // Y: Climber mode
+    {
+      var trigger = player3
+        .y()
+        .and(player3.a().negate())
+        .and(player3.b().negate())
+        .and(player3.x().negate());
+
+      // Holding Y, triggers move climber
+      trigger
+        .and(player3.povDown().negate())
+        .and(player3.povLeft().negate())
+        .and(player3.povRight().negate())
+        .and(player3.povUp().negate())
+        .whileTrue(ClimberCommands.joystick(climber, () -> player3.getLeftTriggerAxis() - player3.getRightTriggerAxis()))
+        .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
+    }
   }
 
   private void configureAutoCommand(String name, Command command) {

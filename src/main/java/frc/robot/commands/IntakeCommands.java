@@ -20,8 +20,7 @@ public class IntakeCommands {
   public static final BasePosition ALGAE_WRIST_STOW = new BasePosition(0.9);
   public static final BasePosition ALGAE_WRIST_DEPLOY = new BasePosition(0.128);
 
-  public static Command moveByJoystick(
-      Intake intake, DoubleSupplier wristPosition, DoubleSupplier wheels) {
+  public static Command moveByJoystick(Intake intake, DoubleSupplier wheels) {
     return Commands.run(
         () -> {
           intake.setFeedOpenLoop(wheels.getAsDouble());
