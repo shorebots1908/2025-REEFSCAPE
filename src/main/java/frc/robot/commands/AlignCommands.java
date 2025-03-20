@@ -221,7 +221,7 @@ public class AlignCommands {
   }
 
   public static List<Pose2d> intakeStationToIntakePoses(Pose2d stationPose) {
-    return intakeStationToIntakePoses(stationPose, 0.0, 0.5);
+    return intakeStationToIntakePoses(stationPose, 0.5, 0.5);
   }
 
   /**
