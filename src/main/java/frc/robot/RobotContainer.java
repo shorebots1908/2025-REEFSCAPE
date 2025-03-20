@@ -77,6 +77,8 @@ public class RobotContainer {
   private final Climber climber;
   private final List<Pose2d> faces;
   private final List<Pose2d> reefPoses;
+  private final List<Pose2d> reefLeftPoses;
+  private final List<Pose2d> reefRightPoses;
   private final List<Pose2d> intakePoses;
 
   // Controller
@@ -139,6 +141,24 @@ public class RobotContainer {
             .collect(Collectors.toList());
     var poseArray = reefPoses.toArray(new Pose2d[reefPoses.size()]);
     Logger.recordOutput("RobotContainer/poses", poseArray);
+
+    reefLeftPoses = List.of(
+      reefPoses.get(0),
+      reefPoses.get(2),
+      reefPoses.get(4),
+      reefPoses.get(6),
+      reefPoses.get(8),
+      reefPoses.get(10)
+    );
+    
+    reefRightPoses = List.of(
+      reefPoses.get(1),
+      reefPoses.get(3),
+      reefPoses.get(5),
+      reefPoses.get(7),
+      reefPoses.get(9),
+      reefPoses.get(11)
+    );
 
     intakePoses = AlignCommands.intakeStationPoses()
       .stream()
@@ -304,7 +324,8 @@ public class RobotContainer {
     player1.a().whileTrue(IntakeCommands.feedOut(coralIntake));
 
     // player1.leftTrigger().whileTrue(AlignCommands.alignToPose(drive, poses.get(6)));
-    player1.leftTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, reefPoses));
+    player1.leftTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, reefLeftPoses));
+    player1.rightTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, reefRightPoses));
 
     player1.leftBumper().whileTrue(new AlignCommands.ToClosestPose(drive, intakePoses));
 
