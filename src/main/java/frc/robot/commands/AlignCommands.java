@@ -209,6 +209,26 @@ public class AlignCommands {
         new Pose2d(1.56, 0.788, Rotation2d.fromDegrees(135.0 + 90.0)));
   }
 
+  /**
+   * Returns the known poses of the april tags on the intake station.
+   */
+  public static List<Pose2d> intakeStationPoses() {
+    return List.of();
+  }
+
+  /**
+   * Given an april tag pose from an intake station, return two poses
+   * that have a given offset left and right along the intake station wall,
+   * and have a given offset back perpendicularly from the wall.
+   */
+  public static List<Pose2d> intakeStationToIntakePoses(
+    Pose2d stationPose,
+    double leftRightOffset,
+    double backOffset
+  ) {
+    return List.of();
+  }
+
   public static class ToClosestPose extends Command {
     private Drive drive;
     private List<Pose2d> poses;
@@ -243,7 +263,7 @@ public class AlignCommands {
 
     @Override
     public void execute() {
-      alignCommand.execute();
+        alignCommand.execute();
     }
 
     @Override
@@ -253,7 +273,7 @@ public class AlignCommands {
 
     @Override
     public void end(boolean interrupted) {
-      alignCommand.end(interrupted);
+        alignCommand.end(interrupted);
     }
   }
 }
