@@ -170,21 +170,18 @@ public class RobotContainer {
             () -> -player1.getLeftY(),
             () -> -player1.getLeftX(),
             () -> -player1.getRightX()));
-
     player1.start().onTrue(Commands.runOnce(drive::gyroReset, drive));
 
-    // player1.rightTrigger(0.5).whileTrue(DriveCommands.generatePath(drive));
-    // player1.leftTrigger(0.5).whileTrue(DriveCommands.followPath(drive, "ABApproach"));
+    // Align commands
+    player1.leftTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, reefPoses));
+    player1.leftBumper().whileTrue(new AlignCommands.ToClosestPose(drive, intakePoses));
 
-    // Switch to X pattern when X button is pressed
-    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
-    // Elevator commands
-    // controller
-    //     .rightBumper()
-    //     .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> controller.getRightY()));
-    // controller.povDown().onTrue(ElevatorCommands.goToPosition(elevator,
-    // ElevatorCommands.BOTTOM));
+    // Elevator auto positions on the D-pad
+    player1
+        .povDown()
+        .and(player1.leftBumper().negate())
+        .and(player1.rightBumper().negate())
+        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM));
     player1
         .povLeft()
         .and(player1.leftBumper().negate())
@@ -200,111 +197,12 @@ public class RobotContainer {
         .and(player1.leftBumper().negate())
         .and(player1.rightBumper().negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4));
-    // Elevator down with stow
-    // player1
-    //     .povDown()
-    //     .and(player1.leftBumper().negate())
-    //     .and(player1.rightBumper().negate())
-    //     .onTrue(
-    //         IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW)
-    //             .alongWith(
-    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
-    //                 ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM)));
 
-    // Elevator down, no stow
-    player1
-        .povDown()
-        .and(player1.leftBumper().negate())
-        .and(player1.rightBumper().negate())
-        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM));
-
-    // Algae set positions
-    // player1
-    //     .leftBumper()
-    //     .and(player1.povUp())
-    //     .onTrue(
-    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_PROC)
-    //             .alongWith(
-    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
-    //                 IntakeCommands.goToPosition(algaeIntake,
-    // IntakeCommands.ALGAE_WRIST_DEPLOY)));
-    // player1
-    //     .leftBumper()
-    //     .and(player1.povDown())
-    //     .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW));
-    // player1
-    //     .leftBumper()
-    //     .and(player1.povRight())
-    //     .onTrue(
-    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L3)
-    //             .alongWith(
-    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
-    //                 IntakeCommands.goToPosition(algaeIntake,
-    // IntakeCommands.ALGAE_WRIST_DEPLOY)));
-    // player1
-    //     .leftBumper()
-    //     .and(player1.povLeft())
-    //     .onTrue(
-    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_L2)
-    //             .alongWith(
-    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_STOW),
-    //                 IntakeCommands.goToPosition(algaeIntake,
-    // IntakeCommands.ALGAE_WRIST_DEPLOY)));
-
-    // player1
-    //     .rightBumper()
-    //     .and(player1.povUp())
-    //     .onTrue(
-    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4)
-    //             .alongWith(
-    //                 IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW),
-    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
-    // player1
-    //     .rightBumper()
-    //     .and(player1.povDown())
-    //     .onTrue(
-    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM)
-    //             .alongWith(
-    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE),
-    //                 IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW)));
-    // player1
-    //     .rightBumper()
-    //     .and(player1.povRight())
-    //     .onTrue(
-    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3)
-    //             .alongWith(
-    //                 IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW),
-    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
-    // player1
-    //     .rightBumper()
-    //     .and(player1.povLeft())
-    //     .onTrue(
-    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2)
-    //             .alongWith(
-    //                 IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW),
-    //                 IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
-
-    // Coral commands
-    // controller.a().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(0.5)));
-    // controller.y().onTrue(IntakeCommands.goToPosition(coralIntake, new BasePosition(1.0)));
-    // controller.x().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(0.5)));
-    // controller.b().onTrue(IntakeCommands.goToPosition(algaeIntake, new BasePosition(1.0)));
-    // player1
-    //    .a()
-    //    .whileTrue(
-    // player1
-    //    .b()
-    //    .whileTrue(IntakeCommands.setTargetPosition(algaeIntake,
-    // IntakeCommands.ALGAE_WRIST_STOW));
-
+    // Coral feeding
     player1.b().whileTrue(IntakeCommands.feedIn(coralIntake));
     player1.a().whileTrue(IntakeCommands.feedOut(coralIntake));
 
-    // player1.leftTrigger().whileTrue(AlignCommands.alignToPose(drive, poses.get(6)));
-    player1.leftTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, reefPoses));
-
-    player1.leftBumper().whileTrue(new AlignCommands.ToClosestPose(drive, intakePoses));
-
+    // Coral wrist to Intake or Score positions
     player1
         .x()
         .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE));
@@ -320,41 +218,29 @@ public class RobotContainer {
   }
 
   private void configurePlayer2() {
-    // // Manual coral commands
-    // copied commands from player1 -MZ
+    // Elevator auto positions on the D-pad
+    player2
+        .povDown()
+        .and(player2.leftBumper().negate())
+        .and(player2.rightBumper().negate())
+        .onTrue(AutoCommands.smartElevatordown(elevator, coralIntake, ElevatorCommands.BOTTOM));
     player2
         .povLeft()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
-        // .and(player2.rightTrigger(0.5).negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2));
     player2
         .povRight()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
-        // .and(player2.rightTrigger(0.5).negate())
         .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3));
     player2
         .povUp()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
-        // .and(player2.rightTrigger(0.5).negate())
         .onTrue(AutoCommands.smartElevator(elevator, coralIntake, ElevatorCommands.CORAL_L4));
-    // .andThen(
-    //     IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
-    player2
-        .povDown()
-        .and(player2.leftBumper().negate())
-        .and(player2.rightBumper().negate())
-        // .and(player2.rightTrigger(0.5).negate())
-        .onTrue(AutoCommands.smartElevatordown(elevator, coralIntake, ElevatorCommands.BOTTOM));
 
-    // player2
-    //     .back()
-    //     .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY));
-
-    // coralIntake.setDefaultCommand(
-    //     IntakeCommands.moveByJoystick(coralIntake, () -> -player2.getLeftY() * 0.5, () -> 0.0));
+    // Hold left trigger to manually control coral wrist with LeftY joystick
     player2
         .leftTrigger(0.5)
         .whileTrue(
@@ -363,6 +249,7 @@ public class RobotContainer {
                 () -> -MathUtil.applyDeadband(player2.getLeftY(), 0.07) * 0.5,
                 () -> 0.0))
         .onFalse(IntakeCommands.moveByJoystick(coralIntake, () -> 0.0, () -> 0.0));
+
     // Without right trigger, X and A feed coral
     player2
         .x()
@@ -374,64 +261,12 @@ public class RobotContainer {
         .whileTrue(IntakeCommands.feedOut(coralIntake));
     player2.a().and(player2.rightTrigger(0.5)).whileTrue(IntakeCommands.feedOut(coralIntake, 0.15));
 
-    // With right trigger, X and A set algae wrist
-    // Algae wrist disabled at 3/9/25 competition
-    // player2
-    //     .x()
-    //     .and(player2.rightTrigger(0.5))
-    //     .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW));
-    // player2
-    //     .a()
-    //     .and(player2.rightTrigger(0.5))
-    //     .onTrue(IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_DEPLOY));
-
-    // algaeIntake.setDefaultCommand(
-    //     IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY() * 0.5, () -> 0.0));
-    // player2
-    //     .rightTrigger(0.5)
-    //     .and(player2.back().negate())
-    //     .whileTrue(
-    //         // removed deadbnd code, didn't seem to work -MZ
-    //         IntakeCommands.moveByJoystick(
-    //             algaeIntake, () -> -MathUtil.applyDeadband(player2.getRightY(), 0.07), () ->
-    // 0.0))
-    //     .onFalse(IntakeCommands.moveByJoystick(algaeIntake, () -> 0.0, () -> 0.0));
-    //    IntakeCommands.moveByJoystick(algaeIntake, () -> -player2.getRightY(), () -> 0.0))
-    // .onFalse(IntakeCommands.moveByJoystick(algaeIntake, () -> 0.0, () -> 0.0));
-
-    // player2
-    //     .rightTrigger(0.5)
-    //     .and(player2.povUp())
-    //     .onTrue(
-    //         new RepeatCommand(ElevatorCommands.goToPosition(elevator,
-    // ElevatorCommands.ALGAE_L3)));
-    // player2
-    //     .rightTrigger(0.5)
-    //     .and(player2.povRight())
-    //     .onTrue(
-    //         new RepeatCommand(ElevatorCommands.goToPosition(elevator,
-    // ElevatorCommands.ALGAE_L2)));
-    // player2
-    //     .rightTrigger(0.5)
-    //     .and(player2.povDown())
-    //     .onTrue(
-    //         new RepeatCommand(
-    //             ElevatorCommands.goToPosition(elevator, ElevatorCommands.ALGAE_PROCESSOR)));
-    // player2
-    //     .rightTrigger(0.5)
-    //     .and(player2.povLeft())
-    //     .onTrue(
-    //         new RepeatCommand(
-    //             IntakeCommands.goToPosition(algaeIntake, IntakeCommands.ALGAE_WRIST_STOW)));
-
-    // player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake, 0.7));
-    // player2.y().whileTrue(IntakeCommands.feedIn(algaeIntake, 0.6));
-    // player2.b().whileTrue(IntakeCommands.feedOut(algaeIntake));
-
+    // Start button moves coral wrist to Score
     player2
         .start()
         .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
 
+    // Manual elevator up and down on bumpers
     player2
         .leftBumper()
         .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> 0.5))
@@ -440,28 +275,6 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> -0.5))
         .onFalse(ElevatorCommands.moveByJoystick(elevator, () -> 0.0));
-
-    // player2
-    //     .leftTrigger(0.5)
-    //     .whileTrue(
-    //         IntakeCommands.moveByJoystick(
-    //             coralIntake,
-    //             () -> -player2.getRightY(),
-    //             () -> {
-    //               if (player2.y().getAsBoolean()) {
-    //                 return 5.0;
-    //               }
-    //               if (player2.a().getAsBoolean()) {
-    //                 return -5.0;
-    //               }
-    //               return 0.0;
-    //             }));
-
-    // Manual climber commands
-    // player2
-    //     .back()
-    //     .whileTrue(ClimberCommands.joystick(climber, () -> player2.getRightY()))
-    //     .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
   }
 
   private void configureAutoCommand(String name, Command command) {
@@ -474,52 +287,6 @@ public class RobotContainer {
   }
 
   private void configureAutoCommands() {
-    // // Set up SysId routines
-    // configureAutoCommand(
-    //     autoChooser,
-    //     "drive-wheel-radius-characterization",
-    //     DriveCommands.wheelRadiusCharacterization(drive));
-    // configureAutoCommand(
-    //     autoChooser,
-    //     "drive-simple-ff-characterization",
-    //     DriveCommands.feedforwardCharacterization(drive));
-    // configureAutoCommand(
-    //     autoChooser,
-    //     "drive-sysid-quasistatic-forward",
-    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // configureAutoCommand(
-    //     autoChooser,
-    //     "drive-sysid-quasistatic-reverse",
-    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // configureAutoCommand(
-    //     autoChooser,
-    //     "drive-sysid-dynamic-forward",
-    //     drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // configureAutoCommand(
-    //     autoChooser,
-    //     "drive-sysid-dynamic-reverse",
-    //     drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-    // configureAutoCommand(
-    //     "elevator-top", ElevatorCommands.setTargetPosition(elevator, new BasePosition(1.0)));
-    // configureAutoCommand(
-    //     "elevator-bottom", ElevatorCommands.setTargetPosition(elevator, new BasePosition(0.0)));
-    // configureAutoCommand(
-    //     "elevator-l4",
-    //     Commands.sequence(
-    //         IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE),
-    //         ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4)));
-
-    // configureAutoCommand("pickup", AutoCommands.pickup(coralIntake, elevator));
-    // configureAutoCommand(
-    //     "score-l1", AutoCommands.score(coralIntake, elevator, ElevatorCommands.BOTTOM));
-    // configureAutoCommand(
-    //     "score-l2", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L2));
-    // configureAutoCommand(
-    //     "score-l3", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L3));
-    // configureAutoCommand(
-    //     "score-l4", AutoCommands.score(coralIntake, elevator, ElevatorCommands.CORAL_L4));
-
     configureAutoCommand(
         "elevator-l1", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.BOTTOM));
     configureAutoCommand(
@@ -564,7 +331,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
-    // return DriveCommands.autoPath(drive);
   }
 
   private Drive initDrive() {
