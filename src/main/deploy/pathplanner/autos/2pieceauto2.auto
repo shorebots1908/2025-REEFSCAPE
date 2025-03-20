@@ -19,6 +19,12 @@
                 "data": {
                   "name": "elevator-l4"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "coral-dispense"
+                }
               }
             ]
           }
@@ -32,19 +38,7 @@
         {
           "type": "named",
           "data": {
-            "name": "coral-dispense"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "feed-out"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "coral-down"
           }
         },
         {
@@ -97,13 +91,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "coral-down"
+                  "name": "elevator-l4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "elevator-l4"
+                  "name": "coral-dispense"
                 }
               }
             ]
@@ -112,25 +106,13 @@
         {
           "type": "named",
           "data": {
-            "name": "coral-dispense"
+            "name": "align-to-reef"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "feed-out"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "coral-down"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "elevator-l1"
           }
         }
       ]

@@ -322,9 +322,9 @@ public class RobotContainer {
     configureAutoCommand(
         "elevator-l4", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.CORAL_L4));
 
-    configureAutoCommand("feed-in", IntakeCommands.feedIn(coralIntake).withTimeout(2.0));
-    configureAutoCommand("feed-out", IntakeCommands.feedOut(coralIntake, 0.5).withTimeout(0.5));
-    configureAutoCommand("feed-spit", IntakeCommands.feedOut(coralIntake, 0.2).withTimeout(0.5));
+    configureAutoCommand("feed-in", IntakeCommands.feedIn(coralIntake).withTimeout(1.4));
+    configureAutoCommand("feed-out", IntakeCommands.feedOut(coralIntake, 0.5).withTimeout(0.3));
+    configureAutoCommand("feed-spit", IntakeCommands.feedOut(coralIntake, 0.2).withTimeout(0.3));
     configureAutoCommand(
         "coral-accept",
         IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE));

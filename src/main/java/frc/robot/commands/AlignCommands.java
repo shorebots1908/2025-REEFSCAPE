@@ -213,7 +213,7 @@ public class AlignCommands {
   }
 
   public static Pose2d offsetIntakePose(Pose2d stationPose) {
-    return offsetPose(stationPose, -0.6, -0.5);
+    return offsetPose(stationPose, -0.55, -0.5);
   }
 
   /**
