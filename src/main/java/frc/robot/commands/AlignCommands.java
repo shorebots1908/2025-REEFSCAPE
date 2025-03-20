@@ -205,14 +205,6 @@ public class AlignCommands {
     return List.of(leftPose, rightPose);
   }
 
-  public static List<Pose2d> intakePoses() {
-    return List.of(
-        new Pose2d(1.56, 7.27, Rotation2d.fromDegrees(-135.0 - 90.0)),
-        new Pose2d(0.85, 6.76, Rotation2d.fromDegrees(-135.0 - 90.0)),
-        new Pose2d(0.74, 1.33, Rotation2d.fromDegrees(135.0 + 90.0)),
-        new Pose2d(1.56, 0.788, Rotation2d.fromDegrees(135.0 + 90.0)));
-  }
-
   /** Returns the known poses of the april tags on the intake station. */
   public static List<Pose2d> intakeStationPoses() {
     return List.of(
@@ -220,34 +212,32 @@ public class AlignCommands {
         aprilTagLayout.getTagPose(13).get().toPose2d());
   }
 
-  public static List<Pose2d> intakeStationToIntakePoses(Pose2d stationPose) {
-    return intakeStationToIntakePoses(stationPose, 0.6, 0.5);
+  public static Pose2d offsetIntakePose(Pose2d stationPose) {
+    return offsetPose(stationPose, -0.6, -0.5);
   }
 
   /**
-   * Given an april tag pose from an intake station, return two poses that have a given offset left
-   * and right along the intake station wall, and have a given offset back perpendicularly from the
-   * wall.
+   * Given an input pose, return a new pose that has the given offsets to the left and forward,
+   * relative to the input pose.
    */
-  public static List<Pose2d> intakeStationToIntakePoses(
-      Pose2d stationPose, double leftRightOffset, double backOffset) {
-    Rotation2d stationRotation = stationPose.getRotation();
+  public static Pose2d offsetPose(Pose2d inputPose, double offsetLeft, double offsetForward) {
+    Rotation2d stationRotation = inputPose.getRotation();
     var backedOffOffsetPose =
         new Pose2d(
-            backOffset * stationRotation.getCos(),
-            backOffset * stationRotation.getSin(),
+            offsetForward * stationRotation.plus(new Rotation2d(Math.PI)).getCos(),
+            offsetForward * stationRotation.plus(new Rotation2d(Math.PI)).getSin(),
             new Rotation2d());
     var leftRightOffsetPose =
         new Pose2d(
-            leftRightOffset * stationRotation.plus(new Rotation2d(Math.PI / 2)).getCos(),
-            leftRightOffset * stationRotation.plus(new Rotation2d(Math.PI / 2)).getSin(),
+            offsetLeft * stationRotation.plus(new Rotation2d(-Math.PI / 2)).getCos(),
+            offsetLeft * stationRotation.plus(new Rotation2d(-Math.PI / 2)).getSin(),
             new Rotation2d());
     var derivedPose =
         new Pose2d(
-            stationPose.getX() + backedOffOffsetPose.getX() + leftRightOffsetPose.getX(),
-            stationPose.getY() + backedOffOffsetPose.getY() + leftRightOffsetPose.getY(),
+            inputPose.getX() + backedOffOffsetPose.getX() + leftRightOffsetPose.getX(),
+            inputPose.getY() + backedOffOffsetPose.getY() + leftRightOffsetPose.getY(),
             stationRotation.plus(new Rotation2d(Math.PI)));
-    return List.of(derivedPose);
+    return derivedPose;
   }
 
   public static class ToClosestPose extends Command {
