@@ -40,4 +40,20 @@ public class AutoCommands {
         // IntakeCommands.feedStop(intake)
         );
   }
+
+  public static Command smartElevator(
+      Elevator elevator, Intake coral, BasePosition elevatorPosition) {
+    return Commands.sequence(
+        Commands.parallel(
+            ElevatorCommands.goToPosition(elevator, elevatorPosition),
+            IntakeCommands.goToPosition(coral, IntakeCommands.CORAL_WRIST_DOWN)),
+        IntakeCommands.goToPosition(coral, IntakeCommands.CORAL_WRIST_SCORE));
+  }
+
+  public static Command smartElevatordown(
+      Elevator elevator, Intake coral, BasePosition elevatorPosition) {
+    return Commands.sequence(
+        ElevatorCommands.goToPosition(elevator, elevatorPosition),
+        IntakeCommands.goToPosition(coral, IntakeCommands.CORAL_WRIST_INTAKE));
+  }
 }

@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AlignCommands;
+import frc.robot.commands.AutoCommands;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
@@ -75,7 +76,8 @@ public class RobotContainer {
   private final Intake algaeIntake;
   private final Climber climber;
   private final List<Pose2d> faces;
-  private final List<Pose2d> poses;
+  private final List<Pose2d> reefPoses;
+  private final List<Pose2d> intakePoses;
 
   // Controller
   private final CommandXboxController player1 = new CommandXboxController(0);
@@ -131,12 +133,16 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     faces = AlignCommands.reefFaces();
-    poses =
+    reefPoses =
         faces.stream()
             .flatMap((face) -> AlignCommands.faceToReefPair(face).stream())
             .collect(Collectors.toList());
-    var poseArray = poses.toArray(new Pose2d[poses.size()]);
+    var poseArray = reefPoses.toArray(new Pose2d[reefPoses.size()]);
     Logger.recordOutput("RobotContainer/poses", poseArray);
+
+    intakePoses = AlignCommands.intakePoses();
+    var intakePoseArray = intakePoses.toArray(new Pose2d[intakePoses.size()]);
+    Logger.recordOutput("RobotContainer/intakePoses", intakePoseArray);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -295,7 +301,9 @@ public class RobotContainer {
     player1.a().whileTrue(IntakeCommands.feedOut(coralIntake));
 
     // player1.leftTrigger().whileTrue(AlignCommands.alignToPose(drive, poses.get(6)));
-    player1.leftTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, poses));
+    player1.leftTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, reefPoses));
+
+    player1.leftBumper().whileTrue(new AlignCommands.ToClosestPose(drive, intakePoses));
 
     player1
         .x()
@@ -331,7 +339,7 @@ public class RobotContainer {
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
         // .and(player2.rightTrigger(0.5).negate())
-        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4));
+        .onTrue(AutoCommands.smartElevator(elevator, coralIntake, ElevatorCommands.CORAL_L4));
     // .andThen(
     //     IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE)));
     player2
@@ -339,7 +347,7 @@ public class RobotContainer {
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
         // .and(player2.rightTrigger(0.5).negate())
-        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM));
+        .onTrue(AutoCommands.smartElevatordown(elevator, coralIntake, ElevatorCommands.BOTTOM));
 
     // player2
     //     .back()

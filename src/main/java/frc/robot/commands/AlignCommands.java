@@ -201,6 +201,14 @@ public class AlignCommands {
     return List.of(leftPose, rightPose);
   }
 
+  public static List<Pose2d> intakePoses() {
+    return List.of(
+        new Pose2d(1.56, 7.27, Rotation2d.fromDegrees(-135.0 - 90.0)),
+        new Pose2d(0.85, 6.76, Rotation2d.fromDegrees(-135.0 - 90.0)),
+        new Pose2d(0.74, 1.33, Rotation2d.fromDegrees(135.0 + 90.0)),
+        new Pose2d(1.56, 0.788, Rotation2d.fromDegrees(135.0 + 90.0)));
+  }
+
   public static class ToClosestPose extends Command {
     private Drive drive;
     private List<Pose2d> poses;
