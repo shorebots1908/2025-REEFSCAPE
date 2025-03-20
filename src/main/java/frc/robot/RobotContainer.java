@@ -147,8 +147,6 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     configureAutoCommands();
-
-    configureScorePaths();
   }
 
   /**
@@ -280,10 +278,6 @@ public class RobotContainer {
   private void configureAutoCommand(String name, Command command) {
     autoChooser.addOption(name, command);
     NamedCommands.registerCommand(name, command);
-  }
-
-  private void configureScorePaths() {
-    FieldPoint.initDerivedPoses();
   }
 
   private void configureAutoCommands() {
