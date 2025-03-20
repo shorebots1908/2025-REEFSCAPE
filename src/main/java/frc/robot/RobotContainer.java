@@ -55,7 +55,6 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import frc.robot.util.FieldPoint;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.littletonrobotics.junction.Logger;
