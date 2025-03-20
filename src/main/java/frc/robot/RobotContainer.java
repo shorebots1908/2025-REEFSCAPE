@@ -77,6 +77,8 @@ public class RobotContainer {
   private final Climber climber;
   private final List<Pose2d> faces;
   private final List<Pose2d> reefPoses;
+  private final List<Pose2d> reefLeftPoses;
+  private final List<Pose2d> reefRightPoses;
   private final List<Pose2d> intakePoses;
 
   // Controller
@@ -137,10 +139,35 @@ public class RobotContainer {
         faces.stream()
             .flatMap((face) -> AlignCommands.faceToReefPair(face).stream())
             .collect(Collectors.toList());
-    var poseArray = reefPoses.toArray(new Pose2d[reefPoses.size()]);
-    Logger.recordOutput("RobotContainer/poses", poseArray);
+    var reefPosesArray = reefPoses.toArray(new Pose2d[reefPoses.size()]);
+    Logger.recordOutput("RobotContainer/reefPoses", reefPosesArray);
 
-    intakePoses = AlignCommands.intakePoses();
+    reefLeftPoses =
+        List.of(
+            reefPoses.get(0),
+            reefPoses.get(2),
+            reefPoses.get(4),
+            reefPoses.get(6),
+            reefPoses.get(8),
+            reefPoses.get(10));
+    var reefLeftPosesArray = reefLeftPoses.toArray(new Pose2d[reefLeftPoses.size()]);
+    Logger.recordOutput("RobotContainer/reefLeftPoses", reefLeftPosesArray);
+
+    reefRightPoses =
+        List.of(
+            reefPoses.get(1),
+            reefPoses.get(3),
+            reefPoses.get(5),
+            reefPoses.get(7),
+            reefPoses.get(9),
+            reefPoses.get(11));
+    var reefRightPosesArray = reefRightPoses.toArray(new Pose2d[reefRightPoses.size()]);
+    Logger.recordOutput("RobotContainer/reefRightPoses", reefRightPosesArray);
+
+    intakePoses =
+        AlignCommands.intakeStationPoses().stream()
+            .flatMap((station) -> AlignCommands.intakeStationToIntakePoses(station).stream())
+            .collect(Collectors.toList());
     var intakePoseArray = intakePoses.toArray(new Pose2d[intakePoses.size()]);
     Logger.recordOutput("RobotContainer/intakePoses", intakePoseArray);
 
@@ -201,6 +228,10 @@ public class RobotContainer {
     player1.a().whileTrue(IntakeCommands.feedOut(coralIntake));
 
     // Coral wrist to Intake or Score positions
+    player1.leftTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, reefLeftPoses));
+    player1.rightTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, reefRightPoses));
+    player1.leftBumper().whileTrue(new AlignCommands.ToClosestPose(drive, intakePoses));
+
     player1
         .x()
         .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE));

@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
  * the function that lets you pick all the inputs.
  */
 public class AlignCommands {
+  public static AprilTagFieldLayout aprilTagLayout =
+      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
   /** The ProfiledPIDControllers we use need inputs for P, I, D, Velocity, and Acceleration */
   public static class AlignConfig {
     public double p;
@@ -207,6 +211,43 @@ public class AlignCommands {
         new Pose2d(0.85, 6.76, Rotation2d.fromDegrees(-135.0 - 90.0)),
         new Pose2d(0.74, 1.33, Rotation2d.fromDegrees(135.0 + 90.0)),
         new Pose2d(1.56, 0.788, Rotation2d.fromDegrees(135.0 + 90.0)));
+  }
+
+  /** Returns the known poses of the april tags on the intake station. */
+  public static List<Pose2d> intakeStationPoses() {
+    return List.of(
+        aprilTagLayout.getTagPose(12).get().toPose2d(),
+        aprilTagLayout.getTagPose(13).get().toPose2d());
+  }
+
+  public static List<Pose2d> intakeStationToIntakePoses(Pose2d stationPose) {
+    return intakeStationToIntakePoses(stationPose, 0.5, 0.5);
+  }
+
+  /**
+   * Given an april tag pose from an intake station, return two poses that have a given offset left
+   * and right along the intake station wall, and have a given offset back perpendicularly from the
+   * wall.
+   */
+  public static List<Pose2d> intakeStationToIntakePoses(
+      Pose2d stationPose, double leftRightOffset, double backOffset) {
+    Rotation2d stationRotation = stationPose.getRotation();
+    var backedOffOffsetPose =
+        new Pose2d(
+            backOffset * stationRotation.getCos(),
+            backOffset * stationRotation.getSin(),
+            new Rotation2d());
+    var leftRightOffsetPose =
+        new Pose2d(
+            leftRightOffset * stationRotation.plus(new Rotation2d(Math.PI / 2)).getCos(),
+            leftRightOffset * stationRotation.plus(new Rotation2d(Math.PI / 2)).getSin(),
+            new Rotation2d());
+    var derivedPose =
+        new Pose2d(
+            stationPose.getX() + backedOffOffsetPose.getX() + leftRightOffsetPose.getX(),
+            stationPose.getY() + backedOffOffsetPose.getY() + leftRightOffsetPose.getY(),
+            stationRotation.plus(new Rotation2d(Math.PI)));
+    return List.of(derivedPose);
   }
 
   public static class ToClosestPose extends Command {
