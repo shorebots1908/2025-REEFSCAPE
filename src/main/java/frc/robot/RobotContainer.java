@@ -313,7 +313,7 @@ public class RobotContainer {
         .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
 
     // Manual climber commands
-    player1
+    player2
         .rightTrigger(0.5)
         .whileTrue(ClimberCommands.joystick(climber, () -> player1.getRightY()))
         .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
