@@ -147,7 +147,7 @@ public class RobotContainer {
             AlignCommands.offsetPose(reefPoses.get(0), 0.0, 0.0),
             AlignCommands.offsetPose(reefPoses.get(2), 0.0, 0.0),
             AlignCommands.offsetPose(reefPoses.get(4), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(6), 0.0, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(6), -0.2, 0.0),
             AlignCommands.offsetPose(reefPoses.get(8), 0.0, 0.0),
             AlignCommands.offsetPose(reefPoses.get(10), 0.0, 0.0));
     var reefLeftPosesArray = reefLeftPoses.toArray(new Pose2d[reefLeftPoses.size()]);
@@ -156,12 +156,12 @@ public class RobotContainer {
     reefRightPoses =
         List.of(
             // To tweak individual poses, add offsets with offsetPose
-            AlignCommands.offsetPose(reefPoses.get(1), 0.0, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(1), -0.2, 0.0),
             AlignCommands.offsetPose(reefPoses.get(3), 0.0, 0.0),
             AlignCommands.offsetPose(reefPoses.get(5), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(7), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(9), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(11), 0.0, 0.0));
+            AlignCommands.offsetPose(reefPoses.get(7), -0.2, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(9), -0.2, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(11), -0.3, 0.0));
     var reefRightPosesArray = reefRightPoses.toArray(new Pose2d[reefRightPoses.size()]);
     Logger.recordOutput("RobotContainer/reefRightPoses", reefRightPosesArray);
 
@@ -243,7 +243,7 @@ public class RobotContainer {
     // Manual climber commands
     player2
         .rightTrigger(0.5)
-        .whileTrue(ClimberCommands.joystick(climber, () -> player1.getRightY()))
+        .whileTrue(ClimberCommands.joystick(climber, () -> player2.getRightY()))
         .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
   }
 
@@ -258,12 +258,12 @@ public class RobotContainer {
         .povLeft()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
-        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2));
+        .onTrue(AutoCommands.smartElevatorl3(elevator, coralIntake, ElevatorCommands.CORAL_L3));
     player2
         .povRight()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
-        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3));
+        .onTrue(AutoCommands.smartElevatorl3(elevator, coralIntake, ElevatorCommands.CORAL_L3));
     player2
         .povUp()
         .and(player2.leftBumper().negate())
@@ -289,6 +289,9 @@ public class RobotContainer {
         .a()
         .and(player2.rightTrigger(0.5).negate())
         .whileTrue(IntakeCommands.feedOut(coralIntake));
+
+    player2.b().whileTrue(IntakeCommands.feedOut(coralIntake, 0.2));
+
     player2.a().and(player2.rightTrigger(0.5)).whileTrue(IntakeCommands.feedOut(coralIntake, 0.15));
 
     // Start button moves coral wrist to Score
@@ -345,6 +348,7 @@ public class RobotContainer {
     configureAutoCommand("midcompauto", new PathPlannerAuto("midcompauto"));
     configureAutoCommand("2pieceauto", new PathPlannerAuto("2pieceauto"));
     configureAutoCommand("2pieceauto2", new PathPlannerAuto("2pieceauto2"));
+    configureAutoCommand("1piecemiddleauto", new PathPlannerAuto("1piecemiddleauto"));
     configureAutoCommand("auto1path1", DriveCommands.followPath(drive, "auto1path1"));
     configureAutoCommand("auto1path2", DriveCommands.followPath(drive, "auto1path2"));
     configureAutoCommand("auto1path3", DriveCommands.followPath(drive, "auto1path3"));

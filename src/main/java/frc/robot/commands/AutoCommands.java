@@ -56,4 +56,13 @@ public class AutoCommands {
         ElevatorCommands.goToPosition(elevator, elevatorPosition),
         IntakeCommands.goToPosition(coral, IntakeCommands.CORAL_WRIST_INTAKE));
   }
+
+  public static Command smartElevatorl3(
+      Elevator elevator, Intake coral, BasePosition elevatorPosition) {
+    return Commands.sequence(
+        Commands.parallel(
+            ElevatorCommands.goToPosition(elevator, elevatorPosition),
+            IntakeCommands.goToPosition(coral, IntakeCommands.CORAL_WRIST_DOWN)),
+        IntakeCommands.goToPosition(coral, IntakeCommands.CORAL_WRIST_L3));
+  }
 }

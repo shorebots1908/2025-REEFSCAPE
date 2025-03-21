@@ -11,13 +11,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "2piecepath1"
+                  "pathName": "2piecepathR1"
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "elevator-l4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "align-to-reef"
                 }
               },
               {
@@ -30,25 +43,19 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "feed-out"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "2piecepath2"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "elevator-l1"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2piecepathR2"
                 }
               },
               {
@@ -61,9 +68,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "feed-in"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "align-to-intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "feed-in"
+                }
+              }
+            ]
           }
         },
         {
@@ -73,7 +93,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "2piecepath3"
+                  "pathName": "2piecepathR3"
                 }
               },
               {
@@ -104,7 +124,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "feed-out"
+                  "name": "coral-dispense"
                 }
               }
             ]

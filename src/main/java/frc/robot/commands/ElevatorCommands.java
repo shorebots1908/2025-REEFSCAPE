@@ -10,7 +10,7 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 public class ElevatorCommands {
   public static final BasePosition BOTTOM = new BasePosition(0.0); // 0
   public static final BasePosition CORAL_L2 = new BasePosition(0.066); // 4.515
-  public static final BasePosition CORAL_L3 = new BasePosition(0.427); // 29.025
+  public static final BasePosition CORAL_L3 = new BasePosition(0.35); // 29.025 ---- was 0.427
   public static final BasePosition CORAL_L4 = new BasePosition(1.0); // 64.5
   public static final BasePosition ALGAE_L2 = new BasePosition(0.569); // 38.7
   public static final BasePosition ALGAE_L3 = new BasePosition(0.873); // 59.34

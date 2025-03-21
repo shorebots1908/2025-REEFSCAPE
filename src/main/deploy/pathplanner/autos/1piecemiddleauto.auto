@@ -1,0 +1,68 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "1piecemiddlepath"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "elevator-l4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "coral-dispense"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "feed-out"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "coral-down"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1piecemiddlepathpt.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevator-l1"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "2pieceauto",
+  "choreoAuto": false
+}
