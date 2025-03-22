@@ -43,11 +43,11 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean isHolding() {
-    return false;
+    return io.isHolding();
   }
 
   public boolean isEmpty() {
-    return false;
+    return io.isEmpty();
   }
 
   public boolean atTargetPosition() {

@@ -41,6 +41,10 @@ public class IntakeCommands {
     return feedIn(intake, FEED_SPEED);
   }
 
+  public static Command feedInUntilHolding(Intake intake) {
+    return feedIn(intake).until(intake::isHolding);
+  }
+
   public static Command feedIn(Intake intake, double feedSpeed) {
     // Absolute value of feedSpeed
     double speed = feedSpeed > 0 ? feedSpeed : -feedSpeed;

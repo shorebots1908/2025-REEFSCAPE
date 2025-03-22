@@ -143,18 +143,10 @@ public class IntakeIOSparkMax implements IntakeIO {
   }
 
   public boolean isHolding() {
-    if (inputs.sensorValue > config.sensorThreshold) {
-      return true;
-    } else {
-      return false;
-    }
+    return inputs.sensorValue > config.sensorThreshold;
   }
 
   public boolean isEmpty() {
-    if (inputs.sensorValue < config.sensorThreshold) {
-      return true;
-    } else {
-      return false;
-    }
+    return inputs.sensorValue < config.sensorThreshold;
   }
 }
