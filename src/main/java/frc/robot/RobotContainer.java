@@ -147,7 +147,7 @@ public class RobotContainer {
             AlignCommands.offsetPose(reefPoses.get(0), 0.0, 0.0),
             AlignCommands.offsetPose(reefPoses.get(2), 0.0, 0.0),
             AlignCommands.offsetPose(reefPoses.get(4), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(6), -0.2, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(6), 0.0, 0.0),
             AlignCommands.offsetPose(reefPoses.get(8), 0.0, 0.0),
             AlignCommands.offsetPose(reefPoses.get(10), 0.0, 0.0));
     var reefLeftPosesArray = reefLeftPoses.toArray(new Pose2d[reefLeftPoses.size()]);
@@ -156,12 +156,12 @@ public class RobotContainer {
     reefRightPoses =
         List.of(
             // To tweak individual poses, add offsets with offsetPose
-            AlignCommands.offsetPose(reefPoses.get(1), -0.2, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(1), 0.0, 0.0),
             AlignCommands.offsetPose(reefPoses.get(3), 0.0, 0.0),
             AlignCommands.offsetPose(reefPoses.get(5), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(7), -0.2, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(9), -0.2, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(11), -0.3, 0.0));
+            AlignCommands.offsetPose(reefPoses.get(7), 0.0, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(9), 0.0, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(11), 0.0, 0.0));
     var reefRightPosesArray = reefRightPoses.toArray(new Pose2d[reefRightPoses.size()]);
     Logger.recordOutput("RobotContainer/reefRightPoses", reefRightPosesArray);
 
