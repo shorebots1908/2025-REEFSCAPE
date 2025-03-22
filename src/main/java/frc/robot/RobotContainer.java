@@ -100,7 +100,7 @@ public class RobotContainer {
                 12,
                 19,
                 0,
-                1000,
+                2000,
                 0.3, // was 6.0
                 0.0001, // was 0.001
                 3, // was 0.0
@@ -243,7 +243,7 @@ public class RobotContainer {
     // Manual climber commands
     player2
         .rightTrigger(0.5)
-        .whileTrue(ClimberCommands.joystick(climber, () -> player2.getRightY()))
+        .whileTrue(ClimberCommands.joystick(climber, () -> -player2.getRightY()))
         .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
   }
 
@@ -325,7 +325,7 @@ public class RobotContainer {
     configureAutoCommand(
         "elevator-l4", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.CORAL_L4));
 
-    configureAutoCommand("feed-in", IntakeCommands.feedIn(coralIntake).withTimeout(1.4));
+    configureAutoCommand("feed-in", IntakeCommands.feedIn(coralIntake).withTimeout(3.0));
     configureAutoCommand(
         "feed-in-until-holding", IntakeCommands.feedInUntilHolding(coralIntake).withTimeout(4));
     configureAutoCommand("feed-out", IntakeCommands.feedOut(coralIntake, 0.5).withTimeout(0.3));

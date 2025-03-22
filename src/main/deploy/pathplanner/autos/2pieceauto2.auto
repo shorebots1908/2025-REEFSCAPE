@@ -63,7 +63,7 @@
         {
           "type": "named",
           "data": {
-            "name": "feed-in-until-holding"
+            "name": "feed-in"
           }
         },
         {
