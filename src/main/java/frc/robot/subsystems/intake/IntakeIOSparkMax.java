@@ -15,7 +15,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.Logger;
 
@@ -27,7 +27,8 @@ public class IntakeIOSparkMax implements IntakeIO {
   private final SparkAbsoluteEncoder wristEncoder;
   private IntakeConfig config;
   private IntakeIO.IntakeIOInputs inputs = new IntakeIOInputs();
-  private AnalogInput sensor;
+  // private AnalogInput analogSensor;
+  private DigitalInput digitalSensor;
   // The target position the wrist will try to reach
   private double targetEncoderPosition = 0;
 
@@ -47,7 +48,8 @@ public class IntakeIOSparkMax implements IntakeIO {
     wristMotor = new SparkMax(config.wristMotorId, MotorType.kBrushless);
     wristEncoder = wristMotor.getAbsoluteEncoder();
     wristController = wristMotor.getClosedLoopController();
-    sensor = new AnalogInput(config.sensorId);
+    // analogSensor = new AnalogInput(config.sensorId);
+    digitalSensor = new DigitalInput(config.sensorId);
 
     // Left motor config
     SparkMaxConfig leftConfig = new SparkMaxConfig();
@@ -97,7 +99,10 @@ public class IntakeIOSparkMax implements IntakeIO {
     Logger.recordOutput(String.format("%s/AtTarget", config.name), atTarget);
     Logger.recordOutput(
         String.format("%s/TargetEncoderPosition", config.name), targetEncoderPosition);
-    Logger.recordOutput(String.format("%s/SensorValue", config.name), inputs.sensorValue);
+    // Logger.recordOutput(String.format("%s/AnalogSensorValue", config.name),
+    // inputs.analogSensorValue);
+    Logger.recordOutput(
+        String.format("%s/HoldingSwitchPressed", config.name), inputs.holdingSwitchPressed);
     Logger.recordOutput(String.format("%s/SensorHolding", config.name), isHolding());
   }
 
@@ -115,7 +120,8 @@ public class IntakeIOSparkMax implements IntakeIO {
   @Override
   public void updateInputs(IntakeIO.IntakeIOInputs inputs) {
     ifOk(wristMotor, wristEncoder::getPosition, (value) -> inputs.positionRevs = value);
-    inputs.sensorValue = sensor.getValue();
+    // inputs.analogSensorValue = analogSensor.getValue();
+    inputs.holdingSwitchPressed = digitalSensor.get();
     this.inputs = inputs;
   }
 
@@ -143,10 +149,12 @@ public class IntakeIOSparkMax implements IntakeIO {
   }
 
   public boolean isHolding() {
-    return inputs.sensorValue > config.sensorThreshold;
+    // return inputs.analogSensorValue > config.sensorThreshold;
+    return inputs.holdingSwitchPressed;
   }
 
   public boolean isEmpty() {
-    return inputs.sensorValue < config.sensorThreshold;
+    // return inputs.analogSensorValue < config.sensorThreshold;
+    return !inputs.holdingSwitchPressed;
   }
 }
