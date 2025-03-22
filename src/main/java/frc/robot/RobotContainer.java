@@ -100,7 +100,7 @@ public class RobotContainer {
                 12,
                 19,
                 0,
-                3335,
+                1000,
                 0.3, // was 6.0
                 0.0001, // was 0.001
                 3, // was 0.0
