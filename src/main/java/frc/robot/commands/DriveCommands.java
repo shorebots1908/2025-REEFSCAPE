@@ -27,11 +27,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.FieldPoint;
 import java.util.List;
@@ -276,20 +275,22 @@ public class DriveCommands {
   }
 
   public static Command wiggleDrive(Drive drive) {
-    return wiggleDrive(drive, 2.0);
+    return wiggleDrive(drive, 3.0, 0.15);
   }
 
-  public static Command wiggleDrive(Drive drive, double cyclesPerSecond) {
-    return Commands.run(() -> {
-      var uptimeSeconds = Timer.getTimestamp();
-      var uptimeCircles = uptimeSeconds * (Math.PI * 2);
-      var circlesPerSecond = uptimeCircles * cyclesPerSecond;
-      var wiggleSignal = Math.sin(circlesPerSecond);
-      var driveRotation = wiggleSignal * drive.getMaxAngularSpeedRadPerSec();
-      var driveRotationScaled = driveRotation * 0.3;
+  public static Command wiggleDrive(Drive drive, double cyclesPerSecond, double powerScale) {
+    return Commands.run(
+        () -> {
+          var uptimeSeconds = Timer.getTimestamp();
+          var uptimeCircles = uptimeSeconds * (Math.PI * 2);
+          var circlesPerSecond = uptimeCircles * cyclesPerSecond;
+          var wiggleSignal = Math.sin(circlesPerSecond);
+          var driveSignal = wiggleSignal * drive.getMaxAngularSpeedRadPerSec();
+          var driveSignalScaled = driveSignal * powerScale;
 
-      var speeds = new ChassisSpeeds(0.0, 0.0, driveRotationScaled);
-      drive.runVelocity(speeds);
-    }, drive);
+          var speeds = new ChassisSpeeds(0.0, driveSignalScaled, 0.0);
+          drive.runVelocity(speeds);
+        },
+        drive);
   }
 }

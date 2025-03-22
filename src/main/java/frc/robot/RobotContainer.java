@@ -35,7 +35,6 @@ import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberIOSparkMax;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
@@ -345,6 +344,8 @@ public class RobotContainer {
         "align-to-intake", new AlignCommands.ToClosestPose(drive, intakePoses).withTimeout(1));
 
     configureAutoCommand("wiggle-drive", DriveCommands.wiggleDrive(drive));
+    configureAutoCommand("wiggle-intake", AutoCommands.wiggleIntake(drive, coralIntake));
+    configureAutoCommand("wiggle-intake-until-holding", AutoCommands.wiggleIntakeUntilHolding(drive, coralIntake));
 
     configureAutoCommand("auto1", new PathPlannerAuto("auto1"));
     configureAutoCommand("auto2", new PathPlannerAuto("auto2"));
