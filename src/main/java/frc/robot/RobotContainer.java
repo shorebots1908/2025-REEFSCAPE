@@ -243,7 +243,7 @@ public class RobotContainer {
     // Manual climber commands
     player2
         .rightTrigger(0.5)
-        .whileTrue(ClimberCommands.joystick(climber, () -> player2.getRightY()))
+        .whileTrue(ClimberCommands.joystick(climber, () -> -player2.getRightY()))
         .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
   }
 
