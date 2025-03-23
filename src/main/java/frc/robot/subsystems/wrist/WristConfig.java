@@ -1,47 +1,41 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.wrist;
 
 import frc.robot.subsystems.BasePosition;
 
-public class IntakeConfig {
+public class WristConfig {
   public final String name;
-  public final int leftMotorId;
-  public final int rightMotorId;
-  public final int sensorId;
-  public final int sensorThreshold;
+  public final int wristMotorId;
   public final double pGain;
   public final double iGain;
   public final double dGain;
   public final double rampRate;
   public final double encoderLowerLimit;
   public final double encoderUpperLimit;
+  public final boolean wristInvert;
   public final boolean encoderInvert;
   public final BasePosition startPosition;
 
-  public IntakeConfig(
+  public WristConfig(
       String name,
-      int leftMotorId,
-      int rightMotorId,
-      int sensorId,
-      int sensorThreshold,
+      int wristMotorId,
       double p,
       double i,
       double d,
       double rampRate,
       double lowerLimit,
       double upperLimit,
+      boolean wristInvert,
       boolean encoderInvert,
       BasePosition startPosition) {
     this.name = name;
-    this.leftMotorId = leftMotorId;
-    this.rightMotorId = rightMotorId;
-    this.sensorId = sensorId;
-    this.sensorThreshold = sensorThreshold;
+    this.wristMotorId = wristMotorId;
     this.pGain = p;
     this.iGain = i;
     this.dGain = d;
     this.rampRate = rampRate;
     this.encoderLowerLimit = lowerLimit;
     this.encoderUpperLimit = upperLimit;
+    this.wristInvert = wristInvert;
     this.encoderInvert = encoderInvert;
     this.startPosition = startPosition;
   }
