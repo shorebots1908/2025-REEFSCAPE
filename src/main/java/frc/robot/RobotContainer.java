@@ -248,6 +248,8 @@ public class RobotContainer {
   }
 
   private void configurePlayer2() {
+    coralIntake.setDefaultCommand(IntakeCommands.feedHoldSticky(coralIntake));
+
     // Elevator auto positions on the D-pad
     player2
         .povDown()
