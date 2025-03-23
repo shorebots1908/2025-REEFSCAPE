@@ -29,6 +29,19 @@ public class IntakeCommands {
         intake);
   }
 
+  public static Command feedHoldSticky(Intake intake) {
+    return Commands.run(
+        () -> {
+          if (intake.isHolding()) {
+            // If the sensor has a coral, keep feeding in to hold it
+            intake.setFeedOpenLoop(FEED_SPEED);
+          } else {
+            // Otherwise, stop trying to feed
+            intake.feedStop();
+          }
+        });
+  }
+
   public static Command feedIn(Intake intake) {
     return feedIn(intake, FEED_SPEED);
   }
