@@ -36,7 +36,6 @@ public class IntakeCommands {
             // If the sensor has a coral, keep feeding in to hold it
             intake.setFeedOpenLoop(FEED_SPEED);
           } else {
-            // Otherwise, stop trying to feed
             intake.feedStop();
           }
         },
