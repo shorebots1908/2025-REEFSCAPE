@@ -2,7 +2,6 @@ package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -26,14 +25,6 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  public void setTargetPosition(BasePosition output) {
-    io.setTargetPosition(output);
-  }
-
-  public void setWristOpenLoop(double output) {
-    io.setWristOpenLoop(output);
-  }
-
   public void setFeedOpenLoop(double output) {
     io.setFeedOpenLoop(output);
   }
@@ -48,9 +39,5 @@ public class Intake extends SubsystemBase {
 
   public boolean isEmpty() {
     return io.isEmpty();
-  }
-
-  public boolean atTargetPosition() {
-    return io.atTargetPosition();
   }
 }

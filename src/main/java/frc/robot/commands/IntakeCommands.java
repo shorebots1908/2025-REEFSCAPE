@@ -20,21 +20,13 @@ public class IntakeCommands {
   public static final BasePosition ALGAE_WRIST_STOW = new BasePosition(0.9);
   public static final BasePosition ALGAE_WRIST_DEPLOY = new BasePosition(0.128);
 
-  public static Command moveByJoystick(Intake intake, DoubleSupplier wrist, DoubleSupplier wheels) {
+  public static Command moveByJoystick(
+      Intake intake, DoubleSupplier wristPosition, DoubleSupplier wheels) {
     return Commands.run(
         () -> {
-          intake.setWristOpenLoop(wrist.getAsDouble());
           intake.setFeedOpenLoop(wheels.getAsDouble());
         },
         intake);
-  }
-
-  public static Command pickup(Intake intake) {
-    return Commands.sequence(goToPosition(intake, CORAL_WRIST_INTAKE), feedIn(intake));
-  }
-
-  public static Command place(Intake intake) {
-    return Commands.sequence(goToPosition(intake, CORAL_WRIST_SCORE), feedOut(intake));
   }
 
   public static Command feedIn(Intake intake) {
@@ -78,26 +70,12 @@ public class IntakeCommands {
             });
   }
 
-  public static Command setTargetPosition(Intake intake, BasePosition position) {
-    return Commands.runOnce(
-        () -> {
-          intake.setTargetPosition(position);
-        },
-        intake);
-  }
-
   public static Command isHolding(Intake intake) {
     return Commands.run(
         () -> {
           intake.isHolding();
         },
         intake);
-  }
-
-  public static Command waitUntilCoralAtTargetPosition(Intake intake) {
-    return Commands.idle(intake)
-        .until(intake::atTargetPosition)
-        .withName("WaitUntilCoralAtTargetPosition");
   }
 
   public static Command waitUntilCoralIsHolding(Intake intake, boolean holding) {
@@ -111,10 +89,5 @@ public class IntakeCommands {
               }
             })
         .withName("WaitUntilCoralIsHolding");
-  }
-
-  public static Command goToPosition(Intake intake, BasePosition position) {
-    return Commands.sequence(
-        setTargetPosition(intake, position), waitUntilCoralAtTargetPosition(intake));
   }
 }

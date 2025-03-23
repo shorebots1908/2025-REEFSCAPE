@@ -29,6 +29,7 @@ import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberConfig;
 import frc.robot.subsystems.climber.ClimberIO;
@@ -55,6 +56,11 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristConfig;
+import frc.robot.subsystems.wrist.WristIO;
+import frc.robot.subsystems.wrist.WristIOSim;
+import frc.robot.subsystems.wrist.WristIOSparkMax;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.littletonrobotics.junction.Logger;
@@ -72,7 +78,7 @@ public class RobotContainer {
   private final Vision vision;
   private final Elevator elevator;
   private final Intake coralIntake;
-  private final Intake algaeIntake;
+  private final Wrist wrist;
   private final Climber climber;
   private final List<Pose2d> faces;
   private final List<Pose2d> reefPoses;
@@ -98,7 +104,6 @@ public class RobotContainer {
                 "Coral",
                 11,
                 12,
-                19,
                 0,
                 2000,
                 0.3, // was 6.0
@@ -107,27 +112,11 @@ public class RobotContainer {
                 0.5,
                 0.58,
                 3.1,
-                true,
                 false,
-                IntakeCommands.CORAL_WRIST_STOW));
-    algaeIntake =
-        initIntake(
-            new IntakeConfig(
-                "Algae",
-                13,
-                14,
-                17,
-                1,
-                3335,
-                7.0,
-                0.001,
-                0.0,
-                1.0,
-                0.371,
-                0.681,
-                true,
-                false,
-                IntakeCommands.ALGAE_WRIST_STOW));
+                WristCommands.CORAL_WRIST_STOW));
+    wrist =
+        initWrist(new WristConfig("Wrist", 19, 0.3, 0.0001, 3, 0.5, 0.58, 3.1, false, false, null));
+
     climber = initClimber(new ClimberConfig(15, 16, 5.0, 0.0, 0.0, 0.0, 67.95));
 
     // Set up auto routines
@@ -233,12 +222,8 @@ public class RobotContainer {
     player1.rightTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, reefRightPoses));
     player1.leftBumper().whileTrue(new AlignCommands.ToClosestPose(drive, intakePoses));
 
-    player1
-        .x()
-        .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE));
-    player1
-        .y()
-        .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
+    player1.x().onTrue(WristCommands.setTargetPosition(wrist, WristCommands.CORAL_WRIST_INTAKE));
+    player1.y().onTrue(WristCommands.setTargetPosition(wrist, WristCommands.CORAL_WRIST_SCORE));
 
     // Manual climber commands
     player2
@@ -253,32 +238,30 @@ public class RobotContainer {
         .povDown()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
-        .onTrue(AutoCommands.smartElevatordown(elevator, coralIntake, ElevatorCommands.BOTTOM));
+        .onTrue(AutoCommands.smartElevatordown(elevator, wrist, ElevatorCommands.BOTTOM));
     player2
         .povLeft()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
-        .onTrue(AutoCommands.smartElevatorl3(elevator, coralIntake, ElevatorCommands.CORAL_L3));
+        .onTrue(AutoCommands.smartElevatorl3(elevator, wrist, ElevatorCommands.CORAL_L3));
     player2
         .povRight()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
-        .onTrue(AutoCommands.smartElevatorl3(elevator, coralIntake, ElevatorCommands.CORAL_L3));
+        .onTrue(AutoCommands.smartElevatorl3(elevator, wrist, ElevatorCommands.CORAL_L3));
     player2
         .povUp()
         .and(player2.leftBumper().negate())
         .and(player2.rightBumper().negate())
-        .onTrue(AutoCommands.smartElevator(elevator, coralIntake, ElevatorCommands.CORAL_L4));
+        .onTrue(AutoCommands.smartElevator(elevator, wrist, ElevatorCommands.CORAL_L4));
 
     // Hold left trigger to manually control coral wrist with LeftY joystick
     player2
         .leftTrigger(0.5)
         .whileTrue(
-            IntakeCommands.moveByJoystick(
-                coralIntake,
-                () -> -MathUtil.applyDeadband(player2.getLeftY(), 0.07) * 0.5,
-                () -> 0.0))
-        .onFalse(IntakeCommands.moveByJoystick(coralIntake, () -> 0.0, () -> 0.0));
+            WristCommands.moveByJoystick(
+                wrist, () -> -MathUtil.applyDeadband(player2.getLeftY(), 0.07) * 0.5, () -> 0.0))
+        .onFalse(WristCommands.moveByJoystick(wrist, () -> 0.0, () -> 0.0));
 
     // Without right trigger, X and A feed coral
     player2
@@ -295,9 +278,7 @@ public class RobotContainer {
     player2.a().and(player2.rightTrigger(0.5)).whileTrue(IntakeCommands.feedOut(coralIntake, 0.15));
 
     // Start button moves coral wrist to Score
-    player2
-        .start()
-        .onTrue(IntakeCommands.setTargetPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
+    player2.start().onTrue(WristCommands.setTargetPosition(wrist, WristCommands.CORAL_WRIST_SCORE));
 
     // Manual elevator up and down on bumpers
     player2
@@ -331,13 +312,11 @@ public class RobotContainer {
     configureAutoCommand("feed-out", IntakeCommands.feedOut(coralIntake, 0.5).withTimeout(0.3));
     configureAutoCommand("feed-spit", IntakeCommands.feedOut(coralIntake, 0.2).withTimeout(0.3));
     configureAutoCommand(
-        "coral-accept",
-        IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_INTAKE));
+        "coral-accept", WristCommands.goToPosition(wrist, WristCommands.CORAL_WRIST_INTAKE));
     configureAutoCommand(
-        "coral-dispense",
-        IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_SCORE));
+        "coral-dispense", WristCommands.goToPosition(wrist, WristCommands.CORAL_WRIST_SCORE));
     configureAutoCommand(
-        "coral-down", IntakeCommands.goToPosition(coralIntake, IntakeCommands.CORAL_WRIST_DOWN));
+        "coral-down", WristCommands.goToPosition(wrist, WristCommands.CORAL_WRIST_DOWN));
     configureAutoCommand(
         "align-to-reef", new AlignCommands.ToClosestPose(drive, reefPoses).withTimeout(1));
     configureAutoCommand(
@@ -467,6 +446,22 @@ public class RobotContainer {
       default:
         // Replayed robot, disable IO implementations
         return new Intake(new IntakeIO() {});
+    }
+  }
+
+  public Wrist initWrist(WristConfig config) {
+    switch (Constants.currentMode) {
+      case REAL:
+        // Real robot, instantiate hardware IO implementations
+        return new Wrist(new WristIOSparkMax(config));
+
+      case SIM:
+        // Sim robot, instantiate physics sim IO implementations
+        return new Wrist(new WristIOSim());
+
+      default:
+        // Replayed robot, disable IO implementations
+        return new Wrist(new WristIO() {});
     }
   }
 }

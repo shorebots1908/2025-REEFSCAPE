@@ -1,6 +1,5 @@
 package frc.robot.subsystems.intake;
 
-import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface IntakeIO {
@@ -15,17 +14,9 @@ public interface IntakeIO {
 
   public default void updateInputs(IntakeIOInputs inputs) {}
 
-  public default void setTargetPosition(BasePosition position) {}
-
-  public default boolean atTargetPosition() {
-    return false;
-  }
-
   public default String name() {
     return "Intake";
   }
-
-  public default void setWristOpenLoop(double output) {}
 
   public default void setFeedOpenLoop(double output) {}
 
