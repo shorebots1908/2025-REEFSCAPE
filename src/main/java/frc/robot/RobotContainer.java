@@ -115,7 +115,19 @@ public class RobotContainer {
                 false,
                 WristCommands.CORAL_WRIST_STOW));
     wrist =
-        initWrist(new WristConfig("Wrist", 19, 0.3, 0.0001, 3, 0.5, 0.58, 3.1, false, false, null));
+        initWrist(
+            new WristConfig(
+                "Wrist",
+                19,
+                0.3,
+                0.0001,
+                3,
+                0.5,
+                0.58,
+                3.1,
+                true,
+                false,
+                WristCommands.CORAL_WRIST_STOW));
 
     climber = initClimber(new ClimberConfig(15, 16, 5.0, 0.0, 0.0, 0.0, 67.95));
 
