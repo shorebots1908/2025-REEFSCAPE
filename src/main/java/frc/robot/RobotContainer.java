@@ -178,6 +178,22 @@ public class RobotContainer {
     configureAutoCommands();
   }
 
+  public void periodic() {
+    var command = coralIntake.getCurrentCommand();
+    if (command == null) {
+      Logger.recordOutput("RobotContainer/intakeCommand", "null");
+      return;
+    }
+
+    var commandName = command.getName();
+    if (commandName == null) {
+      Logger.recordOutput("RobotContainer/intakeCommand", "null");
+      return;
+    }
+
+    Logger.recordOutput("RobotContainer/intakeCommand", commandName);
+  }
+
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link

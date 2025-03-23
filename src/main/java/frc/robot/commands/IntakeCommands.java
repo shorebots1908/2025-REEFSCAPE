@@ -39,7 +39,8 @@ public class IntakeCommands {
             // Otherwise, stop trying to feed
             intake.feedStop();
           }
-        });
+        },
+        intake);
   }
 
   public static Command feedIn(Intake intake) {
