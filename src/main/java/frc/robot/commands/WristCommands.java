@@ -43,6 +43,12 @@ public class WristCommands {
         .withName("WaitUntilCoralAtTargetPosition");
   }
 
+  public static Command waitUntilAlgaeatTargetPosition(Wrist wrist) {
+    return Commands.idle(wrist)
+        .until(wrist::atTargetPosition)
+        .withName("WaitUntilAlgaeAtTargetPosition");
+  }
+
   public static Command goToPosition(Wrist wrist, BasePosition position) {
     return Commands.sequence(
         setTargetPosition(wrist, position), waitUntilCoralAtTargetPosition(wrist));
