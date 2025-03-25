@@ -70,7 +70,10 @@ public class Vision extends SubsystemBase {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
     }
+  }
 
+  public void processCameraObservations() {
+    
     // Initialize logging values
     List<Pose3d> allTagPoses = new ArrayList<>();
     List<Pose3d> allRobotPoses = new ArrayList<>();

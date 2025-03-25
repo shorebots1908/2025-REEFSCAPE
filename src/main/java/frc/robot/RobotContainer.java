@@ -29,6 +29,7 @@ import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.VisionCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberConfig;
@@ -174,8 +175,7 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/intakePoses", intakePoseArray);
 
     // Configure the button bindings
-    configureButtonBindings();
-    configureAutoCommands();
+    configureRobot();
   }
 
   public void periodic() {
@@ -200,19 +200,28 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {
+  private void configureRobot() {
     configurePlayer1();
     configurePlayer2();
+    configureAutoCommands();
+    configureDefaultCommands();
   }
 
-  private void configurePlayer1() {
-    // Drive commands
+  private void configureDefaultCommands() {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
             () -> -player1.getLeftY(),
             () -> -player1.getLeftX(),
             () -> -player1.getRightX()));
+
+    vision.setDefaultCommand(VisionCommands.periodicVisionUpdate(vision));
+    
+    coralIntake.setDefaultCommand(IntakeCommands.feedHoldSticky(coralIntake));
+  }
+
+  private void configurePlayer1() {
+    // Drive commands
     player1.start().onTrue(Commands.runOnce(drive::gyroReset, drive));
 
     // Align commands
@@ -261,8 +270,6 @@ public class RobotContainer {
   }
 
   private void configurePlayer2() {
-    coralIntake.setDefaultCommand(IntakeCommands.feedHoldSticky(coralIntake));
-
     // Elevator auto positions on the D-pad
     player2
         .povDown()
