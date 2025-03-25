@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class AlignCommands {
   public static AprilTagFieldLayout aprilTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+
   /** The ProfiledPIDControllers we use need inputs for P, I, D, Velocity, and Acceleration */
   public static class AlignConfig {
     public double p;

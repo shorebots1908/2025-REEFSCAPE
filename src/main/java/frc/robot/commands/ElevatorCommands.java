@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.BasePosition;
 import frc.robot.subsystems.elevator.Elevator;
 import java.util.function.DoubleSupplier;
-import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class ElevatorCommands {
   public static final BasePosition BOTTOM = new BasePosition(0.0); // 0
@@ -37,23 +36,6 @@ public class ElevatorCommands {
     return Commands.idle(elevator)
         .until(elevator::atTargetPosition)
         .withName("WaitUntilElevatorAtTargetPosition");
-  }
-
-  public static Command moveElevatorTunable(Elevator elevator, LoggedNetworkNumber number) {
-    return Commands.run(
-        () -> {
-          elevator.setTargetPosition(new BasePosition(number.get()));
-        },
-        elevator);
-  }
-
-  // Auto Commands
-  public static Command upAndDown(Elevator elevator) {
-    return Commands.sequence(
-        setTargetPosition(elevator, new BasePosition(1)),
-        waitUntilElevatorAtTargetPosition(elevator).withTimeout(1),
-        setTargetPosition(elevator, new BasePosition(0)),
-        waitUntilElevatorAtTargetPosition(elevator).withTimeout(1));
   }
 
   public static Command goToPosition(Elevator elevator, BasePosition position) {

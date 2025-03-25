@@ -14,38 +14,22 @@
 package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.util.FieldPoint;
-import java.util.List;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
-  private static final double ANGLE_KP = 5.0;
-  private static final double ANGLE_KD = 0.4;
-  private static final double ANGLE_MAX_VELOCITY = 8.0;
-  private static final double ANGLE_MAX_ACCELERATION = 20.0;
-  private static final double FF_START_DELAY = 2.0; // Secs
-  private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
-  private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
-  private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
   private DriveCommands() {}
 
@@ -75,70 +59,6 @@ public class DriveCommands {
       DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
       return Commands.none();
     }
-  }
-
-  public static Command goToFieldPoint(Drive drive, Pose2d point) {
-
-    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(drive.getPose(), point);
-
-    PathConstraints defaultConstraints = new PathConstraints(0.5, 3.0, 9.42478, 12.5664);
-
-    PathPlannerPath scorePath =
-        new PathPlannerPath(
-            waypoints,
-            defaultConstraints,
-            null, // The ideal starting state, this is only relevant for pre-planned paths, so can
-            // be null for on-the-fly paths.
-            new GoalEndState(0.0, point.getRotation()));
-
-    return AutoBuilder.followPath(scorePath);
-  }
-
-  public static Command generatePath(Drive drive, List<Pose2d> poseSet) {
-
-    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poseSet);
-
-    PathConstraints defaultConstraints = new PathConstraints(0.5, 3.0, 9.42478, 12.5664);
-
-    PathPlannerPath scorePath =
-        new PathPlannerPath(
-            waypoints,
-            defaultConstraints,
-            null, // The ideal starting state, this is only relevant for pre-planned paths, so can
-            // be null for on-the-fly paths.
-            new GoalEndState(0.0, poseSet.get(0).getRotation()));
-
-    return AutoBuilder.followPath(scorePath);
-  }
-
-  public static Command generatePath(Drive drive) {
-    FieldPoint.initDerivedPoses();
-    int pathIndex = FieldPoint.START_POSES.indexOf(selectPoint(drive));
-    List<Waypoint> waypoints =
-        PathPlannerPath.waypointsFromPoses(
-            FieldPoint.START_POSES.get(pathIndex), FieldPoint.LEFT_POSES.get(pathIndex));
-
-    PathConstraints defaultConstraints = new PathConstraints(0.05, 0.05, 9.42478, 12.5664);
-
-    PathPlannerPath scorePath =
-        new PathPlannerPath(
-            waypoints,
-            defaultConstraints,
-            null, // The ideal starting state, this is only relevant for pre-planned paths, so can
-            // be null for on-the-fly paths.
-            new GoalEndState(0.0, FieldPoint.START_POSES.get(pathIndex).getRotation()));
-
-    return AutoBuilder.followPath(scorePath);
-  }
-
-  public static Pose2d selectPoint(Drive drive) {
-    return drive.getPose().nearest(FieldPoint.START_POSES);
-  }
-
-  public static void composeScorePathSets() {}
-
-  public static Command goToAutoSelectedPosition(Drive drive) {
-    return goToFieldPoint(drive, selectPoint(drive));
   }
 
   /**
@@ -176,12 +96,6 @@ public class DriveCommands {
                   isFlipped
                       ? drive.getRotation().plus(new Rotation2d(Math.PI))
                       : drive.getRotation()));
-          // drive.runVelocity(
-          //     ChassisSpeeds.fromRobotRelativeSpeeds(
-          //         speeds,
-          //         isFlipped
-          //             ? drive.getRotation().plus(new Rotation2d(Math.PI))
-          //             : drive.getRotation()));
         },
         drive);
   }
@@ -217,59 +131,5 @@ public class DriveCommands {
                   speeds, drive.getRotation().plus(new Rotation2d(Math.PI))));
         },
         drive);
-  }
-
-  /**
-   * Field relative drive command using joystick for linear control and PID for angular control.
-   * Possible use cases include snapping to an angle, aiming at a vision target, or controlling
-   * absolute rotation with a joystick.
-   */
-  public static Command joystickDriveAtAngle(
-      Drive drive,
-      DoubleSupplier xSupplier,
-      DoubleSupplier ySupplier,
-      Supplier<Rotation2d> rotationSupplier) {
-
-    // Create PID controller
-    ProfiledPIDController angleController =
-        new ProfiledPIDController(
-            ANGLE_KP,
-            0.0,
-            ANGLE_KD,
-            new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
-    angleController.enableContinuousInput(-Math.PI, Math.PI);
-
-    // Construct command
-    return Commands.run(
-            () -> {
-              // Get linear velocity
-              Translation2d linearVelocity =
-                  getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
-
-              // Calculate angular speed
-              double omega =
-                  angleController.calculate(
-                      drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
-
-              // Convert to field relative speeds & send command
-              ChassisSpeeds speeds =
-                  new ChassisSpeeds(
-                      linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                      linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                      omega);
-              boolean isFlipped =
-                  DriverStation.getAlliance().isPresent()
-                      && DriverStation.getAlliance().get() == Alliance.Red;
-              drive.runVelocity(
-                  ChassisSpeeds.fromFieldRelativeSpeeds(
-                      speeds,
-                      isFlipped
-                          ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                          : drive.getRotation()));
-            },
-            drive)
-
-        // Reset PID controller when command starts
-        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
   }
 }
