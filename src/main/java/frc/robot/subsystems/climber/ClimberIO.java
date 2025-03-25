@@ -3,12 +3,12 @@ package frc.robot.subsystems.climber;
 import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.AutoLog;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public interface ClimberIO {
   @AutoLog
   public static class ClimberIOInputs {
-
-    public double positionTau = 0;
-    public double velocityTauPerSec = 0;
+    public Rotation2d rotation = new Rotation2d();
   }
 
   public default void periodic() {}
@@ -19,19 +19,13 @@ public interface ClimberIO {
 
   public default void setTargetPosition(BasePosition position) {}
 
-  public default boolean atTargetPosition() {
-    return false;
+  public default BasePosition getTargetPosition() {
+    return new BasePosition(0.0);
   }
 
-  public default boolean isDeployed() {
-    return false;
+  public default Rotation2d getRotation() {
+    return new Rotation2d();
   }
-
-  public default double getPosition() {
-    return 0.0;
-  }
-
-  public default void toggleDeploy() {}
 
   public default void positionStop() {}
 }

@@ -13,6 +13,8 @@ import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.Logger;
 
@@ -22,11 +24,11 @@ public class ClimberIOSparkMax implements ClimberIO {
   private final SparkMax leftMotor;
   private final SparkMax rightMotor;
   private RelativeEncoder leftEncoder;
-  private double targetEncoderPosition = 0;
   private double climberThreshold = 1.0;
   private boolean atTarget = false;
   public boolean isDeployed = false;
   private final SparkClosedLoopController controller;
+  public Rotation2d targetEncoderRotation = new Rotation2d();
 
   public ClimberIOSparkMax(ClimberConfig config) {
     leftMotor = new SparkMax(config.leftMotorCanId, MotorType.kBrushless);
@@ -61,19 +63,21 @@ public class ClimberIOSparkMax implements ClimberIO {
   }
 
   public void periodic() {
-    double distance = targetEncoderPosition - inputs.positionTau;
-    double distanceAbsolute = Math.abs(distance);
+    Rotation2d distance = Rotation2d.fromRotations(targetEncoderRotation.getRotations() - inputs.rotation.getRotations());
+    double distanceAbsolute = Math.abs(distance.getRotations());
     atTarget = distanceAbsolute < climberThreshold;
     BasePosition basePosition =
         BasePosition.fromRange(
-            config.encoderLowerLimit, config.encoderUpperLimit, inputs.positionTau);
-    Logger.recordOutput("Climber/EncoderPosition", inputs.positionTau);
+            config.encoderLowerLimit.getRotations(), 
+            config.encoderUpperLimit.getRotations(), 
+            inputs.rotation.getRotations()
+        );
+    Logger.recordOutput("Climber/EncoderPosition", inputs.rotation);
     Logger.recordOutput("Climber/BasePosition", basePosition.getValue());
   }
 
   public void updateInputs(ClimberIO.ClimberIOInputs inputs) {
-    ifOk(leftMotor, leftEncoder::getPosition, (value) -> inputs.positionTau = value);
-    ifOk(leftMotor, leftEncoder::getVelocity, (value) -> inputs.velocityTauPerSec = value);
+    ifOk(leftMotor, leftEncoder::getPosition, (value) -> inputs.rotation = Rotation2d.fromRotations(value));
     this.inputs = inputs;
   }
 
@@ -82,23 +86,14 @@ public class ClimberIOSparkMax implements ClimberIO {
   }
 
   public void setTargetPosition(BasePosition position) {
-    targetEncoderPosition = position.toRange(config.encoderLowerLimit, config.encoderUpperLimit);
-    controller.setReference(targetEncoderPosition, ControlType.kMAXMotionPositionControl);
+    targetEncoderRotation = Rotation2d.fromRotations(position.toRange(
+      config.encoderLowerLimit.getRotations(),
+      config.encoderUpperLimit.getRotations()
+    ));
+    controller.setReference(targetEncoderRotation.getRotations(), ControlType.kMAXMotionPositionControl);
   }
 
-  public boolean atTargetPosition() {
-    return atTarget;
-  }
-
-  public boolean isDeployed() {
-    return isDeployed;
-  }
-
-  public void toggleDeploy() {
-    isDeployed = !isDeployed;
-  }
-
-  public double getPosition() {
-    return leftEncoder.getPosition();
+  public Rotation2d getRotation() {
+    return Rotation2d.fromRotations(leftEncoder.getPosition());
   }
 }

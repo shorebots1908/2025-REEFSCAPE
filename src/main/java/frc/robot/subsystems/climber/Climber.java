@@ -1,5 +1,6 @@
 package frc.robot.subsystems.climber;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.Logger;
@@ -27,23 +28,20 @@ public class Climber extends SubsystemBase {
     io.setTargetPosition(position);
   }
 
+  public BasePosition getTargetPosition() {
+    return io.getTargetPosition();
+  }
+
   public boolean atTargetPosition() {
-    return io.atTargetPosition();
+    // return io.atTargetPosition();
+    return false; // TODO
   }
 
   public void positionStop() {
     io.positionStop();
   }
 
-  public boolean isDeployed() {
-    return io.isDeployed();
-  }
-
-  public void toggleDeploy() {
-    io.toggleDeploy();
-  }
-
-  public double getPosition() {
-    return io.getPosition();
+  public Rotation2d getRotation() {
+    return io.getRotation();
   }
 }
