@@ -133,8 +133,8 @@ public class RobotContainer {
                 0.0001, // was 0.001
                 3, // was 0.0
                 0.5,
-                0.58,
-                3.1,
+                0.0,
+                4.69,
                 false,
                 WristCommands.ALGAE_WRIST_STOW));
     coralWrist =
