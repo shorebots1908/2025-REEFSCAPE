@@ -16,6 +16,12 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.revrobotics.spark.config.AbsoluteEncoderConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SoftLimitConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -136,32 +142,50 @@ public class RobotContainer {
             new WristConfig(
                 "CoralWrist",
                 19,
-                0.3,
-                0.0001,
-                3,
-                0.5,
-                0.58,
-                3.1,
+                WristCommands.CORAL_WRIST_STOW,
                 true,
-                true,
-                false,
-                WristCommands.CORAL_WRIST_STOW));
+                new SparkMaxConfig()
+                    .inverted(true)
+                    .idleMode(IdleMode.kBrake)
+                    .apply(new AbsoluteEncoderConfig().inverted(false))
+                    .closedLoopRampRate(0.5)
+                    .apply(
+                        new ClosedLoopConfig()
+                            .p(0.3)
+                            .i(0.0001)
+                            .d(3)
+                            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder))
+                    .apply(
+                        new SoftLimitConfig()
+                            .forwardSoftLimit(3.1)
+                            .forwardSoftLimitEnabled(true)
+                            .reverseSoftLimit(0.58)
+                            .reverseSoftLimitEnabled(true))));
 
     algaeWrist =
         initWrist(
             new WristConfig(
                 "AlgaeWrist",
                 17,
-                0.3,
-                0.0001,
-                3,
-                0.5,
-                0.58,
-                3.1,
+                WristCommands.ALGAE_WRIST_STOW,
                 false,
-                true,
-                false,
-                WristCommands.ALGAE_WRIST_STOW));
+                new SparkMaxConfig()
+                    .inverted(true)
+                    .idleMode(IdleMode.kBrake)
+                    // .apply(new AbsoluteEncoderConfig().inverted(false))
+                    .closedLoopRampRate(0.5)
+                    .apply(
+                        new ClosedLoopConfig()
+                            .p(0.3)
+                            .i(0.0001)
+                            .d(3)
+                            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder))
+                    .apply(
+                        new SoftLimitConfig()
+                            .forwardSoftLimit(3.1)
+                            .forwardSoftLimitEnabled(true)
+                            .reverseSoftLimit(0.58)
+                            .reverseSoftLimitEnabled(true))));
 
     climber =
         initClimber(
