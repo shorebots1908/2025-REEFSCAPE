@@ -11,6 +11,9 @@ public interface ElevatorIO {
     public double velocityRadPerSec = 0;
     public boolean atUpper = false;
     public boolean atLower = false;
+    public double targetEncoderPosition = 0;
+    public boolean atTarget = false;
+    public double elevatorThreshold = 1.0;
   }
 
   public default void periodic() {}

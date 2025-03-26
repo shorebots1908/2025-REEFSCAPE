@@ -28,9 +28,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
   private final SparkLimitSwitch limitLower;
 
   private ElevatorIO.ElevatorIOInputs inputs = new ElevatorIOInputs();
-  private double targetEncoderPosition = 0;
-  private boolean atTarget = false;
-  private double elevatorThreshold = 1.0;
+
   private ElevatorConfig config;
 
   public ElevatorIOSparkMax(ElevatorConfig config) {
@@ -73,15 +71,15 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
   @Override
   public void periodic() {
-    double distance = targetEncoderPosition - inputs.positionRad;
+    double distance = inputs.targetEncoderPosition - inputs.positionRad;
     double distanceAbsolute = Math.abs(distance);
-    atTarget = distanceAbsolute < elevatorThreshold;
+    inputs.atTarget = distanceAbsolute < inputs.elevatorThreshold;
     BasePosition basePosition =
         BasePosition.fromRange(
             config.encoderLowerLimit, config.encoderUpperLimit, inputs.positionRad);
     Logger.recordOutput("Elevator/BasePosition", basePosition.getValue());
     Logger.recordOutput("Elevator/DistanceToTarget", distanceAbsolute);
-    Logger.recordOutput("Elevator/AtTarget", atTarget);
+    Logger.recordOutput("Elevator/AtTarget", inputs.atTarget);
 
     Logger.recordOutput(
         "Elevator/BasePositionLower",
@@ -101,12 +99,13 @@ public class ElevatorIOSparkMax implements ElevatorIO {
   }
 
   public void setTargetPosition(BasePosition position) {
-    targetEncoderPosition = position.toRange(config.encoderLowerLimit, config.encoderUpperLimit);
-    controller.setReference(targetEncoderPosition, ControlType.kMAXMotionPositionControl);
+    inputs.targetEncoderPosition =
+        position.toRange(config.encoderLowerLimit, config.encoderUpperLimit);
+    controller.setReference(inputs.targetEncoderPosition, ControlType.kMAXMotionPositionControl);
   }
 
   public boolean atTargetPosition() {
-    return atTarget;
+    return inputs.atTarget;
   }
 
   public void setElevatorOpenLoop(double output) {

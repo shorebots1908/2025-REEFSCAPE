@@ -23,18 +23,10 @@ public class WristIOSparkMax implements WristIO {
   private final SparkAbsoluteEncoder wristEncoder;
   private WristConfig config;
   private WristIOInputs inputs = new WristIOInputs();
-  // The target position the wrist will try to reach
-  private double targetEncoderPosition = 0;
-
-  // How close the wrist needs to be to be "close enough"
-  private double targetThreshold = 0.05;
-
-  // Whether the wrist is currently close enough
-  private boolean atTarget = false;
 
   public WristIOSparkMax(WristConfig config) {
     this.config = config;
-    targetEncoderPosition =
+    inputs.targetEncoderPosition =
         config.startPosition.toRange(config.encoderLowerLimit, config.encoderUpperLimit);
     wristMotor = new SparkMax(config.wristMotorId, MotorType.kBrushless);
     wristEncoder = wristMotor.getAbsoluteEncoder();
@@ -64,9 +56,9 @@ public class WristIOSparkMax implements WristIO {
 
   public void periodic() {
     double position = inputs.positionRevs;
-    double distance = targetEncoderPosition - inputs.positionRevs;
+    double distance = inputs.targetEncoderPosition - inputs.positionRevs;
     double distanceAbsolute = Math.abs(distance);
-    atTarget = distanceAbsolute < targetThreshold;
+    inputs.atTarget = distanceAbsolute < inputs.targetThreshold;
     BasePosition basePosition =
         BasePosition.fromRange(config.encoderLowerLimit, config.encoderUpperLimit, position);
 
@@ -74,9 +66,9 @@ public class WristIOSparkMax implements WristIO {
     Logger.recordOutput(
         String.format("%s/WristBasePosition", config.name), basePosition.getValue());
     Logger.recordOutput(String.format("%s/DistanceToTarget", config.name), distanceAbsolute);
-    Logger.recordOutput(String.format("%s/AtTarget", config.name), atTarget);
+    Logger.recordOutput(String.format("%s/AtTarget", config.name), inputs.atTarget);
     Logger.recordOutput(
-        String.format("%s/TargetEncoderPosition", config.name), targetEncoderPosition);
+        String.format("%s/TargetEncoderPosition", config.name), inputs.targetEncoderPosition);
   }
 
   @Override
@@ -92,7 +84,7 @@ public class WristIOSparkMax implements WristIO {
 
   @Override
   public boolean atTargetPosition() {
-    return atTarget;
+    return inputs.atTarget;
   }
 
   @Override
@@ -103,7 +95,8 @@ public class WristIOSparkMax implements WristIO {
 
   @Override
   public void setTargetPosition(BasePosition position) {
-    targetEncoderPosition = position.toRange(config.encoderLowerLimit, config.encoderUpperLimit);
-    wristController.setReference(targetEncoderPosition, ControlType.kPosition);
+    inputs.targetEncoderPosition =
+        position.toRange(config.encoderLowerLimit, config.encoderUpperLimit);
+    wristController.setReference(inputs.targetEncoderPosition, ControlType.kPosition);
   }
 }

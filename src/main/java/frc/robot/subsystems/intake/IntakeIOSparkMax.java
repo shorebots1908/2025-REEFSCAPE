@@ -1,7 +1,5 @@
 package frc.robot.subsystems.intake;
 
-import static frc.robot.util.SparkUtil.*;
-
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -14,10 +12,9 @@ import org.littletonrobotics.junction.Logger;
 public class IntakeIOSparkMax implements IntakeIO {
   private final SparkMax leftMotor;
   private final SparkMax rightMotor;
+  private DigitalInput digitalSensor;
   private IntakeConfig config;
   private IntakeIO.IntakeIOInputs inputs = new IntakeIOInputs();
-  // private AnalogInput analogSensor;
-  private DigitalInput digitalSensor;
 
   public IntakeIOSparkMax(IntakeConfig config) {
     this.config = config;

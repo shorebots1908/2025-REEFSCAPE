@@ -62,9 +62,6 @@ import frc.robot.subsystems.wrist.WristConfig;
 import frc.robot.subsystems.wrist.WristIO;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSparkMax;
-
-import static edu.wpi.first.units.Units.Rotation;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import org.littletonrobotics.junction.Logger;
@@ -133,17 +130,16 @@ public class RobotContainer {
                 false,
                 WristCommands.CORAL_WRIST_STOW));
 
-    climber = initClimber(
-        new ClimberConfig(
-          15, 
-          16, 
-          5.0, 
-          0.0, 
-          0.0, 
-          Rotation2d.fromRotations(0.0),
-          Rotation2d.fromRotations(67.95)
-        )
-    );
+    climber =
+        initClimber(
+            new ClimberConfig(
+                15,
+                16,
+                5.0,
+                0.0,
+                0.0,
+                Rotation2d.fromRotations(0.0),
+                Rotation2d.fromRotations(67.95)));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

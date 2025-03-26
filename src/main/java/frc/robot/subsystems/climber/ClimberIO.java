@@ -1,14 +1,17 @@
 package frc.robot.subsystems.climber;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.AutoLog;
-
-import edu.wpi.first.math.geometry.Rotation2d;
 
 public interface ClimberIO {
   @AutoLog
   public static class ClimberIOInputs {
     public Rotation2d rotation = new Rotation2d();
+    public double climberThreshold = 1.0;
+    public boolean atTarget = false;
+
+    public Rotation2d targetEncoderRotation = new Rotation2d();
   }
 
   public default void periodic() {}

@@ -7,7 +7,6 @@ public interface IntakeIO {
   public static class IntakeIOInputs {
     public boolean connected = false;
     public double positionRevs = 0.0;
-    // public int analogSensorValue = 0;
     public boolean holdingSwitchPressed = false;
   }
 

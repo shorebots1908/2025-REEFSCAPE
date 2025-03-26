@@ -6,9 +6,10 @@ import org.littletonrobotics.junction.AutoLog;
 public interface WristIO {
   @AutoLog
   public static class WristIOInputs {
-    public boolean connected = false;
     public double positionRevs = 0.0;
-    public int sensorValue = 0;
+    public boolean atTarget = false;
+    public double targetThreshold = 0.05;
+    public double targetEncoderPosition = 0;
   }
 
   public default void periodic() {}
