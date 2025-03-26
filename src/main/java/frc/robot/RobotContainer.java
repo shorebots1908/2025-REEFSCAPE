@@ -183,9 +183,9 @@ public class RobotContainer {
                     .apply(
                         new SoftLimitConfig()
                             .forwardSoftLimit(3.1)
-                            .forwardSoftLimitEnabled(true)
+                            .forwardSoftLimitEnabled(false)
                             .reverseSoftLimit(0.58)
-                            .reverseSoftLimitEnabled(true))));
+                            .reverseSoftLimitEnabled(false))));
 
     climber =
         initClimber(
@@ -377,8 +377,8 @@ public class RobotContainer {
         .and(player2.rightTrigger(0.5).negate())
         .whileTrue(IntakeCommands.feedOut(coralIntake));
 
-    player2.leftStick().whileTrue(IntakeCommands.feedIn(algaeIntake));
-    player2.rightStick().whileTrue(IntakeCommands.feedIn(algaeIntake));
+    player2.leftStick().whileTrue(IntakeCommands.feedOut(algaeIntake, 0.8));
+    player2.rightStick().whileTrue(IntakeCommands.feedIn(algaeIntake, 0.8));
 
     player2
         .y()
