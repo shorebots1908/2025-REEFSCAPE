@@ -68,12 +68,9 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -99,71 +96,72 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     drive = initDrive();
     vision = initVision();
     elevator = initElevator(new ElevatorConfig(9, 10, 1.0, 0.0, 0.0, 0.0, 68.0));
-    coralIntake = initIntake(
-        new IntakeConfig(
-            "Coral",
-            11,
-            12,
-            0,
-            2000,
-            0.3, // was 6.0
-            0.0001, // was 0.001
-            3, // was 0.0
-            0.5,
-            0.58,
-            3.1,
-            false,
-            WristCommands.CORAL_WRIST_STOW));
+    coralIntake =
+        initIntake(
+            new IntakeConfig(
+                "Coral",
+                11,
+                12,
+                0,
+                2000,
+                0.3, // was 6.0
+                0.0001, // was 0.001
+                3, // was 0.0
+                0.5,
+                0.58,
+                3.1,
+                false,
+                WristCommands.CORAL_WRIST_STOW));
 
-    algaeIntake = initIntake(
-        new IntakeConfig(
-            "Algae",
-            13,
-            14,
-            0,
-            2000,
-            0.3, // was 6.0
-            0.0001, // was 0.001
-            3, // was 0.0
-            0.5,
-            0.58,
-            3.1,
-            false,
-            WristCommands.ALGAE_WRIST_STOW));
-    coralWrist = initWrist(
-        new WristConfig(
-            "CoralWrist",
-            19,
-            0.3,
-            0.0001,
-            3,
-            0.5,
-            0.58,
-            3.1,
-            true,
-            false,
-            WristCommands.CORAL_WRIST_STOW));
+    algaeIntake =
+        initIntake(
+            new IntakeConfig(
+                "Algae",
+                13,
+                0.3, // was 6.0
+                0.0001, // was 0.001
+                3, // was 0.0
+                0.5,
+                0.58,
+                3.1,
+                false,
+                WristCommands.ALGAE_WRIST_STOW));
+    coralWrist =
+        initWrist(
+            new WristConfig(
+                "CoralWrist",
+                19,
+                0.3,
+                0.0001,
+                3,
+                0.5,
+                0.58,
+                3.1,
+                true,
+                true,
+                false,
+                WristCommands.CORAL_WRIST_STOW));
 
-    algaeWrist = initWrist(
-        new WristConfig(
-            "AlgaeWrist",
-            18,
-            0.3,
-            0.0001,
-            3,
-            0.5,
-            0.58,
-            3.1,
-            true,
-            false,
-            WristCommands.ALGAE_WRIST_STOW));
+    algaeWrist =
+        initWrist(
+            new WristConfig(
+                "AlgaeWrist",
+                17,
+                0.3,
+                0.0001,
+                3,
+                0.5,
+                0.58,
+                3.1,
+                false,
+                true,
+                false,
+                WristCommands.ALGAE_WRIST_STOW));
 
     climber =
         initClimber(
@@ -180,37 +178,41 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     faces = AlignCommands.reefFaces();
-    reefPoses = faces.stream()
-        .flatMap((face) -> AlignCommands.faceToReefPair(face).stream())
-        .collect(Collectors.toList());
+    reefPoses =
+        faces.stream()
+            .flatMap((face) -> AlignCommands.faceToReefPair(face).stream())
+            .collect(Collectors.toList());
     var reefPosesArray = reefPoses.toArray(new Pose2d[reefPoses.size()]);
     Logger.recordOutput("RobotContainer/reefPoses", reefPosesArray);
 
-    reefLeftPoses = List.of(
-        // To tweak individual poses, add offsets with offsetPose
-        AlignCommands.offsetPose(reefPoses.get(0), 0.0, 0.0),
-        AlignCommands.offsetPose(reefPoses.get(2), 0.0, 0.0),
-        AlignCommands.offsetPose(reefPoses.get(4), 0.0, 0.0),
-        AlignCommands.offsetPose(reefPoses.get(6), 0.0, 0.0),
-        AlignCommands.offsetPose(reefPoses.get(8), 0.0, 0.0),
-        AlignCommands.offsetPose(reefPoses.get(10), 0.0, 0.0));
+    reefLeftPoses =
+        List.of(
+            // To tweak individual poses, add offsets with offsetPose
+            AlignCommands.offsetPose(reefPoses.get(0), 0.0, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(2), 0.0, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(4), 0.0, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(6), 0.0, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(8), 0.0, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(10), 0.0, 0.0));
     var reefLeftPosesArray = reefLeftPoses.toArray(new Pose2d[reefLeftPoses.size()]);
     Logger.recordOutput("RobotContainer/reefLeftPoses", reefLeftPosesArray);
 
-    reefRightPoses = List.of(
-        // To tweak individual poses, add offsets with offsetPose
-        AlignCommands.offsetPose(reefPoses.get(1), 0.0, 0.0),
-        AlignCommands.offsetPose(reefPoses.get(3), 0.0, 0.0),
-        AlignCommands.offsetPose(reefPoses.get(5), 0.0, 0.0),
-        AlignCommands.offsetPose(reefPoses.get(7), 0.0, 0.0),
-        AlignCommands.offsetPose(reefPoses.get(9), 0.0, 0.0),
-        AlignCommands.offsetPose(reefPoses.get(11), 0.0, 0.0));
+    reefRightPoses =
+        List.of(
+            // To tweak individual poses, add offsets with offsetPose
+            AlignCommands.offsetPose(reefPoses.get(1), 0.0, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(3), 0.0, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(5), 0.0, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(7), 0.0, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(9), 0.0, 0.0),
+            AlignCommands.offsetPose(reefPoses.get(11), 0.0, 0.0));
     var reefRightPosesArray = reefRightPoses.toArray(new Pose2d[reefRightPoses.size()]);
     Logger.recordOutput("RobotContainer/reefRightPoses", reefRightPosesArray);
 
-    intakePoses = AlignCommands.intakeStationPoses().stream()
-        .map((station) -> AlignCommands.offsetIntakePose(station))
-        .collect(Collectors.toList());
+    intakePoses =
+        AlignCommands.intakeStationPoses().stream()
+            .map((station) -> AlignCommands.offsetIntakePose(station))
+            .collect(Collectors.toList());
     var intakePoseArray = intakePoses.toArray(new Pose2d[intakePoses.size()]);
     Logger.recordOutput("RobotContainer/intakePoses", intakePoseArray);
 
@@ -236,11 +238,9 @@ public class RobotContainer {
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by
+   * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
-   * it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
@@ -293,12 +293,17 @@ public class RobotContainer {
     player1.rightTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, reefRightPoses));
     player1.leftBumper().whileTrue(new AlignCommands.ToClosestPose(drive, intakePoses));
 
-    player1.x().onTrue(WristCommands.setTargetPosition(coralWrist, WristCommands.CORAL_WRIST_INTAKE));
-    player1.y().onTrue(WristCommands.setTargetPosition(coralWrist, WristCommands.CORAL_WRIST_SCORE));
+    player1
+        .x()
+        .onTrue(WristCommands.setTargetPosition(coralWrist, WristCommands.CORAL_WRIST_INTAKE));
+    player1
+        .y()
+        .onTrue(WristCommands.setTargetPosition(coralWrist, WristCommands.CORAL_WRIST_SCORE));
 
     // Manual climber commands
     player2
         .rightTrigger(0.5)
+        .and(player2.y().negate())
         .whileTrue(ClimberCommands.joystick(climber, () -> -player2.getRightY()))
         .onFalse(ClimberCommands.joystick(climber, () -> 0.0));
   }
@@ -333,7 +338,9 @@ public class RobotContainer {
         .leftTrigger(0.5)
         .whileTrue(
             WristCommands.moveByJoystick(
-                coralWrist, () -> -MathUtil.applyDeadband(player2.getLeftY(), 0.07) * 0.5, () -> 0.0))
+                coralWrist,
+                () -> -MathUtil.applyDeadband(player2.getLeftY(), 0.07) * 0.5,
+                () -> 0.0))
         .onFalse(WristCommands.moveByJoystick(coralWrist, () -> 0.0, () -> 0.0));
 
     // Without right trigger, X and A feed coral
@@ -346,17 +353,16 @@ public class RobotContainer {
         .and(player2.rightTrigger(0.5).negate())
         .whileTrue(IntakeCommands.feedOut(coralIntake));
 
-    player2
-        .leftStick()
-        .whileTrue(IntakeCommands.feedIn(algaeIntake));
-    player2
-        .rightStick()
-        .whileTrue(IntakeCommands.feedIn(algaeIntake));
+    player2.leftStick().whileTrue(IntakeCommands.feedIn(algaeIntake));
+    player2.rightStick().whileTrue(IntakeCommands.feedIn(algaeIntake));
 
-    player2.rightBumper()
+    player2
+        .y()
         .whileTrue(
             WristCommands.moveByJoystick(
-                algaeWrist, () -> -MathUtil.applyDeadband(player2.getRightY(), 0.07) * 0.5, () -> 0.0))
+                algaeWrist,
+                () -> -MathUtil.applyDeadband(player2.getRightY(), 0.07) * 0.5,
+                () -> 0.0))
         .onFalse(WristCommands.moveByJoystick(algaeWrist, () -> 0.0, () -> 0.0));
 
     player2.b().whileTrue(IntakeCommands.feedOut(coralIntake, 0.2));
@@ -364,7 +370,9 @@ public class RobotContainer {
     player2.a().and(player2.rightTrigger(0.5)).whileTrue(IntakeCommands.feedOut(coralIntake, 0.15));
 
     // Start button moves coral wrist to Score
-    player2.start().onTrue(WristCommands.setTargetPosition(coralWrist, WristCommands.CORAL_WRIST_SCORE));
+    player2
+        .start()
+        .onTrue(WristCommands.setTargetPosition(coralWrist, WristCommands.CORAL_WRIST_SCORE));
 
     // Manual elevator up and down on bumpers
     player2
@@ -444,8 +452,7 @@ public class RobotContainer {
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
         return new Drive(
-            new GyroIO() {
-            },
+            new GyroIO() {},
             new ModuleIOSim(),
             new ModuleIOSim(),
             new ModuleIOSim(),
@@ -453,16 +460,11 @@ public class RobotContainer {
       default:
         // Replayed robot, disable IO implementations
         return new Drive(
-            new GyroIO() {
-            },
-            new ModuleIO() {
-            },
-            new ModuleIO() {
-            },
-            new ModuleIO() {
-            },
-            new ModuleIO() {
-            });
+            new GyroIO() {},
+            new ModuleIO() {},
+            new ModuleIO() {},
+            new ModuleIO() {},
+            new ModuleIO() {});
     }
   }
 
@@ -489,9 +491,7 @@ public class RobotContainer {
 
       default:
         // Replayed robot, disable IO implementations
-        return new Vision(drive::addVisionMeasurement, new VisionIO() {
-        }, new VisionIO() {
-        });
+        return new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
     }
   }
 
@@ -507,8 +507,7 @@ public class RobotContainer {
 
       default:
         // Replayed robot, disable IO implementations
-        return new Elevator(new ElevatorIO() {
-        });
+        return new Elevator(new ElevatorIO() {});
     }
   }
 
@@ -524,8 +523,7 @@ public class RobotContainer {
 
       default:
         // Replayed robot, disable IO implementations
-        return new Climber(new ClimberIO() {
-        });
+        return new Climber(new ClimberIO() {});
     }
   }
 
@@ -541,8 +539,7 @@ public class RobotContainer {
 
       default:
         // Replayed robot, disable IO implementations
-        return new Intake(new IntakeIO() {
-        });
+        return new Intake(new IntakeIO() {});
     }
   }
 
@@ -558,8 +555,7 @@ public class RobotContainer {
 
       default:
         // Replayed robot, disable IO implementations
-        return new Wrist(new WristIO() {
-        });
+        return new Wrist(new WristIO() {});
     }
   }
 }

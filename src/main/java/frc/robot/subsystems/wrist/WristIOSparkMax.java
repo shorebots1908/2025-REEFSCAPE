@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SoftLimitConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.Logger;
@@ -36,6 +37,7 @@ public class WristIOSparkMax implements WristIO {
     SparkMaxConfig wristConfig = new SparkMaxConfig();
     wristConfig
         .inverted(config.wristInvert)
+        .idleMode(IdleMode.kBrake)
         .apply(new AbsoluteEncoderConfig().inverted(config.encoderInvert))
         .closedLoopRampRate(config.rampRate)
         .apply(
@@ -47,9 +49,9 @@ public class WristIOSparkMax implements WristIO {
         .apply(
             new SoftLimitConfig()
                 .forwardSoftLimit(config.encoderUpperLimit)
-                .forwardSoftLimitEnabled(true)
+                .forwardSoftLimitEnabled(config.softLimitEnabled)
                 .reverseSoftLimit(config.encoderLowerLimit)
-                .reverseSoftLimitEnabled(true));
+                .reverseSoftLimitEnabled(config.softLimitEnabled));
     wristMotor.configure(
         wristConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }

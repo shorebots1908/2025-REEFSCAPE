@@ -11,6 +11,7 @@ public class WristConfig {
   public final double rampRate;
   public final double encoderLowerLimit;
   public final double encoderUpperLimit;
+  public final boolean softLimitEnabled;
   public final boolean wristInvert;
   public final boolean encoderInvert;
   public final BasePosition startPosition;
@@ -24,6 +25,7 @@ public class WristConfig {
       double rampRate,
       double lowerLimit,
       double upperLimit,
+      boolean softLimitEnabled,
       boolean wristInvert,
       boolean encoderInvert,
       BasePosition startPosition) {
@@ -35,6 +37,7 @@ public class WristConfig {
     this.rampRate = rampRate;
     this.encoderLowerLimit = lowerLimit;
     this.encoderUpperLimit = upperLimit;
+    this.softLimitEnabled = softLimitEnabled;
     this.wristInvert = wristInvert;
     this.encoderInvert = encoderInvert;
     this.startPosition = startPosition;
