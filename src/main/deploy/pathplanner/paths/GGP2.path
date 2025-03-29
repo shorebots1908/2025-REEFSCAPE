@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.177219296240498,
-        "y": 4.084351368862317
+        "x": 5.093991713614333,
+        "y": 5.298008721388965
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.177219296240505,
-        "y": 4.084351368862317
+        "x": 6.093991713614333,
+        "y": 5.298008721388965
       },
       "isLocked": false,
-      "linkedName": "start-center"
+      "linkedName": "2pieceauto1end"
     },
     {
       "anchor": {
-        "x": 5.77497877494851,
-        "y": 4.084351368862317
+        "x": 1.6523582424173142,
+        "y": 7.32867052608362
       },
       "prevControl": {
-        "x": 4.77497877494851,
-        "y": 4.084351368862317
+        "x": 3.020777441596011,
+        "y": 6.6905661739402635
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "reef-center"
+      "linkedName": "GGP2"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -179.7642162301234
+    "rotation": 126.33734183334805
   },
   "reversed": false,
-  "folder": "GraysonPaths",
+  "folder": "Grayson's Goated paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -179.5398028320213
+    "rotation": -120.14966170101572
   },
   "useDefaultConstraints": true
 }

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.BasePosition;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.led.*;
 
 public class IntakeCommands {
   public static final double FEED_SPEED = 0.3;
@@ -20,14 +21,16 @@ public class IntakeCommands {
   public static final BasePosition ALGAE_WRIST_STOW = new BasePosition(0.9);
   public static final BasePosition ALGAE_WRIST_DEPLOY = new BasePosition(0.128);
 
-  public static Command feedHoldSticky(Intake intake) {
+  public static Command feedHoldSticky(Intake intake, LED led) {
     return Commands.run(
         () -> {
           if (intake.isHolding()) {
             // If the sensor has a coral, keep feeding in to hold it
+            led.yellow();
             intake.setFeedOpenLoop(FEED_STICK);
           } else {
             intake.feedStop();
+            led.currentLEDColor();
           }
         },
         intake);

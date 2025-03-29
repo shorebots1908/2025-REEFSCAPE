@@ -23,7 +23,7 @@ public class IntakeIOSparkMax implements IntakeIO {
     leftMotor = new SparkMax(config.leftMotorId, MotorType.kBrushless);
     // Left motor config
     SparkMaxConfig leftConfig = new SparkMaxConfig();
-    leftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20);
+    leftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(config.motorInvert);
     leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     if (config.rightMotorId.isPresent()) {

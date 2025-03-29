@@ -25,6 +25,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -58,6 +60,11 @@ import frc.robot.subsystems.intake.IntakeConfig;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSparkMax;
+import frc.robot.subsystems.led.LED;
+import frc.robot.subsystems.led.LEDConfig;
+import frc.robot.subsystems.led.LEDIO;
+import frc.robot.subsystems.led.LEDIOSim;
+import frc.robot.subsystems.led.LEDIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -83,6 +90,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
+  private final LED led;
   private final Elevator elevator;
   private final Intake coralIntake;
   private final Intake algaeIntake;
@@ -94,7 +102,7 @@ public class RobotContainer {
   private final List<Pose2d> reefLeftPoses;
   private final List<Pose2d> reefRightPoses;
   private final List<Pose2d> intakePoses;
-
+  private NetworkTable FMS = NetworkTableInstance.getDefault().getTable("FMSInfo");
   // Controller
   private final CommandXboxController player1 = new CommandXboxController(0);
   private final CommandXboxController player2 = new CommandXboxController(1);
@@ -106,6 +114,7 @@ public class RobotContainer {
   public RobotContainer() {
     drive = initDrive();
     vision = initVision();
+    led = initLED(new LEDConfig("LED", 0));
     elevator = initElevator(new ElevatorConfig(9, 10, 1.0, 0.0, 0.0, 0.0, 68.0));
     coralIntake =
         initIntake(
@@ -119,8 +128,7 @@ public class RobotContainer {
                 0.0001, // was 0.001
                 3, // was 0.0
                 0.5,
-                0.58,
-                3.1,
+                false,
                 false,
                 WristCommands.CORAL_WRIST_STOW));
 
@@ -133,8 +141,7 @@ public class RobotContainer {
                 0.0001, // was 0.001
                 3, // was 0.0
                 0.5,
-                0.0,
-                4.69,
+                true,
                 false,
                 WristCommands.ALGAE_WRIST_STOW));
     coralWrist =
@@ -144,6 +151,8 @@ public class RobotContainer {
                 19,
                 WristCommands.CORAL_WRIST_STOW,
                 true,
+                0.58,
+                3.1,
                 new SparkMaxConfig()
                     .inverted(true)
                     .idleMode(IdleMode.kBrake)
@@ -169,6 +178,8 @@ public class RobotContainer {
                 17,
                 WristCommands.ALGAE_WRIST_STOW,
                 false,
+                0.0,
+                5.0,
                 new SparkMaxConfig()
                     .inverted(true)
                     .idleMode(IdleMode.kBrake)
@@ -176,10 +187,10 @@ public class RobotContainer {
                     .closedLoopRampRate(0.5)
                     .apply(
                         new ClosedLoopConfig()
-                            .p(0.3)
+                            .p(0.15)
                             .i(0.0001)
                             .d(3)
-                            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder))
+                            .feedbackSensor(FeedbackSensor.kPrimaryEncoder))
                     .apply(
                         new SoftLimitConfig()
                             .forwardSoftLimit(3.1)
@@ -333,7 +344,7 @@ public class RobotContainer {
   }
 
   private void configurePlayer2() {
-    coralIntake.setDefaultCommand(IntakeCommands.feedHoldSticky(coralIntake));
+    coralIntake.setDefaultCommand(IntakeCommands.feedHoldSticky(coralIntake, led));
 
     // Elevator auto positions on the D-pad
     player2
@@ -378,6 +389,9 @@ public class RobotContainer {
         .whileTrue(IntakeCommands.feedOut(coralIntake));
 
     player2.leftStick().whileTrue(IntakeCommands.feedOut(algaeIntake, 0.8));
+    // player2
+    // .leftStick()
+    //  .onTrue(WristCommands.goToPosition(algaeWrist, WristCommands.ALGAE_WRIST_HALF));
     player2.rightStick().whileTrue(IntakeCommands.feedIn(algaeIntake, 0.8));
 
     player2
@@ -385,7 +399,7 @@ public class RobotContainer {
         .whileTrue(
             WristCommands.moveByJoystick(
                 algaeWrist,
-                () -> -MathUtil.applyDeadband(player2.getRightY(), 0.07) * 0.5,
+                () -> MathUtil.applyDeadband(player2.getRightY(), 0.07) * 0.5,
                 () -> 0.0))
         .onFalse(WristCommands.moveByJoystick(algaeWrist, () -> 0.0, () -> 0.0));
 
@@ -580,6 +594,22 @@ public class RobotContainer {
       default:
         // Replayed robot, disable IO implementations
         return new Wrist(new WristIO() {});
+    }
+  }
+
+  public LED initLED(LEDConfig config) {
+    switch (Constants.currentMode) {
+      case REAL:
+        // Real robot, instantiate hardware IO implementations
+        return new LED(new LEDIOSparkMax(FMS, config));
+
+      case SIM:
+        // Sim robot, instantiate physics sim IO implementations
+        return new LED(new LEDIOSim());
+
+      default:
+        // Replayed robot, disable IO implementations
+        return new LED(new LEDIO() {});
     }
   }
 }
