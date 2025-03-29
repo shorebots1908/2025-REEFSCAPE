@@ -12,13 +12,18 @@ public class LEDIOSparkMax implements LEDIO {
 
   public LEDIOSparkMax(NetworkTable FMS, LEDConfig config) {
     this.config = config;
-    if (FMS.getEntry("isRedAlliance").getBoolean(false)) {
+    if (FMS.getEntry("IsRedAlliance").getBoolean(false)) {
       inputs.teamColor = inputs.red;
-      red();
+
     } else {
       inputs.teamColor = inputs.blue;
-      blue();
     }
+    teamColor();
+  }
+
+  @Override
+  public void updateInputs(LEDIO.LEDIOInputs inputs) {
+    this.inputs = inputs;
   }
 
   public void setLEDColor(double pwmColorCode) {
@@ -33,31 +38,37 @@ public class LEDIOSparkMax implements LEDIO {
     SmartDashboard.putString("Current LED Color", inputs.color);
   }
 
+  @Override
   public void yellow() {
     setLEDColor(inputs.yellow);
     inputs.color = "yellow";
   }
 
+  @Override
   public void green() {
     setLEDColor(inputs.green);
     inputs.color = "green";
   }
 
+  @Override
   public void blue() {
     setLEDColor(inputs.blue);
     inputs.color = "blue";
   }
 
+  @Override
   public void red() {
     setLEDColor(inputs.red);
     inputs.color = "red";
   }
 
+  @Override
   public void purple() {
     setLEDColor(inputs.purple);
     inputs.color = "purple";
   }
 
+  @Override
   public void teamColor() {
     setLEDColor(inputs.teamColor);
     if (inputs.teamColor == inputs.red) {

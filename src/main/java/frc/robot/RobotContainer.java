@@ -103,7 +103,7 @@ public class RobotContainer {
   private final List<Pose2d> reefLeftPoses;
   private final List<Pose2d> reefRightPoses;
   private final List<Pose2d> intakePoses;
-  private NetworkTable FMS = NetworkTableInstance.getDefault().getTable("FMSInfo");
+  private NetworkTable FMS = NetworkTableInstance.getDefault().getTable("/FMSInfo");
   // Controller
   private final CommandXboxController player1 = new CommandXboxController(0);
   private final CommandXboxController player2 = new CommandXboxController(1);
@@ -188,8 +188,8 @@ public class RobotContainer {
                     .closedLoopRampRate(0.5)
                     .apply(
                         new ClosedLoopConfig()
-                            .p(0.15)
-                            .i(0.0001)
+                            .p(0.1)
+                            .i(0.00001)
                             .d(3)
                             .feedbackSensor(FeedbackSensor.kPrimaryEncoder))
                     .apply(
@@ -389,7 +389,14 @@ public class RobotContainer {
         .and(player2.rightTrigger(0.5).negate())
         .whileTrue(IntakeCommands.feedOut(coralIntake));
 
-    player2.leftStick().whileTrue(IntakeCommands.feedOut(algaeIntake, 0.4));
+    player2
+        .leftStick()
+        .whileTrue(
+            WristCommands.goToPosition(algaeWrist, new BasePosition(0.15))
+                .andThen(IntakeCommands.feedOut(algaeIntake, 0.4)))
+        .onFalse(
+            WristCommands.goToPosition(algaeWrist, new BasePosition(0))
+                .alongWith(IntakeCommands.feedIn(algaeIntake, 0)));
     // player2
     // .leftStick()
     //  .onTrue(WristCommands.goToPosition(algaeWrist, WristCommands.ALGAE_WRIST_HALF));
@@ -398,7 +405,7 @@ public class RobotContainer {
     player2
         .y()
         .whileTrue(
-            WristCommands.goToPosition(algaeWrist, new BasePosition(1))
+            WristCommands.goToPosition(algaeWrist, new BasePosition(0.9))
                 .alongWith(IntakeCommands.feedIn(algaeIntake, 0.8)))
         .onFalse(
             WristCommands.goToPosition(algaeWrist, new BasePosition(0))
