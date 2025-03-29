@@ -37,4 +37,6 @@ public interface LEDIO {
   public default void purple() {}
 
   public default void teamColor() {}
+
+  public default void updateTeamColor() {}
 }

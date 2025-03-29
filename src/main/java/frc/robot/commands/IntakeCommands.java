@@ -21,20 +21,17 @@ public class IntakeCommands {
   public static final BasePosition ALGAE_WRIST_STOW = new BasePosition(0.9);
   public static final BasePosition ALGAE_WRIST_DEPLOY = new BasePosition(0.128);
 
-  public static Command feedHoldSticky(Intake intake, LED led) {
+  public static Command feedHoldSticky(Intake intake) {
     return Commands.run(
         () -> {
           if (intake.isHolding()) {
             // If the sensor has a coral, keep feeding in to hold it
-            led.yellow();
             intake.setFeedOpenLoop(FEED_STICK);
           } else {
             intake.feedStop();
-            led.teamColor();
           }
         },
-        intake,
-        led);
+        intake);
   }
 
   public static Command feedIn(Intake intake) {

@@ -5,13 +5,20 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LEDIOSparkMax implements LEDIO {
-
+  private NetworkTable FMS;
   private LEDConfig config;
   private LEDIO.LEDIOInputs inputs = new LEDIOInputs();
-  public Spark ledStrip = new Spark(0);
+  public Spark ledStrip;
 
   public LEDIOSparkMax(NetworkTable FMS, LEDConfig config) {
     this.config = config;
+    this.FMS = FMS;
+    ledStrip = new Spark(config.LEDStripId);
+    updateTeamColor();
+  }
+
+  @Override
+  public void updateTeamColor() {
     if (FMS.getEntry("IsRedAlliance").getBoolean(false)) {
       inputs.teamColor = inputs.red;
 

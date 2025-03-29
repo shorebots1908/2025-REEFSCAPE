@@ -38,6 +38,7 @@ import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.LEDCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.BasePosition;
 import frc.robot.subsystems.climber.Climber;
@@ -345,7 +346,8 @@ public class RobotContainer {
   }
 
   private void configurePlayer2() {
-    coralIntake.setDefaultCommand(IntakeCommands.feedHoldSticky(coralIntake, led));
+    coralIntake.setDefaultCommand(IntakeCommands.feedHoldSticky(coralIntake));
+    led.setDefaultCommand(LEDCommands.ledDefault(led, coralIntake));
 
     // Elevator auto positions on the D-pad
     player2
@@ -400,7 +402,7 @@ public class RobotContainer {
     // player2
     // .leftStick()
     //  .onTrue(WristCommands.goToPosition(algaeWrist, WristCommands.ALGAE_WRIST_HALF));
-    player2.rightStick().whileTrue(IntakeCommands.feedIn(algaeIntake, 0.8));
+    player2.rightStick().whileTrue(LEDCommands.ledChange(led));
 
     player2
         .y()
@@ -623,5 +625,9 @@ public class RobotContainer {
         // Replayed robot, disable IO implementations
         return new LED(new LEDIO() {});
     }
+  }
+
+  public void updateTeamColor() {
+    led.updateTeamColor();
   }
 }

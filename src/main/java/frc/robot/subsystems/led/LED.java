@@ -40,4 +40,6 @@ public class LED extends SubsystemBase {
   public void purple() {}
 
   public void teamColor() {}
+
+  public void updateTeamColor() {}
 }
