@@ -5,10 +5,10 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LEDIOSparkMax implements LEDIO {
-  public Spark ledStrip = new Spark(0);
 
   private LEDConfig config;
   private LEDIO.LEDIOInputs inputs = new LEDIOInputs();
+  public Spark ledStrip = new Spark(0);
 
   public LEDIOSparkMax(NetworkTable FMS, LEDConfig config) {
     this.config = config;

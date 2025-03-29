@@ -89,7 +89,7 @@ public class WristIOSparkMax implements WristIO {
 
   @Override
   public void setTargetPosition(BasePosition position) {
-    inputs.targetEncoderPosition = position.toRange(0.58, 3.1);
+    inputs.targetEncoderPosition = position.toRange(config.lowerLimit, config.upperLimit);
     wristController.setReference(inputs.targetEncoderPosition, ControlType.kPosition);
   }
 }

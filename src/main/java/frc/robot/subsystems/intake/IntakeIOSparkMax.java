@@ -42,6 +42,9 @@ public class IntakeIOSparkMax implements IntakeIO {
   }
 
   public void periodic() {
+    if (digitalSensor.isPresent()) {
+      inputs.holdingSwitchPressed = digitalSensor.get().get();
+    }
     Logger.recordOutput(String.format("%s/SensorValue", config.name), inputs.holdingSwitchPressed);
     Logger.recordOutput(String.format("%s/SensorHolding", config.name), isHolding());
   }
@@ -79,6 +82,7 @@ public class IntakeIOSparkMax implements IntakeIO {
 
   public boolean isHolding() {
     // return inputs.analogSensorValue > config.sensorThreshold;
+
     return !inputs.holdingSwitchPressed;
   }
 

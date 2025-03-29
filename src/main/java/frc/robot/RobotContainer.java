@@ -39,6 +39,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.WristCommands;
+import frc.robot.subsystems.BasePosition;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberConfig;
 import frc.robot.subsystems.climber.ClimberIO;
@@ -388,7 +389,7 @@ public class RobotContainer {
         .and(player2.rightTrigger(0.5).negate())
         .whileTrue(IntakeCommands.feedOut(coralIntake));
 
-    player2.leftStick().whileTrue(IntakeCommands.feedOut(algaeIntake, 0.8));
+    player2.leftStick().whileTrue(IntakeCommands.feedOut(algaeIntake, 0.4));
     // player2
     // .leftStick()
     //  .onTrue(WristCommands.goToPosition(algaeWrist, WristCommands.ALGAE_WRIST_HALF));
@@ -397,11 +398,15 @@ public class RobotContainer {
     player2
         .y()
         .whileTrue(
-            WristCommands.moveByJoystick(
-                algaeWrist,
-                () -> MathUtil.applyDeadband(player2.getRightY(), 0.07) * 0.5,
-                () -> 0.0))
-        .onFalse(WristCommands.moveByJoystick(algaeWrist, () -> 0.0, () -> 0.0));
+            WristCommands.goToPosition(algaeWrist, new BasePosition(1))
+                .alongWith(IntakeCommands.feedIn(algaeIntake, 0.8)))
+        .onFalse(
+            WristCommands.goToPosition(algaeWrist, new BasePosition(0))
+                .alongWith(IntakeCommands.feedIn(algaeIntake, 0)));
+    // moveByJoystick(
+    //     algaeWrist,
+    //     () -> MathUtil.applyDeadband(player2.getRightY(), 0.07) * 0.5,
+    //     () -> 0.0))
 
     player2.b().whileTrue(IntakeCommands.feedOut(coralIntake, 0.2));
 

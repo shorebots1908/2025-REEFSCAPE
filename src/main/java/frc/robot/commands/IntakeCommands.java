@@ -8,7 +8,7 @@ import frc.robot.subsystems.led.*;
 
 public class IntakeCommands {
   public static final double FEED_SPEED = 0.3;
-  public static final double FEED_STICK = 0.18;
+  public static final double FEED_STICK = 0.1;
   public static final BasePosition CORAL_WRIST_DOWN = new BasePosition(0.0);
   public static final BasePosition CORAL_WRIST_STOW = new BasePosition(1.0);
   public static final BasePosition CORAL_WRIST_INTAKE = new BasePosition(0.75); // was 0.74
@@ -30,10 +30,11 @@ public class IntakeCommands {
             intake.setFeedOpenLoop(FEED_STICK);
           } else {
             intake.feedStop();
-            led.currentLEDColor();
+            led.teamColor();
           }
         },
-        intake);
+        intake,
+        led);
   }
 
   public static Command feedIn(Intake intake) {
