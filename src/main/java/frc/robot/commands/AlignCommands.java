@@ -51,7 +51,7 @@ public class AlignCommands {
   public static Command alignToPose(Drive drive, Pose2d targetPose) {
     // AlignConfig is P, I, D, Velocity, Acceleration
     var translationConfig = new AlignConfig(3.0, 0.0, 0.0, 15, 50.0); // p-1.6 i-0.0001 d-0.1
-    var rotationConfig = new AlignConfig(0.075, 0.0001, 0.1, 2.0, 50.0);
+    var rotationConfig = new AlignConfig(0.2, 0.0001, 0.1, 2.0, 50.0);
     return alignToPose(drive, targetPose, translationConfig, rotationConfig);
   }
 
@@ -116,8 +116,7 @@ public class AlignCommands {
           var yOut = yPid.calculate(drivePose.getY(), targetPose.getY());
           var rOut =
               -rPid.calculate(
-                  drivePose.getRotation().getRadians() + Math.PI,
-                  targetPose.getRotation().getRadians());
+                  drivePose.getRotation().getRadians(), targetPose.getRotation().getRadians());
           var fieldSpeeds = new ChassisSpeeds(xOut, yOut, rOut);
           var driveSpeeds =
               ChassisSpeeds.fromFieldRelativeSpeeds(fieldSpeeds, drivePose.getRotation());
