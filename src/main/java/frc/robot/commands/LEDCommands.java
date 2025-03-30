@@ -19,10 +19,12 @@ public class LEDCommands {
         },
         led);
   }
+
   public static Command ledChange(LED led) {
     return Commands.run(
         () -> {
-        led.setLEDColor(0.67);}
-        , led);
+          led.setLEDColor(0.69);
+        },
+        led);
   }
 }

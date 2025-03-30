@@ -55,8 +55,8 @@ public class ElevatorIOSparkMax implements ElevatorIO {
                 .d(config.dGain)
                 .apply(
                     new MAXMotionConfig()
-                        .maxVelocity(4500.0) // was 3600
-                        .maxAcceleration(3000.0)
+                        .maxVelocity(5600.0) // was 3600
+                        .maxAcceleration(4800.0)
                         .allowedClosedLoopError(0.3)));
     leftMotor.configure(
         leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
