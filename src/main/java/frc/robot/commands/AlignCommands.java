@@ -44,14 +44,43 @@ public class AlignCommands {
     }
   }
 
+  // allowable setpoint deviation
+  public static final double ROTATION_TOLERANCE = 15; // degrees
+  public static final double TRANSLATION_TOLERANCE = 0.08; // meters
+
+  // ALIGN:
+
+  public static final double ROTATION_P = 0.25;
+  public static final double ROTATION_I = 0.0001;
+  public static final double ROTATION_D = 0.1;
+  // try not to touch
+  public static final double ROTATION_VELOCITY = 2.0;
+  public static final double ROTATION_ACCEL = 50;
+
+  // POSITION:
+
+  public static final double TRANSLATION_P = 3.0;
+  public static final double TRANSLATION_I = 0.0;
+  public static final double TRANSLATION_D = 0.0;
+  // try not to touch
+  public static final double TRANSLATION_VELOCITY = 15;
+  public static final double TRANSLATION_ACCEL = 50;
+
   /**
    * Given a Drive subsystem and a target Pose2d, this command will use three profiled PID
    * controllers to drive the robot to the pose.
    */
   public static Command alignToPose(Drive drive, Pose2d targetPose) {
     // AlignConfig is P, I, D, Velocity, Acceleration
-    var translationConfig = new AlignConfig(3.0, 0.0, 0.0, 15, 50.0); // p-1.6 i-0.0001 d-0.1
-    var rotationConfig = new AlignConfig(0.2, 0.0001, 0.1, 2.0, 50.0);
+    var translationConfig =
+        new AlignConfig(
+            TRANSLATION_P,
+            TRANSLATION_I,
+            TRANSLATION_D,
+            TRANSLATION_VELOCITY,
+            TRANSLATION_ACCEL); // p-1.6 i-0.0001 d-0.1
+    var rotationConfig =
+        new AlignConfig(ROTATION_P, ROTATION_I, ROTATION_D, ROTATION_VELOCITY, ROTATION_ACCEL);
     return alignToPose(drive, targetPose, translationConfig, rotationConfig);
   }
 
@@ -68,7 +97,7 @@ public class AlignCommands {
             translationConfig.d,
             new TrapezoidProfile.Constraints(
                 translationConfig.velocity, translationConfig.acceleration));
-    xPid.setTolerance(0.08);
+    xPid.setTolerance(TRANSLATION_TOLERANCE);
     var yPid =
         new ProfiledPIDController(
             translationConfig.p,
@@ -76,7 +105,7 @@ public class AlignCommands {
             translationConfig.d,
             new TrapezoidProfile.Constraints(
                 translationConfig.velocity, translationConfig.acceleration));
-    yPid.setTolerance(0.08);
+    yPid.setTolerance(TRANSLATION_TOLERANCE);
     var rPid =
         new ProfiledPIDController(
             rotationConfig.p,
@@ -84,7 +113,7 @@ public class AlignCommands {
             rotationConfig.d,
             new TrapezoidProfile.Constraints(rotationConfig.velocity, rotationConfig.acceleration));
     rPid.enableContinuousInput(-Math.PI, Math.PI);
-    rPid.setTolerance(Units.degreesToRadians(10));
+    rPid.setTolerance(Units.degreesToRadians(ROTATION_TOLERANCE));
 
     return alignToPose(drive, targetPose, xPid, yPid, rPid);
   }

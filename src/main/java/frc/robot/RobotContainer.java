@@ -180,8 +180,8 @@ public class RobotContainer {
                 17,
                 WristCommands.ALGAE_WRIST_STOW,
                 false,
-                0.0,
-                5.0,
+                -2.5,
+                22.5,
                 new SparkMaxConfig()
                     .inverted(true)
                     .idleMode(IdleMode.kBrake)
@@ -395,7 +395,7 @@ public class RobotContainer {
         .leftStick()
         .whileTrue(
             WristCommands.goToPosition(algaeWrist, new BasePosition(0.15))
-                .andThen(IntakeCommands.feedOut(algaeIntake, 0.4)))
+                .andThen(IntakeCommands.feedOut(algaeIntake, 0.8)))
         .onFalse(
             WristCommands.goToPosition(algaeWrist, new BasePosition(0))
                 .alongWith(IntakeCommands.feedIn(algaeIntake, 0)));
