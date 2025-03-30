@@ -68,7 +68,7 @@ public class AlignCommands {
             translationConfig.d,
             new TrapezoidProfile.Constraints(
                 translationConfig.velocity, translationConfig.acceleration));
-    xPid.setTolerance(0.3);
+    xPid.setTolerance(0.08);
     var yPid =
         new ProfiledPIDController(
             translationConfig.p,
@@ -76,7 +76,7 @@ public class AlignCommands {
             translationConfig.d,
             new TrapezoidProfile.Constraints(
                 translationConfig.velocity, translationConfig.acceleration));
-    yPid.setTolerance(0.3);
+    yPid.setTolerance(0.08);
     var rPid =
         new ProfiledPIDController(
             rotationConfig.p,
@@ -84,7 +84,7 @@ public class AlignCommands {
             rotationConfig.d,
             new TrapezoidProfile.Constraints(rotationConfig.velocity, rotationConfig.acceleration));
     rPid.enableContinuousInput(-Math.PI, Math.PI);
-    rPid.setTolerance(Units.degreesToRadians(50));
+    rPid.setTolerance(Units.degreesToRadians(10));
 
     return alignToPose(drive, targetPose, xPid, yPid, rPid);
   }

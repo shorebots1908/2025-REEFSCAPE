@@ -3,18 +3,16 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "GraysonPaths",
-    "New Folder",
+    "2piecepathing",
+    "Grayson's Goated paths",
     "auto1paths",
     "auto2paths",
     "auto4paths",
-    "misc",
-    "test"
+    "misc"
   ],
   "autoFolders": [
-    "GraysonAutos",
     "2pieceauto",
-    "abby autos",
+    "GGP",
     "drive.foreward.autos"
   ],
   "defaultMaxVel": 3.0,

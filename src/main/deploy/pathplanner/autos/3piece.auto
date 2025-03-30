@@ -7,37 +7,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "score"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
+            "pathName": "GGP1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "2"
+            "pathName": "GGP2"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "feed-out"
+            "pathName": "GGP3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GGP4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GGP5"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "abby autos",
+  "folder": "GGP",
   "choreoAuto": false
 }

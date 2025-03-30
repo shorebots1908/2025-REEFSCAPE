@@ -4,13 +4,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.BasePosition;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.led.*;
 
 public class IntakeCommands {
   public static final double FEED_SPEED = 0.3;
-  public static final double FEED_STICK = 0.18;
+  public static final double FEED_STICK = 0.1;
   public static final BasePosition CORAL_WRIST_DOWN = new BasePosition(0.0);
   public static final BasePosition CORAL_WRIST_STOW = new BasePosition(1.0);
-  public static final BasePosition CORAL_WRIST_INTAKE = new BasePosition(0.75); // was 0.74
+  public static final BasePosition CORAL_WRIST_INTAKE = new BasePosition(0.71); // was 0.74
   public static final BasePosition CORAL_WRIST_SCORE = new BasePosition(0.21);
   public static final BasePosition CORAL_WRIST_L3 = new BasePosition(0.40);
   public static final BasePosition CORAL_WRIST_L4 = new BasePosition(0.3);

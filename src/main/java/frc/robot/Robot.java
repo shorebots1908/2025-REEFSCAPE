@@ -106,7 +106,9 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void robotInit() {}
+  public void robotInit() {
+    robotContainer.updateTeamColor();
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
@@ -125,6 +127,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
+    robotContainer.updateTeamColor();
   }
 
   /** This function is called periodically during autonomous. */
@@ -141,6 +144,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    robotContainer.updateTeamColor();
   }
 
   /** This function is called periodically during operator control. */

@@ -13,9 +13,8 @@ public class IntakeConfig {
   public final double iGain;
   public final double dGain;
   public final double rampRate;
-  public final double encoderLowerLimit;
-  public final double encoderUpperLimit;
   public final boolean encoderInvert;
+  public final boolean motorInvert;
   public final BasePosition startPosition;
 
   public IntakeConfig(
@@ -28,9 +27,8 @@ public class IntakeConfig {
       double i,
       double d,
       double rampRate,
-      double lowerLimit,
-      double upperLimit,
       boolean encoderInvert,
+      boolean motorInvert,
       BasePosition startPosition) {
     this.name = name;
     this.leftMotorId = leftMotorId;
@@ -41,8 +39,7 @@ public class IntakeConfig {
     this.iGain = i;
     this.dGain = d;
     this.rampRate = rampRate;
-    this.encoderLowerLimit = lowerLimit;
-    this.encoderUpperLimit = upperLimit;
+    this.motorInvert = motorInvert;
     this.encoderInvert = encoderInvert;
     this.startPosition = startPosition;
   }
@@ -54,8 +51,7 @@ public class IntakeConfig {
       double i,
       double d,
       double rampRate,
-      double lowerLimit,
-      double upperLimit,
+      boolean motorInvert,
       boolean encoderInvert,
       BasePosition startPosition) {
     this.name = name;
@@ -67,8 +63,7 @@ public class IntakeConfig {
     this.iGain = i;
     this.dGain = d;
     this.rampRate = rampRate;
-    this.encoderLowerLimit = lowerLimit;
-    this.encoderUpperLimit = upperLimit;
+    this.motorInvert = motorInvert;
     this.encoderInvert = encoderInvert;
     this.startPosition = startPosition;
   }
