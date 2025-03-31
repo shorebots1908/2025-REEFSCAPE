@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GGP1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GGP2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GGP3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GGP4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GGP5"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "GGP",
+  "choreoAuto": false
+}

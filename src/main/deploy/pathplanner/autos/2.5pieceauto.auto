@@ -11,87 +11,19 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "GGP1"
+                  "pathName": "2.5path1"
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "elevator-l4"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "align-to-reef"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "coral-dispense"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "feed-out"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "GGP2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "elevator-l1"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "coral-accept"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "feed-in"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "GGP3"
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "coral-dispense"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "elevator-l4"
                 }
               }
             ]
@@ -116,22 +48,29 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "GGP4"
+                  "pathName": "2.5path2"
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "elevator-l1"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "elevator-l1"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "coral-accept"
+                      }
+                    }
+                  ]
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "coral-accept"
           }
         },
         {
@@ -147,19 +86,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "GGP5"
+                  "pathName": "2.5path3"
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "coral-dispense"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "elevator-l4"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "coral-dispense"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "elevator-l4"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -168,13 +114,57 @@
         {
           "type": "named",
           "data": {
+            "name": "align-to-reef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "feed-out"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2.5path4"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "elevator-l1"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "coral-accept"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "feed-in"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "GGP",
+  "folder": "2.5auto",
   "choreoAuto": false
 }
