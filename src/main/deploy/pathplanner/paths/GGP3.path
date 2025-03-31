@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6523582424173142,
-        "y": 7.32867052608362
+        "x": 1.5562230521877194,
+        "y": 7.37405486067893
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.652358242417314,
-        "y": 7.32867052608362
+        "x": 3.176508252393355,
+        "y": 6.060343350988753
       },
       "isLocked": false,
       "linkedName": "GGP2"
@@ -20,8 +20,8 @@
         "y": 5.305581324503985
       },
       "prevControl": {
-        "x": 3.6635732958475913,
-        "y": 5.817678292150101
+        "x": 3.080840163934426,
+        "y": 6.122848360655737
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,12 +29,39 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "stop",
+      "minWaypointRelativePos": 0.7548500881834272,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 3.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.5996472663139333,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 3.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

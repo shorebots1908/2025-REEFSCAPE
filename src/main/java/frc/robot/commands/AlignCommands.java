@@ -50,7 +50,7 @@ public class AlignCommands {
 
   // ALIGN:
 
-  public static final double ROTATION_P = 0.25;
+  public static final double ROTATION_P = 0.2;
   public static final double ROTATION_I = 0.0001;
   public static final double ROTATION_D = 0.1;
   // try not to touch

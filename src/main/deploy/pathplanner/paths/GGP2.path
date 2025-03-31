@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.093991713614333,
+        "x": 5.048419590877727,
         "y": 5.298008721388965
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.093991713614333,
-        "y": 5.298008721388965
+        "x": 3.8120901639344256,
+        "y": 6.206762295081967
       },
       "isLocked": false,
       "linkedName": "2pieceauto1end"
     },
     {
       "anchor": {
-        "x": 1.6523582424173142,
-        "y": 7.32867052608362
+        "x": 1.5562230521877194,
+        "y": 7.37405486067893
       },
       "prevControl": {
-        "x": 3.020777441596011,
-        "y": 6.6905661739402635
+        "x": 2.720975465508112,
+        "y": 6.623765482136293
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,12 +29,39 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.0,
+      "maxWaypointRelativePos": 0.7807172251616692,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 3.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Slow down",
+      "minWaypointRelativePos": 0.5831863609641387,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 3.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

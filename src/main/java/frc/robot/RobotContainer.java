@@ -395,7 +395,7 @@ public class RobotContainer {
         .leftStick()
         .whileTrue(
             WristCommands.goToPosition(algaeWrist, new BasePosition(0.15))
-                .andThen(IntakeCommands.feedOut(algaeIntake, 0.8)))
+                .andThen(IntakeCommands.feedOut(algaeIntake, 1.0)))
         .onFalse(
             WristCommands.goToPosition(algaeWrist, new BasePosition(0))
                 .alongWith(IntakeCommands.feedIn(algaeIntake, 0)));
@@ -475,6 +475,8 @@ public class RobotContainer {
     configureAutoCommand("midcompauto", new PathPlannerAuto("midcompauto"));
     configureAutoCommand("2pieceauto", new PathPlannerAuto("2pieceauto"));
     configureAutoCommand("2pieceauto2", new PathPlannerAuto("2pieceauto2"));
+    configureAutoCommand("2.5pieceauto", new PathPlannerAuto("2.5pieceauto"));
+    configureAutoCommand("3piece", new PathPlannerAuto("3piece"));
     configureAutoCommand("1piecemiddleauto", new PathPlannerAuto("1piecemiddleauto"));
     configureAutoCommand("auto1path1", DriveCommands.followPath(drive, "auto1path1"));
     configureAutoCommand("auto1path2", DriveCommands.followPath(drive, "auto1path2"));
