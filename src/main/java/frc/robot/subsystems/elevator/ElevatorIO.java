@@ -1,5 +1,6 @@
 package frc.robot.subsystems.elevator;
 
+import com.revrobotics.RelativeEncoder;
 import frc.robot.subsystems.BasePosition;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -20,6 +21,10 @@ public interface ElevatorIO {
 
   public default void updateInputs(ElevatorIOInputs inputs) {}
 
+  public default RelativeEncoder getEncoder() {
+    return null;
+  }
+
   public default void setTargetPosition(BasePosition position) {}
 
   public default boolean atTargetPosition() {
@@ -29,4 +34,8 @@ public interface ElevatorIO {
   public default void setElevatorOpenLoop(double output) {}
 
   public default void stop() {}
+
+  public default ElevatorConfig getConfig() {
+    return null;
+  }
 }

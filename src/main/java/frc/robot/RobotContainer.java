@@ -117,7 +117,7 @@ public class RobotContainer {
     drive = initDrive();
     vision = initVision();
     led = initLED(new LEDConfig("LED", 0));
-    elevator = initElevator(new ElevatorConfig(9, 10, 1.0, 0.0, 0.0, 0.0, 68.0));
+    elevator = initElevator(new ElevatorConfig(9, 10, 0.5, 0.0, 0.0, 0.0, 68.0));
     coralIntake =
         initIntake(
             new IntakeConfig(

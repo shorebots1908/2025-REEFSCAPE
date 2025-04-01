@@ -119,4 +119,14 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     }
     leftMotor.set(output);
   }
+
+  @Override
+  public ElevatorConfig getConfig() {
+    return this.config;
+  }
+
+  @Override
+  public RelativeEncoder getEncoder() {
+    return leftEncoder;
+  }
 }
