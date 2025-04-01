@@ -395,7 +395,7 @@ public class RobotContainer {
         .leftStick()
         .whileTrue(
             WristCommands.goToPosition(algaeWrist, new BasePosition(0.15))
-                .andThen(IntakeCommands.feedOut(algaeIntake, 1.0)))
+                .alongWith(IntakeCommands.feedOut(algaeIntake, 1.0)))
         .onFalse(
             WristCommands.goToPosition(algaeWrist, new BasePosition(0))
                 .alongWith(IntakeCommands.feedIn(algaeIntake, 0)));
@@ -408,7 +408,7 @@ public class RobotContainer {
         .y()
         .whileTrue(
             WristCommands.goToPosition(algaeWrist, new BasePosition(0.9))
-                .alongWith(IntakeCommands.feedIn(algaeIntake, 0.8)))
+                .alongWith(IntakeCommands.feedIn(algaeIntake, 1)))
         .onFalse(
             WristCommands.goToPosition(algaeWrist, new BasePosition(0))
                 .alongWith(IntakeCommands.feedIn(algaeIntake, 0)));
