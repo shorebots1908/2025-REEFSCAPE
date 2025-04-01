@@ -11,8 +11,10 @@ public class IntakeCommands {
   public static final double FEED_STICK = 0.1;
   public static final BasePosition CORAL_WRIST_DOWN = new BasePosition(0.0);
   public static final BasePosition CORAL_WRIST_STOW = new BasePosition(1.0);
-  public static final BasePosition CORAL_WRIST_INTAKE = new BasePosition(0.45); // was 0.74
-  public static final BasePosition CORAL_WRIST_SCORE = new BasePosition(0.60);
+  // These functions for wrist positioning are now in WristCommands
+  public static final BasePosition CORAL_WRIST_INTAKE = new BasePosition(0.20); // was 0.74
+  public static final BasePosition CORAL_WRIST_SCORE = new BasePosition(0.40);
+  // end of wrist commands that are no longer used
   public static final BasePosition CORAL_WRIST_L3 = new BasePosition(0.40);
   public static final BasePosition CORAL_WRIST_L4 = new BasePosition(0.3);
 
