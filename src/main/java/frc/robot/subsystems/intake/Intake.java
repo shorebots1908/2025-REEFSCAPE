@@ -36,8 +36,4 @@ public class Intake extends SubsystemBase {
   public boolean isHolding() {
     return io.isHolding();
   }
-
-  public boolean isEmpty() {
-    return io.isEmpty();
-  }
 }

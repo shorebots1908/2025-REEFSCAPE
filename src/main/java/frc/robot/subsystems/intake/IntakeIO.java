@@ -25,8 +25,4 @@ public interface IntakeIO {
   public default boolean isHolding() {
     return false;
   }
-
-  public default boolean isEmpty() {
-    return false;
-  }
 }

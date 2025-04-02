@@ -346,7 +346,7 @@ public class RobotContainer {
   }
 
   private void configurePlayer2() {
-    coralIntake.setDefaultCommand(IntakeCommands.feedHoldSticky(coralIntake));
+    // coralIntake.setDefaultCommand(IntakeCommands.feedHoldSticky(coralIntake));
     led.setDefaultCommand(LEDCommands.ledDefault(led, coralIntake));
 
     // Elevator auto positions on the D-pad

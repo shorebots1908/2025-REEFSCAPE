@@ -83,11 +83,6 @@ public class IntakeIOSparkMax implements IntakeIO {
   public boolean isHolding() {
     // return inputs.analogSensorValue > config.sensorThreshold;
 
-    return !inputs.holdingSwitchPressed;
-  }
-
-  public boolean isEmpty() {
-    // return inputs.analogSensorValue < config.sensorThreshold;
     return inputs.holdingSwitchPressed;
   }
 }
