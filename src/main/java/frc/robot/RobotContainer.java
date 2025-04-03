@@ -180,7 +180,7 @@ public class RobotContainer {
                 17,
                 WristCommands.ALGAE_WRIST_STOW,
                 false,
-                -2.5,
+                0,
                 22.5,
                 new SparkMaxConfig()
                     .inverted(true)
@@ -453,6 +453,7 @@ public class RobotContainer {
         "elevator-l4", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.CORAL_L4));
 
     configureAutoCommand("feed-in", IntakeCommands.feedIn(coralIntake).withTimeout(3.0));
+    configureAutoCommand("short-feed", IntakeCommands.shortFeed(coralIntake));
     configureAutoCommand(
         "feed-in-until-holding", IntakeCommands.feedInUntilHolding(coralIntake).withTimeout(4));
     configureAutoCommand("feed-out", IntakeCommands.feedOut(coralIntake, 0.5).withTimeout(0.3));
@@ -476,6 +477,9 @@ public class RobotContainer {
     configureAutoCommand("2pieceauto", new PathPlannerAuto("2pieceauto"));
     configureAutoCommand("2pieceauto2", new PathPlannerAuto("2pieceauto2"));
     configureAutoCommand("2.5pieceauto", new PathPlannerAuto("2.5pieceauto"));
+    configureAutoCommand("Copy of 2.5pieceauto", new PathPlannerAuto("Copy of 2.5pieceauto"));
+    configureAutoCommand(
+        "Copy of Copy of 2.5pieceauto", new PathPlannerAuto("Copy of Copy of 2.5pieceauto"));
     configureAutoCommand("3piece", new PathPlannerAuto("3piece"));
     configureAutoCommand("1piecemiddleauto", new PathPlannerAuto("1piecemiddleauto"));
     configureAutoCommand("auto1path1", DriveCommands.followPath(drive, "auto1path1"));

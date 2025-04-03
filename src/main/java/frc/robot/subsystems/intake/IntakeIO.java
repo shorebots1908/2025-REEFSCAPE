@@ -25,4 +25,12 @@ public interface IntakeIO {
   public default boolean isHolding() {
     return false;
   }
+
+  public default void feedInWait() {}
+
+  public default boolean timer() {
+    return false;
+  }
+
+  public default void timerStart() {}
 }

@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
@@ -16,9 +17,11 @@ public class IntakeIOSparkMax implements IntakeIO {
   private Optional<DigitalInput> digitalSensor = Optional.empty();
   private IntakeConfig config;
   private IntakeIO.IntakeIOInputs inputs = new IntakeIOInputs();
+  private Timer timer;
 
   public IntakeIOSparkMax(IntakeConfig config) {
     this.config = config;
+    timer = new Timer();
     // Left wheel is leader
     leftMotor = new SparkMax(config.leftMotorId, MotorType.kBrushless);
     // Left motor config
@@ -62,6 +65,17 @@ public class IntakeIOSparkMax implements IntakeIO {
     }
   }
 
+  public boolean timer() {
+    if (timer.hasElapsed(0.25)) {
+      leftMotor.stopMotor();
+      timer.reset();
+      timer.stop();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @Override
   public void updateInputs(IntakeIO.IntakeIOInputs inputs) {
     if (digitalSensor.isPresent()) {
@@ -80,9 +94,11 @@ public class IntakeIOSparkMax implements IntakeIO {
     }
   }
 
+  public void timerStart() {}
+
   public boolean isHolding() {
     // return inputs.analogSensorValue > config.sensorThreshold;
-
+    timer.start();
     return inputs.holdingSwitchPressed;
   }
 }

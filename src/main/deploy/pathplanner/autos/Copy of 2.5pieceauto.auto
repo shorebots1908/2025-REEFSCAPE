@@ -1,0 +1,170 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2.5path1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "elevator-l4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "coral-dispense"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "align-to-reef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "feed-out"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2.5path2"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "elevator-l1"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "coral-accept"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "feed-in-until-holding"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2.5path3"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "coral-dispense"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "elevator-l4"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "align-to-reef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "feed-out"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2.5path4"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "elevator-l1"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "coral-accept"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "feed-in-until-holding"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "2.5auto",
+  "choreoAuto": false
+}

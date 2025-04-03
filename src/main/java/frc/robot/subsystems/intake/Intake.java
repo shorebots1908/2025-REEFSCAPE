@@ -36,4 +36,16 @@ public class Intake extends SubsystemBase {
   public boolean isHolding() {
     return io.isHolding();
   }
+
+  public void feedInWait() {
+    io.feedInWait();
+  }
+
+  public boolean timer() {
+    return io.timer();
+  }
+
+  public void timerStart() {
+    io.timerStart();
+  }
 }

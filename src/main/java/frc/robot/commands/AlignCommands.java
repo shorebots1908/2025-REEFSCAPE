@@ -45,12 +45,12 @@ public class AlignCommands {
   }
 
   // allowable setpoint deviation
-  public static final double ROTATION_TOLERANCE = 15; // degrees
+  public static final double ROTATION_TOLERANCE = 13; // degrees
   public static final double TRANSLATION_TOLERANCE = 0.08; // meters
 
   // ALIGN:
 
-  public static final double ROTATION_P = 0.25; // was 0.25
+  public static final double ROTATION_P = 0.25; // was 0.25  then 0.9 w/ 10 degree tolerance
   public static final double ROTATION_I = 0.001; // was 0.0001
   public static final double ROTATION_D = 0.1;
   // try not to touch

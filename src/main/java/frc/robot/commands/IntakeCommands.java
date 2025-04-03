@@ -53,8 +53,20 @@ public class IntakeCommands {
     return feedIn(intake, FEED_SPEED);
   }
 
+  public static Command timerStart(Intake intake) {
+    return Commands.run(
+        () -> {
+          intake.timerStart();
+        },
+        intake);
+  }
+
   public static Command feedInUntilHolding(Intake intake) {
-    return feedIn(intake).until(intake::isHolding);
+    return Commands.sequence(feedIn(intake).until(intake::isHolding));
+  }
+
+  public static Command shortFeed(Intake intake) {
+    return feedIn(intake, 0.3).withTimeout(0.2);
   }
 
   public static Command feedIn(Intake intake, double feedSpeed) {
