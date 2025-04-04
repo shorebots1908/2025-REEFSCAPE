@@ -99,10 +99,6 @@ public class RobotContainer {
   private final Wrist coralWrist;
   private final Wrist algaeWrist;
   private final Climber climber;
-  private final List<Pose2d> faces;
-  private final List<Pose2d> reefPoses;
-  private final List<Pose2d> reefLeftPoses;
-  private final List<Pose2d> reefRightPoses;
   private final List<Pose2d> intakePoses;
   private NetworkTable FMS = NetworkTableInstance.getDefault().getTable("/FMSInfo");
   // Controller
@@ -214,38 +210,6 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    faces = AlignCommands.reefFaces();
-    reefPoses =
-        faces.stream()
-            .flatMap((face) -> AlignCommands.faceToReefPair(face).stream())
-            .collect(Collectors.toList());
-    var reefPosesArray = reefPoses.toArray(new Pose2d[reefPoses.size()]);
-    Logger.recordOutput("RobotContainer/reefPoses", reefPosesArray);
-
-    reefLeftPoses =
-        List.of(
-            // To tweak individual poses, add offsets with offsetPose
-            AlignCommands.offsetPose(reefPoses.get(0), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(2), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(4), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(6), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(8), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(10), 0.0, 0.0));
-    var reefLeftPosesArray = reefLeftPoses.toArray(new Pose2d[reefLeftPoses.size()]);
-    Logger.recordOutput("RobotContainer/reefLeftPoses", reefLeftPosesArray);
-
-    reefRightPoses =
-        List.of(
-            // To tweak individual poses, add offsets with offsetPose
-            AlignCommands.offsetPose(reefPoses.get(1), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(3), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(5), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(7), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(9), 0.0, 0.0),
-            AlignCommands.offsetPose(reefPoses.get(11), 0.0, 0.0));
-    var reefRightPosesArray = reefRightPoses.toArray(new Pose2d[reefRightPoses.size()]);
-    Logger.recordOutput("RobotContainer/reefRightPoses", reefRightPosesArray);
-
     intakePoses =
         AlignCommands.intakeStationPoses().stream()
             .map((station) -> AlignCommands.offsetIntakePose(station))
@@ -295,9 +259,9 @@ public class RobotContainer {
             () -> -player1.getRightX()));
     player1.start().onTrue(Commands.runOnce(drive::gyroReset, drive));
 
-    // Align commands
-    player1.leftTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, reefPoses));
-    player1.leftBumper().whileTrue(new AlignCommands.ToClosestPose(drive, intakePoses));
+    // // Align commands
+    // player1.leftTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, reefPoses));
+    // player1.leftBumper().whileTrue(new AlignCommands.ToClosestPose(drive, intakePoses));
 
     // Elevator auto positions on the D-pad
     player1
@@ -326,9 +290,10 @@ public class RobotContainer {
     player1.a().whileTrue(IntakeCommands.feedOut(coralIntake));
 
     // Coral wrist to Intake or Score positions
-    player1.leftTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, reefLeftPoses));
-    player1.rightTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, reefRightPoses));
-    player1.leftBumper().whileTrue(new AlignCommands.ToClosestPose(drive, intakePoses));
+    player1.leftTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, true));
+    player1.rightTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, false));
+
+    // player1.leftBumper().whileTrue(new AlignCommands.ToClosestPose(drive, intakePoses));
 
     player1
         .x()
@@ -465,9 +430,9 @@ public class RobotContainer {
     configureAutoCommand(
         "coral-down", WristCommands.goToPosition(coralWrist, WristCommands.CORAL_WRIST_DOWN));
     configureAutoCommand(
-        "align-to-reef", new AlignCommands.ToClosestPose(drive, reefPoses).withTimeout(1));
-    configureAutoCommand(
-        "align-to-intake", new AlignCommands.ToClosestPose(drive, intakePoses).withTimeout(1));
+        "align-to-reef", new AlignCommands.ToClosestPose(drive, false).withTimeout(1));
+    // configureAutoCommand(
+    //     "align-to-intake", new AlignCommands.ToClosestPose(drive, intakePoses).withTimeout(1));
 
     configureAutoCommand("auto1", new PathPlannerAuto("auto1"));
     configureAutoCommand("auto2", new PathPlannerAuto("auto2"));

@@ -8,12 +8,15 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.subsystems.drive.Drive;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * AlignCommands contains static functions for constructing a Command that will drive the Robot to a
@@ -164,10 +167,27 @@ public class AlignCommands {
 
   /** Generate the reef face poses using the default geometry. */
   public static List<Pose2d> reefFaces() {
+
     // Geometry setup: Need a center point and radius for the reef circle
-    var reefCenter = new Pose2d(4.4895, 4.026, Rotation2d.fromRadians(0.0));
+    var reefCenterBlue = new Pose2d(4.4895, 4.026, Rotation2d.fromRadians(0.0));
+    var reefCenterRed = new Pose2d(13.057, 4.026, Rotation2d.fromRadians(0.0));
+
+    var alliance = DriverStation.getAlliance();
     var reefRadius = 1.2;
-    return reefFaces(reefCenter, reefRadius);
+
+    if (alliance.isPresent()) {
+
+      if (alliance.get() == Alliance.Blue) {
+        Logger.recordOutput("ReefFaceIsBlue", true);
+        return reefFaces(reefCenterBlue, reefRadius);
+
+      } else if (alliance.get() == Alliance.Red) {
+        Logger.recordOutput("ReefFaceIsBlue", false);
+        return reefFaces(reefCenterRed, reefRadius);
+      }
+    }
+
+    return reefFaces(reefCenterBlue, reefRadius);
   }
 
   /**
@@ -271,22 +291,69 @@ public class AlignCommands {
 
   public static class ToClosestPose extends Command {
     private Drive drive;
-    private List<Pose2d> poses;
+    private boolean isLeft;
     private Command alignCommand;
 
-    public ToClosestPose(Drive drive, List<Pose2d> poses) {
+    public ToClosestPose(Drive drive, boolean isLeft) {
       this.drive = drive;
-      this.poses = poses;
+      this.isLeft = isLeft;
     }
 
     @Override
     public void initialize() {
+
+      var faces = AlignCommands.reefFaces();
+      var reefPoses =
+          faces.stream()
+              .flatMap((face) -> AlignCommands.faceToReefPair(face).stream())
+              .collect(Collectors.toList());
+      var reefPosesArray = reefPoses.toArray(new Pose2d[reefPoses.size()]);
+      Logger.recordOutput("RobotContainer/reefPoses", reefPosesArray);
+
+      var reefLeftPoses =
+          List.of(
+              // To tweak individual poses, add offsets with offsetPose
+              AlignCommands.offsetPose(reefPoses.get(0), 0.0, 0.0),
+              AlignCommands.offsetPose(reefPoses.get(2), 0.0, 0.0),
+              AlignCommands.offsetPose(reefPoses.get(4), 0.0, 0.0),
+              AlignCommands.offsetPose(reefPoses.get(6), 0.0, 0.0),
+              AlignCommands.offsetPose(reefPoses.get(8), 0.0, 0.0),
+              AlignCommands.offsetPose(reefPoses.get(10), 0.0, 0.0));
+      var reefLeftPosesArray = reefLeftPoses.toArray(new Pose2d[reefLeftPoses.size()]);
+      Logger.recordOutput("RobotContainer/reefLeftPoses", reefLeftPosesArray);
+
+      var reefRightPoses =
+          List.of(
+              // To tweak individual poses, add offsets with offsetPose
+              AlignCommands.offsetPose(reefPoses.get(1), 0.0, 0.0),
+              AlignCommands.offsetPose(reefPoses.get(3), 0.0, 0.0),
+              AlignCommands.offsetPose(reefPoses.get(5), 0.0, 0.0),
+              AlignCommands.offsetPose(reefPoses.get(7), 0.0, 0.0),
+              AlignCommands.offsetPose(reefPoses.get(9), 0.0, 0.0),
+              AlignCommands.offsetPose(reefPoses.get(11), 0.0, 0.0));
+      var reefRightPosesArray = reefRightPoses.toArray(new Pose2d[reefRightPoses.size()]);
+      Logger.recordOutput("RobotContainer/reefRightPoses", reefRightPosesArray);
+
+      List<Pose2d> currentPoses = null;
+
+      if (DriverStation.isTeleop()) {
+
+        if (isLeft) {
+          currentPoses = reefLeftPoses;
+        } else {
+          currentPoses = reefRightPoses;
+        }
+
+      } else {
+        currentPoses = reefPoses;
+      }
+
       var drivePose = drive.getPose();
 
       var closestDistance = Double.MAX_VALUE;
-      var closestPose = poses.get(0);
+      var closestPose = currentPoses.get(0);
 
-      for (Pose2d pose : poses) {
+      for (Pose2d pose : currentPoses) {
         var xDelta = Math.abs(drivePose.getX() - pose.getX());
         var yDelta = Math.abs(drivePose.getY() - pose.getY());
         var distance = Math.sqrt(xDelta * xDelta + yDelta * yDelta);
