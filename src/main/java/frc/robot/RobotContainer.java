@@ -382,14 +382,17 @@ public class RobotContainer {
     //     () -> MathUtil.applyDeadband(player2.getRightY(), 0.07) * 0.5,
     //     () -> 0.0))
 
-    player2.b().whileTrue(IntakeCommands.feedOut(coralIntake, 0.2));
+    // player2.b().whileTrue(IntakeCommands.feedOut(coralIntake, 0.2));
+    player2
+        .b()
+        .onTrue(WristCommands.setTargetPosition(coralWrist, WristCommands.CORAL_WRIST_SCORE));
 
     player2.a().and(player2.rightTrigger(0.5)).whileTrue(IntakeCommands.feedOut(coralIntake, 0.15));
 
     // Start button moves coral wrist to Score
     player2
         .start()
-        .onTrue(WristCommands.setTargetPosition(coralWrist, WristCommands.CORAL_WRIST_SCORE));
+        .onTrue(WristCommands.setTargetPosition(coralWrist, WristCommands.CORAL_WRIST_L2));
 
     // Manual elevator up and down on bumpers
     player2
@@ -442,6 +445,7 @@ public class RobotContainer {
     configureAutoCommand("2pieceauto", new PathPlannerAuto("2pieceauto"));
     configureAutoCommand("2pieceauto2", new PathPlannerAuto("2pieceauto2"));
     configureAutoCommand("2.5pieceauto", new PathPlannerAuto("2.5pieceauto"));
+    configureAutoCommand("2pieceautoR", new PathPlannerAuto("2pieceautoR"));
     configureAutoCommand("Copy of 2.5pieceauto", new PathPlannerAuto("Copy of 2.5pieceauto"));
     configureAutoCommand(
         "Copy of Copy of 2.5pieceauto", new PathPlannerAuto("Copy of Copy of 2.5pieceauto"));

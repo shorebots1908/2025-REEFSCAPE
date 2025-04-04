@@ -11,11 +11,12 @@ public class WristCommands {
   public static final BasePosition CORAL_WRIST_DOWN = new BasePosition(0.0);
   public static final BasePosition CORAL_WRIST_STOW = new BasePosition(1.0);
   // this is where the wrist angles are stored now
-  public static final BasePosition CORAL_WRIST_INTAKE = new BasePosition(0.66); // was 0.74
-  public static final BasePosition CORAL_WRIST_SCORE = new BasePosition(0.20);
+  public static final BasePosition CORAL_WRIST_INTAKE = new BasePosition(0.62); // was 0.66
+  public static final BasePosition CORAL_WRIST_SCORE = new BasePosition(0.17); // was 0.20 --> 0.17
 
-  public static final BasePosition CORAL_WRIST_L3 = new BasePosition(0.34);
-  public static final BasePosition CORAL_WRIST_L4 = new BasePosition(0.3);
+  public static final BasePosition CORAL_WRIST_L2 = new BasePosition(0.30); // was 0.34
+  public static final BasePosition CORAL_WRIST_L3 = new BasePosition(0.30); // was 0.34
+  public static final BasePosition CORAL_WRIST_L4 = new BasePosition(0.27); // was 0.3
 
   // public static final BasePosition ALGAE_WRIST_STOW = new BasePosition(0.8);
   // public static final BasePosition ALGAE_WRIST_DEPLOY = new BasePosition(0.2);
