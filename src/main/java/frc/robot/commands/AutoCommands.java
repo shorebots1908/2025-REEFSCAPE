@@ -31,4 +31,11 @@ public class AutoCommands {
             WristCommands.goToPosition(wrist, WristCommands.CORAL_WRIST_DOWN)),
         WristCommands.goToPosition(wrist, WristCommands.CORAL_WRIST_L3));
   }
+
+  public static Command smartElevatorl2(
+      Elevator elevator, Wrist wrist, BasePosition elevatorPosition) {
+    return Commands.sequence(
+        ElevatorCommands.goToPosition(elevator, elevatorPosition),
+        WristCommands.goToPosition(wrist, WristCommands.CORAL_WRIST_L2));
+  }
 }

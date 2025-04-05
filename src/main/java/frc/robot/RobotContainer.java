@@ -301,7 +301,6 @@ public class RobotContainer {
     player1
         .y()
         .onTrue(WristCommands.setTargetPosition(coralWrist, WristCommands.CORAL_WRIST_SCORE));
-
     // Manual climber commands
     player2
         .rightTrigger(0.5)
@@ -312,7 +311,7 @@ public class RobotContainer {
 
   private void configurePlayer2() {
     // coralIntake.setDefaultCommand(IntakeCommands.feedHoldSticky(coralIntake));
-    led.setDefaultCommand(LEDCommands.ledDefault(led, coralIntake));
+    led.setDefaultCommand(LEDCommands.ledAlliance(led));
 
     // Elevator auto positions on the D-pad
     player2
@@ -367,8 +366,6 @@ public class RobotContainer {
     // player2
     // .leftStick()
     //  .onTrue(WristCommands.goToPosition(algaeWrist, WristCommands.ALGAE_WRIST_HALF));
-    player2.rightStick().whileTrue(LEDCommands.ledChange(led));
-
     player2
         .y()
         .whileTrue(
@@ -377,6 +374,7 @@ public class RobotContainer {
         .onFalse(
             WristCommands.goToPosition(algaeWrist, new BasePosition(0))
                 .alongWith(IntakeCommands.feedIn(algaeIntake, 0)));
+
     // moveByJoystick(
     //     algaeWrist,
     //     () -> MathUtil.applyDeadband(player2.getRightY(), 0.07) * 0.5,
@@ -389,10 +387,10 @@ public class RobotContainer {
 
     player2.a().and(player2.rightTrigger(0.5)).whileTrue(IntakeCommands.feedOut(coralIntake, 0.15));
 
-    // Start button moves coral wrist to Score
+    // Start button moves coral wrist to Score L2
     player2
         .start()
-        .onTrue(WristCommands.setTargetPosition(coralWrist, WristCommands.CORAL_WRIST_L2));
+        .onTrue(AutoCommands.smartElevatorl2(elevator, coralWrist, ElevatorCommands.CORAL_L2));
 
     // Manual elevator up and down on bumpers
     player2
@@ -433,6 +431,8 @@ public class RobotContainer {
     configureAutoCommand(
         "coral-down", WristCommands.goToPosition(coralWrist, WristCommands.CORAL_WRIST_DOWN));
     configureAutoCommand(
+        "coral-l4bad", WristCommands.goToPosition(coralWrist, WristCommands.CORAL_WRIST_L4));
+    configureAutoCommand(
         "align-to-reef", new AlignCommands.ToClosestPose(drive, false).withTimeout(1));
     // configureAutoCommand(
     //     "align-to-intake", new AlignCommands.ToClosestPose(drive, intakePoses).withTimeout(1));
@@ -450,6 +450,8 @@ public class RobotContainer {
     configureAutoCommand(
         "Copy of Copy of 2.5pieceauto", new PathPlannerAuto("Copy of Copy of 2.5pieceauto"));
     configureAutoCommand("3piece", new PathPlannerAuto("3piece"));
+    configureAutoCommand("middle1auto", new PathPlannerAuto("middle1auto"));
+    configureAutoCommand("middle1autoextra", new PathPlannerAuto("middle1autoextra"));
     configureAutoCommand("1piecemiddleauto", new PathPlannerAuto("1piecemiddleauto"));
     configureAutoCommand("auto1path1", DriveCommands.followPath(drive, "auto1path1"));
     configureAutoCommand("auto1path2", DriveCommands.followPath(drive, "auto1path2"));

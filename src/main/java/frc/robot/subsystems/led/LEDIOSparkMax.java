@@ -1,6 +1,8 @@
 package frc.robot.subsystems.led;
 
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -19,11 +21,17 @@ public class LEDIOSparkMax implements LEDIO {
 
   @Override
   public void updateTeamColor() {
-    if (FMS.getEntry("IsRedAlliance").getBoolean(false)) {
-      inputs.teamColor = inputs.red;
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      if (alliance.get() == Alliance.Blue) {
+        blue();
+        inputs.teamColor = inputs.blue;
+      }
 
-    } else {
-      inputs.teamColor = inputs.blue;
+      if (alliance.get() == Alliance.Red) {
+        red();
+        inputs.teamColor = inputs.red;
+      }
     }
     teamColor();
   }
