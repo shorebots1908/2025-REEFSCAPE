@@ -433,7 +433,7 @@ public class RobotContainer {
     configureAutoCommand(
         "coral-l4bad", WristCommands.goToPosition(coralWrist, WristCommands.CORAL_WRIST_L4));
     configureAutoCommand(
-        "align-to-reef", new AlignCommands.ToClosestPose(drive, false).withTimeout(1));
+        "align-to-reef", new AlignCommands.ToClosestPose(drive, false).withTimeout(1.5));
     // configureAutoCommand(
     //     "align-to-intake", new AlignCommands.ToClosestPose(drive, intakePoses).withTimeout(1));
 
