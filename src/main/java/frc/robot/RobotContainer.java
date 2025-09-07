@@ -91,7 +91,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Vision vision;
   private final LED led;
   private final Elevator elevator;
   private final Intake coralIntake;
@@ -111,7 +110,6 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     drive = initDrive();
-    vision = initVision();
     led = initLED(new LEDConfig("LED", 0));
     elevator = initElevator(new ElevatorConfig(9, 10, 0.5, 0.0, 0.0, 0.0, 68.0));
     coralIntake =

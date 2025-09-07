@@ -27,7 +27,6 @@ public class GyroIOADIS16470 implements GyroIO {
   // private final double yawVelocity = m_gyro.getAccelZ();
 
   public GyroIOADIS16470() {
-    // TODO
     m_gyro.calibrate();
 
     yawTimestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
@@ -50,6 +49,5 @@ public class GyroIOADIS16470 implements GyroIO {
 
     yawTimestampQueue.clear();
     yawPositionQueue.clear();
-    // TODO
   }
 }

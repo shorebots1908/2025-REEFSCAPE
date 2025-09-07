@@ -34,7 +34,7 @@ public class Climber extends SubsystemBase {
 
   public boolean atTargetPosition() {
     // return io.atTargetPosition();
-    return false; // TODO
+    return false;
   }
 
   public void positionStop() {
