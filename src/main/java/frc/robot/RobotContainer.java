@@ -37,6 +37,7 @@ import frc.robot.commands.AutoCommands;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
+import frc.robot.commands.HoodCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.KickerCommands;
 import frc.robot.commands.LEDCommands;
@@ -60,6 +61,11 @@ import frc.robot.subsystems.elevator.ElevatorConfig;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSparkMax;
+import frc.robot.subsystems.hood.Hood;
+import frc.robot.subsystems.hood.HoodConfig;
+import frc.robot.subsystems.hood.HoodIO;
+import frc.robot.subsystems.hood.HoodIOSim;
+import frc.robot.subsystems.hood.HoodIOSpark;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConfig;
 import frc.robot.subsystems.intake.IntakeIO;
@@ -119,6 +125,7 @@ public class RobotContainer {
   private final Turret turret;
   private final Kicker feeder;
   private final Spindexer spindexer;
+  private final Hood hood;
   private final List<Pose2d> intakePoses;
   private NetworkTable FMS = NetworkTableInstance.getDefault().getTable("/FMSInfo");
   // Controller
@@ -132,7 +139,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     drive = initDrive();
-    led = initLED(new LEDConfig("LED", 0));
+    led = initLED(new LEDConfig("LED", 5));
     elevator = initElevator(new ElevatorConfig(9, 10, 0.5, 0.0, 0.0, 0.0, 68.0));
     coralIntake =
         initIntake(
@@ -241,6 +248,7 @@ public class RobotContainer {
                 10.0, // max rotations
                 0.0 // home rotations
                 ));
+
     feeder =
         initFeeder(
             new KickerConfig(
@@ -255,6 +263,14 @@ public class RobotContainer {
                 "Spindexer",
                 28, // motor CAN ID
                 false // motor invert
+                ));
+
+    hood =
+        initHood(
+            new HoodConfig(
+                "Hood",
+                0, // PWM channel
+                false // invert
                 ));
 
     // Set up auto routines
@@ -501,6 +517,10 @@ public class RobotContainer {
     // Spindexer forward on D-pad right, reverse on D-pad left (30% speed)
     player3.povRight().whileTrue(SpindexerCommands.forward(spindexer));
     player3.povLeft().whileTrue(SpindexerCommands.reverse(spindexer));
+
+    // Hood up on D-pad up, down on D-pad down (30% speed)
+    player3.povUp().whileTrue(HoodCommands.up(hood));
+    player3.povDown().whileTrue(HoodCommands.down(hood));
   }
 
   private void configureAutoCommand(String name, Command command) {
@@ -686,6 +706,17 @@ public class RobotContainer {
         return new Spindexer(new SpindexerIOSim());
       default:
         return new Spindexer(new SpindexerIO() {});
+    }
+  }
+
+  private Hood initHood(HoodConfig config) {
+    switch (Constants.currentMode) {
+      case REAL:
+        return new Hood(new HoodIOSpark(config));
+      case SIM:
+        return new Hood(new HoodIOSim());
+      default:
+        return new Hood(new HoodIO() {});
     }
   }
 
