@@ -38,7 +38,9 @@ import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.KickerCommands;
 import frc.robot.commands.LEDCommands;
+import frc.robot.commands.TurretCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.BasePosition;
 import frc.robot.subsystems.climber.Climber;
@@ -61,12 +63,22 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConfig;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.intake.IntakeIOSparkMax;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.kicker.Kicker;
+import frc.robot.subsystems.kicker.KickerConfig;
+import frc.robot.subsystems.kicker.KickerIO;
+import frc.robot.subsystems.kicker.KickerIOSim;
+import frc.robot.subsystems.kicker.KickerIOTalonFX;
 import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LEDConfig;
 import frc.robot.subsystems.led.LEDIO;
 import frc.robot.subsystems.led.LEDIOSim;
 import frc.robot.subsystems.led.LEDIOSparkMax;
+import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretConfig;
+import frc.robot.subsystems.turret.TurretIO;
+import frc.robot.subsystems.turret.TurretIOSim;
+import frc.robot.subsystems.turret.TurretIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -98,11 +110,14 @@ public class RobotContainer {
   private final Wrist coralWrist;
   private final Wrist algaeWrist;
   private final Climber climber;
+  private final Turret turret;
+  private final Kicker feeder;
   private final List<Pose2d> intakePoses;
   private NetworkTable FMS = NetworkTableInstance.getDefault().getTable("/FMSInfo");
   // Controller
   private final CommandXboxController player1 = new CommandXboxController(0);
   private final CommandXboxController player2 = new CommandXboxController(1);
+  private final CommandXboxController player3 = new CommandXboxController(2);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -204,6 +219,28 @@ public class RobotContainer {
                 0.0,
                 Rotation2d.fromRotations(0.0),
                 Rotation2d.fromRotations(67.95)));
+    turret =
+        initTurret(
+            new TurretConfig(
+                "Turret",
+                25, // turn motor CAN ID
+                26, // shoot motor CAN ID
+                1.0, // turn P gain
+                0.0, // turn I gain
+                0.0, // turn D gain
+                false, // turn motor invert
+                false, // shoot motor invert
+                -10.0, // min rotations
+                10.0, // max rotations
+                0.0 // home rotations
+                ));
+    feeder =
+        initFeeder(
+            new KickerConfig(
+                "Feeder",
+                27, // motor CAN ID
+                false // motor invert
+                ));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -245,6 +282,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     configurePlayer1();
     configurePlayer2();
+    configurePlayer3();
   }
 
   private void configurePlayer1() {
@@ -285,11 +323,12 @@ public class RobotContainer {
 
     // Coral feeding
     player1.b().whileTrue(IntakeCommands.feedIn(coralIntake));
-    player1.a().whileTrue(IntakeCommands.feedOut(coralIntake));
+    // player1.a().whileTrue(IntakeCommands.feedOut(coralIntake));
+    player1.rightTrigger().whileTrue(IntakeCommands.feedOut(coralIntake));
 
     // Coral wrist to Intake or Score positions
     player1.leftTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, true));
-    player1.rightTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, false));
+    // player1.rightTrigger().whileTrue(new AlignCommands.ToClosestPose(drive, false));
 
     // player1.leftBumper().whileTrue(new AlignCommands.ToClosestPose(drive, intakePoses));
 
@@ -399,6 +438,50 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> -0.5))
         .onFalse(ElevatorCommands.moveByJoystick(elevator, () -> 0.0));
+  }
+
+  private void configurePlayer3() {
+    // Turn positive/negative with bumpers
+    player3
+        .leftBumper()
+        .whileTrue(TurretCommands.turnNegative(turret))
+        .onFalse(Commands.runOnce(turret::turnStop, turret));
+
+    player3
+        .rightBumper()
+        .whileTrue(TurretCommands.turnPositive(turret))
+        .onFalse(Commands.runOnce(turret::turnStop, turret));
+
+    // Shoot positive/negative with triggers
+    player3.leftTrigger(0.5).whileTrue(TurretCommands.shootNegative(turret));
+
+    player3.rightTrigger(0.5).whileTrue(TurretCommands.shootPositive(turret));
+
+    // Velocity-controlled shooting on face buttons
+    // player3.a().whileTrue(TurretCommands.shootLow(turret));
+    // player3.b().whileTrue(TurretCommands.shootHigh(turret));
+
+    // Return to home position
+    player3.x().onTrue(TurretCommands.turnHome(turret));
+
+    // Stop all turret motors
+    player3.y().onTrue(TurretCommands.stopAll(turret));
+
+    // Manual joystick control for turning
+    player3
+        .leftStick()
+        .whileTrue(TurretCommands.turnManual(turret, () -> -player3.getLeftX() * 0.5));
+
+    // Manual joystick control for shooter
+    player3.rightStick().whileTrue(TurretCommands.shootManual(turret, () -> player3.getRightY()));
+
+    // Forward on A button, Reverse on B button (30% speed)
+    player3.a().whileTrue(KickerCommands.forward(feeder));
+    player3.b().whileTrue(KickerCommands.reverse(feeder));
+
+    // Alternative: X and Y for different speeds
+    player3.x().whileTrue(KickerCommands.forward(feeder, 0.5)); // 50% speed
+    player3.y().whileTrue(KickerCommands.reverse(feeder, 0.5)); // 50% speed
   }
 
   private void configureAutoCommand(String name, Command command) {
@@ -554,12 +637,33 @@ public class RobotContainer {
     }
   }
 
+  private Turret initTurret(TurretConfig config) {
+    switch (Constants.currentMode) {
+      case REAL:
+        return new Turret(new TurretIOTalonFX(config));
+      case SIM:
+        return new Turret(new TurretIOSim());
+      default:
+        return new Turret(new TurretIO() {});
+    }
+  }
+
+  private Kicker initFeeder(KickerConfig config) {
+    switch (Constants.currentMode) {
+      case REAL:
+        return new Kicker(new KickerIOTalonFX(config));
+      case SIM:
+        return new Kicker(new KickerIOSim());
+      default:
+        return new Kicker(new KickerIO() {});
+    }
+  }
+
   public Intake initIntake(IntakeConfig config) {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        return new Intake(new IntakeIOSparkMax(config));
-
+        return new Intake(new IntakeIOTalonFX(config)); // chnged from spark
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
         return new Intake(new IntakeIOSim());
