@@ -6,7 +6,7 @@ import frc.robot.subsystems.kicker.Kicker;
 import java.util.function.DoubleSupplier;
 
 public class KickerCommands {
-  public static final double DEFAULT_SPEED = 0.3; // 30% speed
+  public static final double DEFAULT_SPEED = 0.4; // 40% speed
 
   // ==================== BASIC COMMANDS ====================
 

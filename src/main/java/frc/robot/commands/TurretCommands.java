@@ -7,7 +7,7 @@ import java.util.function.DoubleSupplier;
 
 public class TurretCommands {
   public static final double TURN_SPEED = 0.05;
-  public static final double SHOOT_SPEED = 0.7;
+  public static final double SHOOT_SPEED = 0.60;
   public static final double TURN_TOLERANCE = 0.5; // rotations
 
   // Turn position constants (in motor rotations)

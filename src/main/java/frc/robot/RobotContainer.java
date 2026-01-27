@@ -40,6 +40,7 @@ import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.KickerCommands;
 import frc.robot.commands.LEDCommands;
+import frc.robot.commands.SpindexerCommands;
 import frc.robot.commands.TurretCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.BasePosition;
@@ -74,6 +75,11 @@ import frc.robot.subsystems.led.LEDConfig;
 import frc.robot.subsystems.led.LEDIO;
 import frc.robot.subsystems.led.LEDIOSim;
 import frc.robot.subsystems.led.LEDIOSparkMax;
+import frc.robot.subsystems.spindexer.Spindexer;
+import frc.robot.subsystems.spindexer.SpindexerConfig;
+import frc.robot.subsystems.spindexer.SpindexerIO;
+import frc.robot.subsystems.spindexer.SpindexerIOSim;
+import frc.robot.subsystems.spindexer.SpindexerIOSparkMax;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretConfig;
 import frc.robot.subsystems.turret.TurretIO;
@@ -112,6 +118,7 @@ public class RobotContainer {
   private final Climber climber;
   private final Turret turret;
   private final Kicker feeder;
+  private final Spindexer spindexer;
   private final List<Pose2d> intakePoses;
   private NetworkTable FMS = NetworkTableInstance.getDefault().getTable("/FMSInfo");
   // Controller
@@ -239,6 +246,14 @@ public class RobotContainer {
             new KickerConfig(
                 "Feeder",
                 27, // motor CAN ID
+                false // motor invert
+                ));
+
+    spindexer =
+        initSpindexer(
+            new SpindexerConfig(
+                "Spindexer",
+                28, // motor CAN ID
                 false // motor invert
                 ));
 
@@ -462,15 +477,15 @@ public class RobotContainer {
     // player3.b().whileTrue(TurretCommands.shootHigh(turret));
 
     // Return to home position
-    player3.x().onTrue(TurretCommands.turnHome(turret));
+    player3.y().onTrue(TurretCommands.turnHome(turret));
 
     // Stop all turret motors
-    player3.y().onTrue(TurretCommands.stopAll(turret));
+    // player3.x().onTrue(TurretCommands.stopAll(turret));
 
     // Manual joystick control for turning
-    player3
-        .leftStick()
-        .whileTrue(TurretCommands.turnManual(turret, () -> -player3.getLeftX() * 0.5));
+    // player3
+    //    .leftStick()
+    //    .whileTrue(TurretCommands.turnManual(turret, () -> -player3.getLeftX() * 0.5));
 
     // Manual joystick control for shooter
     player3.rightStick().whileTrue(TurretCommands.shootManual(turret, () -> player3.getRightY()));
@@ -482,6 +497,10 @@ public class RobotContainer {
     // Alternative: X and Y for different speeds
     player3.x().whileTrue(KickerCommands.forward(feeder, 0.5)); // 50% speed
     player3.y().whileTrue(KickerCommands.reverse(feeder, 0.5)); // 50% speed
+
+    // Spindexer forward on D-pad right, reverse on D-pad left (30% speed)
+    player3.povRight().whileTrue(SpindexerCommands.forward(spindexer));
+    player3.povLeft().whileTrue(SpindexerCommands.reverse(spindexer));
   }
 
   private void configureAutoCommand(String name, Command command) {
@@ -656,6 +675,17 @@ public class RobotContainer {
         return new Kicker(new KickerIOSim());
       default:
         return new Kicker(new KickerIO() {});
+    }
+  }
+
+  private Spindexer initSpindexer(SpindexerConfig config) {
+    switch (Constants.currentMode) {
+      case REAL:
+        return new Spindexer(new SpindexerIOSparkMax(config));
+      case SIM:
+        return new Spindexer(new SpindexerIOSim());
+      default:
+        return new Spindexer(new SpindexerIO() {});
     }
   }
 
