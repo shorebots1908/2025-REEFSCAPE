@@ -2,7 +2,7 @@ package frc.robot.subsystems.hood;
 
 public interface HoodIO {
   public static class HoodIOInputs {
-    public double appliedOutput = 0.0;
+    public double position = 0.0;
   }
 
   public default void periodic() {}
@@ -13,7 +13,6 @@ public interface HoodIO {
     return "Hood";
   }
 
-  public default void setOpenLoop(double output) {}
-
-  public default void stop() {}
+  /** Set position from 0.0 (retracted) to 1.0 (extended) */
+  public default void setPosition(double position) {}
 }

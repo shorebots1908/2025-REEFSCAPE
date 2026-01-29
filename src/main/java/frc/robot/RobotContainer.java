@@ -518,9 +518,9 @@ public class RobotContainer {
     player3.povRight().whileTrue(SpindexerCommands.forward(spindexer));
     player3.povLeft().whileTrue(SpindexerCommands.reverse(spindexer));
 
-    // Hood up on D-pad up, down on D-pad down (30% speed)
-    player3.povUp().whileTrue(HoodCommands.up(hood));
-    player3.povDown().whileTrue(HoodCommands.down(hood));
+    // Hood step up 10% on D-pad up, step down 10% on D-pad down
+    player3.povUp().onTrue(HoodCommands.stepUp(hood));
+    player3.povDown().onTrue(HoodCommands.stepDown(hood));
   }
 
   private void configureAutoCommand(String name, Command command) {

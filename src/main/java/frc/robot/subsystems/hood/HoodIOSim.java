@@ -1,22 +1,17 @@
 package frc.robot.subsystems.hood;
 
 public class HoodIOSim implements HoodIO {
-  private double output = 0.0;
+  private double position = 0.2; // Start at 10%
 
   public HoodIOSim() {}
 
   @Override
   public void updateInputs(HoodIOInputs inputs) {
-    inputs.appliedOutput = output;
+    inputs.position = position;
   }
 
   @Override
-  public void setOpenLoop(double output) {
-    this.output = output;
-  }
-
-  @Override
-  public void stop() {
-    output = 0.0;
+  public void setPosition(double position) {
+    this.position = Math.max(0.0, Math.min(1.0, position));
   }
 }

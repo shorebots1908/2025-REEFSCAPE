@@ -1,21 +1,22 @@
 package frc.robot.subsystems.hood;
 
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.Servo;
 import org.littletonrobotics.junction.Logger;
 
 public class HoodIOSpark implements HoodIO {
-  private final Spark motor;
+  private final Servo actuator;
   private final HoodConfig config;
-  private double currentOutput = 0.0;
+  private double currentPosition = 0.0;
 
   public HoodIOSpark(HoodConfig config) {
     this.config = config;
-    motor = new Spark(config.pwmChannel);
+    actuator = new Servo(config.pwmChannel);
+    setPosition(0.2); // Start at 10%
   }
 
   @Override
   public void periodic() {
-    Logger.recordOutput(config.name + "/AppliedOutput", currentOutput);
+    Logger.recordOutput(config.name + "/Position", currentPosition);
   }
 
   @Override
@@ -25,18 +26,17 @@ public class HoodIOSpark implements HoodIO {
 
   @Override
   public void updateInputs(HoodIOInputs inputs) {
-    inputs.appliedOutput = currentOutput;
+    inputs.position = currentPosition;
   }
 
   @Override
-  public void setOpenLoop(double output) {
-    currentOutput = config.invert ? -output : output;
-    motor.set(currentOutput);
-  }
+  public void setPosition(double position) {
+    currentPosition = Math.max(0.0, Math.min(1.0, position));
 
-  @Override
-  public void stop() {
-    currentOutput = 0.0;
-    motor.stopMotor();
+    if (config.invert) {
+      actuator.set(1.0 - currentPosition);
+    } else {
+      actuator.set(currentPosition);
+    }
   }
 }

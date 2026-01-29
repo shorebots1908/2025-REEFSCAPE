@@ -3,46 +3,42 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.hood.Hood;
-import java.util.function.DoubleSupplier;
 
 public class HoodCommands {
-  public static final double DEFAULT_SPEED = 0.3; // 30% speed
+  public static final double STEP_SIZE = 0.1; // 10% per press
 
-  /** Move hood up at default speed */
-  public static Command up(Hood hood) {
-    return up(hood, DEFAULT_SPEED);
+  /** Increase hood position by 10% */
+  public static Command stepUp(Hood hood) {
+    return stepUp(hood, STEP_SIZE);
   }
 
-  /** Move hood up at specified speed */
-  public static Command up(Hood hood, double speed) {
-    double output = Math.abs(speed);
-    return Commands.run(() -> hood.setOpenLoop(output), hood)
-        .finallyDo(() -> hood.stop())
-        .withName("HoodUp");
+  /** Increase hood position by specified amount */
+  public static Command stepUp(Hood hood, double amount) {
+    return Commands.runOnce(() -> hood.increasePosition(amount), hood).withName("HoodStepUp");
   }
 
-  /** Move hood down at default speed */
+  /** Decrease hood position by 10% */
+  public static Command stepDown(Hood hood) {
+    return stepDown(hood, STEP_SIZE);
+  }
+
+  /** Decrease hood position by specified amount */
+  public static Command stepDown(Hood hood, double amount) {
+    return Commands.runOnce(() -> hood.decreasePosition(amount), hood).withName("HoodStepDown");
+  }
+
+  /** Move hood to fully retracted position (0%) */
   public static Command down(Hood hood) {
-    return down(hood, DEFAULT_SPEED);
+    return goToPosition(hood, 0.0).withName("HoodDown");
   }
 
-  /** Move hood down at specified speed */
-  public static Command down(Hood hood, double speed) {
-    double output = -Math.abs(speed);
-    return Commands.run(() -> hood.setOpenLoop(output), hood)
-        .finallyDo(() -> hood.stop())
-        .withName("HoodDown");
+  /** Move hood to fully extended position (100%) */
+  public static Command up(Hood hood) {
+    return goToPosition(hood, 1.0).withName("HoodUp");
   }
 
-  /** Manual control with joystick */
-  public static Command manual(Hood hood, DoubleSupplier speed) {
-    return Commands.run(() -> hood.setOpenLoop(speed.getAsDouble()), hood)
-        .finallyDo(() -> hood.stop())
-        .withName("HoodManual");
-  }
-
-  /** Stop hood */
-  public static Command stop(Hood hood) {
-    return Commands.runOnce(hood::stop, hood).withName("HoodStop");
+  /** Move hood to a specific position (0.0 to 1.0) */
+  public static Command goToPosition(Hood hood, double position) {
+    return Commands.runOnce(() -> hood.setPosition(position), hood).withName("HoodToPosition");
   }
 }
