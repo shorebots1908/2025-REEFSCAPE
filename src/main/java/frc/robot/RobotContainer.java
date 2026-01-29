@@ -33,10 +33,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AlignCommands;
-import frc.robot.commands.AutoCommands;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ElevatorCommands;
+// import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.HoodCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.KickerCommands;
@@ -56,11 +55,11 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
-import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorConfig;
-import frc.robot.subsystems.elevator.ElevatorIO;
-import frc.robot.subsystems.elevator.ElevatorIOSim;
-import frc.robot.subsystems.elevator.ElevatorIOSparkMax;
+// import frc.robot.subsystems.elevator.Elevator;
+// import frc.robot.subsystems.elevator.ElevatorConfig;
+// import frc.robot.subsystems.elevator.ElevatorIO;
+// import frc.robot.subsystems.elevator.ElevatorIOSim;
+// import frc.robot.subsystems.elevator.ElevatorIOSparkMax;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodConfig;
 import frc.robot.subsystems.hood.HoodIO;
@@ -116,7 +115,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final LED led;
-  private final Elevator elevator;
+  // private final Elevator elevator;
   private final Intake coralIntake;
   private final Intake algaeIntake;
   private final Wrist coralWrist;
@@ -140,7 +139,7 @@ public class RobotContainer {
   public RobotContainer() {
     drive = initDrive();
     led = initLED(new LEDConfig("LED", 5));
-    elevator = initElevator(new ElevatorConfig(9, 10, 0.5, 0.0, 0.0, 0.0, 68.0));
+    // elevator = initElevator(new ElevatorConfig(9, 10, 0.5, 0.0, 0.0, 0.0, 68.0));
     coralIntake =
         initIntake(
             new IntakeConfig(
@@ -331,26 +330,26 @@ public class RobotContainer {
     // player1.leftBumper().whileTrue(new AlignCommands.ToClosestPose(drive, intakePoses));
 
     // Elevator auto positions on the D-pad
-    player1
-        .povDown()
-        .and(player1.leftBumper().negate())
-        .and(player1.rightBumper().negate())
-        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM));
-    player1
-        .povLeft()
-        .and(player1.leftBumper().negate())
-        .and(player1.rightBumper().negate())
-        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2));
-    player1
-        .povRight()
-        .and(player1.leftBumper().negate())
-        .and(player1.rightBumper().negate())
-        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3));
-    player1
-        .povUp()
-        .and(player1.leftBumper().negate())
-        .and(player1.rightBumper().negate())
-        .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4));
+    // player1
+    //     .povDown()
+    //     .and(player1.leftBumper().negate())
+    //     .and(player1.rightBumper().negate())
+    //     .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.BOTTOM));
+    // player1
+    //     .povLeft()
+    //     .and(player1.leftBumper().negate())
+    //     .and(player1.rightBumper().negate())
+    //     .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L2));
+    // player1
+    //     .povRight()
+    //     .and(player1.leftBumper().negate())
+    //     .and(player1.rightBumper().negate())
+    //     .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L3));
+    // player1
+    //     .povUp()
+    //     .and(player1.leftBumper().negate())
+    //     .and(player1.rightBumper().negate())
+    //     .onTrue(ElevatorCommands.goToPosition(elevator, ElevatorCommands.CORAL_L4));
 
     // Coral feeding
     player1.b().whileTrue(IntakeCommands.feedIn(coralIntake));
@@ -382,26 +381,26 @@ public class RobotContainer {
     led.setDefaultCommand(LEDCommands.ledAlliance(led));
 
     // Elevator auto positions on the D-pad
-    player2
-        .povDown()
-        .and(player2.leftBumper().negate())
-        .and(player2.rightBumper().negate())
-        .onTrue(AutoCommands.smartElevatordown(elevator, coralWrist, ElevatorCommands.BOTTOM));
-    player2
-        .povLeft()
-        .and(player2.leftBumper().negate())
-        .and(player2.rightBumper().negate())
-        .onTrue(AutoCommands.smartElevatorl3(elevator, coralWrist, ElevatorCommands.CORAL_L3));
-    player2
-        .povRight()
-        .and(player2.leftBumper().negate())
-        .and(player2.rightBumper().negate())
-        .onTrue(AutoCommands.smartElevatorl3(elevator, coralWrist, ElevatorCommands.CORAL_L3));
-    player2
-        .povUp()
-        .and(player2.leftBumper().negate())
-        .and(player2.rightBumper().negate())
-        .onTrue(AutoCommands.smartElevator(elevator, coralWrist, ElevatorCommands.CORAL_L4));
+    // player2
+    //     .povDown()
+    //     .and(player2.leftBumper().negate())
+    //     .and(player2.rightBumper().negate())
+    //     .onTrue(AutoCommands.smartElevatordown(elevator, coralWrist, ElevatorCommands.BOTTOM));
+    // player2
+    //     .povLeft()
+    //     .and(player2.leftBumper().negate())
+    //     .and(player2.rightBumper().negate())
+    //     .onTrue(AutoCommands.smartElevatorl3(elevator, coralWrist, ElevatorCommands.CORAL_L3));
+    // player2
+    //     .povRight()
+    //     .and(player2.leftBumper().negate())
+    //     .and(player2.rightBumper().negate())
+    //     .onTrue(AutoCommands.smartElevatorl3(elevator, coralWrist, ElevatorCommands.CORAL_L3));
+    // player2
+    //     .povUp()
+    //     .and(player2.leftBumper().negate())
+    //     .and(player2.rightBumper().negate())
+    //     .onTrue(AutoCommands.smartElevator(elevator, coralWrist, ElevatorCommands.CORAL_L4));
 
     // Hold left trigger to manually control coral wrist with LeftY joystick
     player2
@@ -456,19 +455,19 @@ public class RobotContainer {
     player2.a().and(player2.rightTrigger(0.5)).whileTrue(IntakeCommands.feedOut(coralIntake, 0.15));
 
     // Start button moves coral wrist to Score L2
-    player2
-        .start()
-        .onTrue(AutoCommands.smartElevatorl2(elevator, coralWrist, ElevatorCommands.CORAL_L2));
+    // player2
+    //     .start()
+    //     .onTrue(AutoCommands.smartElevatorl2(elevator, coralWrist, ElevatorCommands.CORAL_L2));
 
     // Manual elevator up and down on bumpers
-    player2
-        .leftBumper()
-        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> 0.5))
-        .onFalse(ElevatorCommands.moveByJoystick(elevator, () -> 0.0));
-    player2
-        .rightBumper()
-        .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> -0.5))
-        .onFalse(ElevatorCommands.moveByJoystick(elevator, () -> 0.0));
+    // player2
+    //     .leftBumper()
+    //     .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> 0.5))
+    //     .onFalse(ElevatorCommands.moveByJoystick(elevator, () -> 0.0));
+    // player2
+    //     .rightBumper()
+    //     .whileTrue(ElevatorCommands.moveByJoystick(elevator, () -> -0.5))
+    //     .onFalse(ElevatorCommands.moveByJoystick(elevator, () -> 0.0));
   }
 
   private void configurePlayer3() {
@@ -529,14 +528,14 @@ public class RobotContainer {
   }
 
   private void configureAutoCommands() {
-    configureAutoCommand(
-        "elevator-l1", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.BOTTOM));
-    configureAutoCommand(
-        "elevator-l2", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.CORAL_L2));
-    configureAutoCommand(
-        "elevator-l3", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.CORAL_L3));
-    configureAutoCommand(
-        "elevator-l4", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.CORAL_L4));
+    // configureAutoCommand(
+    //     "elevator-l1", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.BOTTOM));
+    // configureAutoCommand(
+    //     "elevator-l2", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.CORAL_L2));
+    // configureAutoCommand(
+    //     "elevator-l3", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.CORAL_L3));
+    // configureAutoCommand(
+    //     "elevator-l4", ElevatorCommands.setTargetPosition(elevator, ElevatorCommands.CORAL_L4));
 
     configureAutoCommand("feed-in", IntakeCommands.feedIn(coralIntake).withTimeout(3.0));
     configureAutoCommand("short-feed", IntakeCommands.shortFeed(coralIntake));
@@ -644,21 +643,21 @@ public class RobotContainer {
     }
   }
 
-  private Elevator initElevator(ElevatorConfig config) {
-    switch (Constants.currentMode) {
-      case REAL:
-        // Real robot, instantiate hardware IO implementations
-        return new Elevator(new ElevatorIOSparkMax(config));
+  // private Elevator initElevator(ElevatorConfig config) {
+  //   switch (Constants.currentMode) {
+  //     case REAL:
+  //       // Real robot, instantiate hardware IO implementations
+  //       return new Elevator(new ElevatorIOSparkMax(config));
 
-      case SIM:
-        // Sim robot, instantiate physics sim IO implementations
-        return new Elevator(new ElevatorIOSim());
+  //     case SIM:
+  //       // Sim robot, instantiate physics sim IO implementations
+  //       return new Elevator(new ElevatorIOSim());
 
-      default:
-        // Replayed robot, disable IO implementations
-        return new Elevator(new ElevatorIO() {});
-    }
-  }
+  //     default:
+  //       // Replayed robot, disable IO implementations
+  //       return new Elevator(new ElevatorIO() {});
+  //   }
+  // }
 
   private Climber initClimber(ClimberConfig config) {
     switch (Constants.currentMode) {
