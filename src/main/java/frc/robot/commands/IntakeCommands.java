@@ -6,7 +6,7 @@ import frc.robot.subsystems.BasePosition;
 import frc.robot.subsystems.intake.Intake;
 
 public class IntakeCommands {
-  public static final double FEED_SPEED = 0.5;
+  public static final double FEED_SPEED = 0.7;
   public static final double FEED_STICK = 0.1;
   public static final BasePosition CORAL_WRIST_DOWN = new BasePosition(0.0);
   public static final BasePosition CORAL_WRIST_STOW = new BasePosition(1.0);
